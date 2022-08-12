@@ -10,18 +10,28 @@ body {
     background-color: white ;
     font-family: 'Maven Pro', 'sans serif'; 
 }
+#page {
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 1em;
+    border-radius: 19px;
+}
+p {
+    padding: 4px;
+    background: white;
+    color: black;
+}
 input {
     padding:4px;
     border: 1px solid lightsalmon;
     transition: box-shadow 0.3s;
-    /* box-shadow: inset 1px 1px 2px 0 #707070; */
     background: lightyellow;
     border-radius: 5px;
     color: black;
 }
 input:focus { 
     border: 1px solid teal;
-    /* box-shadow: inset 1px 1px 2px 0 #a0a0a0; */
     box-shadow: 0 0 5px 1px powderblue;
 }
 #freq { 
@@ -34,30 +44,57 @@ input:focus {
     width: 4em;
 }
 #morse {
-    width : 50%;
-	height : 50%;
-    padding:4px;
+    width : 100%;
+    height : 50%;
+    padding: 4px;
     border: 1px solid lightsalmon;
     transition: box-shadow 0.3s;
-    /* box-shadow: inset 1px 1px 2px 0 #707070; */
     background: lightyellow;
     border-radius: 5px;
     color: black;
 }
 </style>
 </head>
-<body><p>
+<body><div id="page">
+<p>
+<b>한글 CW 연습기 by DS1TZE</b>
+</p>
+<p>
 Frequency : <input type="number" id="freq" value="600" step="10" size="4" min="200" max="1200" required>Hz
 &nbsp;
 Speed : <input type="number" id="speed" value="20" size="2" min="5" max="50" required>wpm
 &nbsp;
 Volume : <input type="number" min="10" max="100" value="100" step="10" id="volume">%
 &nbsp; &nbsp; &nbsp;
-<button id="play">Play</button>
-<button id="stop">Stop</button>
+<button id="play">PLAY</button>
+<button id="stop">STOP</button>
 </p>
-<textarea id="morse" placeholder="Type something and push play."></textarea>
+<textarea id="morse"></textarea>
 
+<p>
+	<b>Intro.</b><br />
+	안녕하세요. DS1TZE 입니다.<br /><br />
+	위 프로그램은 한글 CW 청취 연습기입니다.<br />영문과 숫자를 포함해 원하는 내용을 입력하고 PLAY 버튼을 누르면 모스 부호로 들려줍니다.<br />
+	CW 청취 연습에 유용한 웹사이트인 Seiuchy를 사용하던 중, 그 근간이 되는 모스 코드 생성 라이브러리를 알게 되어, 한글 자모 분해 라이브러리를 붙여 만들게 되었습니다.<br />
+	많은 활용 바라며, 건의 사항은 온에어에서 말씀해주시기 바랍니다.<br />
+	<br />
+	<br />
+	
+	<b>Links</b><br />
+	Seiuchy - <a href="http://seiuchy.macache.com/" target="_blank">http://seiuchy.macache.com/</a><br />
+	Morse Code generator Javascript 라이브러리 - <a href="https://gist.github.com/eholk/0115691987090973cefe" target="_blank">https://gist.github.com/eholk/0115691987090973cefe</a><br />
+	위 라이브러리 제작 관련 글 - <a href="https://blog.theincredibleholk.org/blog/2014/06/23/generating-morse-code-with-javascript/" target="_blank">https://blog.theincredibleholk.org/blog/2014/06/23/generating-morse-code-with-javascript/</a><br />
+	위 라이브러리가 사용하는 기술인 Web Audio API - <a href="https://webaudio.github.io/web-audio-api/" target="_blank">https://webaudio.github.io/web-audio-api/<a/><br />
+	한글 자모 분해 Javascipt 라이브러리* - <a href="https://github.com/e-/Hangul.js/" target="_blank">https://github.com/e-/Hangul.js/</a><br />
+	※ 한글 CW는 26개 부호만 사용하기 때문에, 라이브러리를 살짝 수정해 "ㅖ"와 "ㅒ"는 각각 "ㅕ" + "ㅣ" 및 "ㅑ" + "ㅣ" 로 분해하도록 했습니다.<br />
+	<br />
+	<br />
+
+	<b>DE DS1TZE</b> - <a href="https://www.qrz.com/db/DS1TZE" target="_blank">https://www.qrz.com/db/DS1TZE</a><br />
+	2022.08.12.
+	
+</p>
+</div>
 <script type="text/javascript">
 function MorseNode(ac, rate) {
     // ac is an audio context.
@@ -118,48 +155,48 @@ MorseNode.prototype.MORSE = {
     "8": "---..",
     "9": "----.",
     "0": "-----",
-	
-	".": ".-.-.-",
-	",": "--..--",
-	"?": "..--..",
-	"/": "-..-.",
-	"+": ".-.-.",
-	"-": "-....-",
-	"=": "-...-",
-	":": "---...",
-	";": "-.-.-.",
-	"(": "-.--.",
-	")": "-.--.-",
-	"'": ".----.",
-	"\"": ".-..-.",
-	"@": ".--.-.",
-	
-	"ㄱ": ".-..",
-	"ㄴ": ",,-,",
-	"ㄷ": "-...",
-	"ㄹ": "...-",
-	"ㅁ": "--",
-	"ㅂ": ",--",
-	"ㅅ": "--.",
-	"ㅇ": "-.-",
-	"ㅈ": ".--.",
-	"ㅊ": "-.-.",
-	"ㅋ": "-..-",
-	"ㅌ": "--..",
-	"ㅍ": "---",
-	"ㅎ": ".---",
-	"ㅏ": ".",
-	"ㅑ": "..",
-	"ㅓ": "-",
-	"ㅕ": "...",
-	"ㅗ": ".-",
-	"ㅛ": "-.",
-	"ㅜ": "....",
-	"ㅠ": ".-.",
-	"ㅡ": "-..",
-	"ㅣ": "..-",
-	"ㅔ": "-.--",
-	"ㅐ": "--.-"
+    
+    ".": ".-.-.-",
+    ",": "--..--",
+    "?": "..--..",
+    "/": "-..-.",
+    "+": ".-.-.",
+    "-": "-....-",
+    "=": "-...-",
+    ":": "---...",
+    ";": "-.-.-.",
+    "(": "-.--.",
+    ")": "-.--.-",
+    "'": ".----.",
+    "\"": ".-..-.",
+    "@": ".--.-.",
+    
+    "ㄱ": ".-..",
+    "ㄴ": ",,-,",
+    "ㄷ": "-...",
+    "ㄹ": "...-",
+    "ㅁ": "--",
+    "ㅂ": ",--",
+    "ㅅ": "--.",
+    "ㅇ": "-.-",
+    "ㅈ": ".--.",
+    "ㅊ": "-.-.",
+    "ㅋ": "-..-",
+    "ㅌ": "--..",
+    "ㅍ": "---",
+    "ㅎ": ".---",
+    "ㅏ": ".",
+    "ㅑ": "..",
+    "ㅓ": "-",
+    "ㅕ": "...",
+    "ㅗ": ".-",
+    "ㅛ": "-.",
+    "ㅜ": "....",
+    "ㅠ": ".-.",
+    "ㅡ": "-..",
+    "ㅣ": "..-",
+    "ㅔ": "-.--",
+    "ㅐ": "--.-"
 };
 
 MorseNode.prototype.playChar = function(t, c) {
@@ -253,21 +290,5 @@ volctl.onchange = function() {
     volume=volctl.value/100.0;
 }
 </script>
-<p>
-	
-
-한글 CW 청취 연습 프로그램입니다. <br />
-	CW 청취 연습에 유용한 웹사이트인 Seiuchy를 사용하던 중, 그 근간이 되는 Javascript Morse Code 라이브러리를 알게 되어, 한글 자모 분해 라이브러리까지 활용하면 한글도 모스 부호 소리를 낼 수 있을 것 같아 만들어보았습니다.<br />
-	
-	Seiuchy - <a href="http://seiuchy.macache.com/" target="_blank">http://seiuchy.macache.com/</a> <br />
-	Morse Code generator Javascript 라이브러리 - <a href="https://gist.github.com/eholk/0115691987090973cefe" target="_blank">https://gist.github.com/eholk/0115691987090973cefe</a> <br />
-	위 라이브러리 제작 관련 글 - <a href="https://blog.theincredibleholk.org/blog/2014/06/23/generating-morse-code-with-javascript/" target="_blank">https://blog.theincredibleholk.org/blog/2014/06/23/generating-morse-code-with-javascript/</a> <br />
-	위 라이브러리가 사용하는 기술인 Web Audio API - <a href="https://webaudio.github.io/web-audio-api/" target="_blank">https://webaudio.github.io/web-audio-api/<a/> <br />
-	한글 자모 분해 Javascipt 라이브러리* - <a href="https://github.com/e-/Hangul.js/" target="_blank">https://github.com/e-/Hangul.js/</a> <br />
-	※ 한글 CW는 26개 부호만 사용하기 때문에, 라이브러리를 살짝 수정해 "ㅖ"와 "ㅒ"는 각각 "ㅕ" + "ㅣ" 및 "ㅑ" + "ㅣ" 로 분해하도록 했습니다.
-
-	DE DS1TZE - <a href="https://www.qrz.com/db/DS1TZE" target="_blank">https://www.qrz.com/db/DS1TZE</a>
-	
-</p>
 </body>
 </html>
