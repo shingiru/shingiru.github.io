@@ -70,6 +70,10 @@ button {
 .font_medium {
     font-size : medium;
 }
+::selection {
+    background-color: rgba(255, 0, 0, 0.5);
+}
+
 </style>
 </head>
 <body><div id="page">
@@ -86,11 +90,12 @@ Volume : <input type="number" id="volume" value="100" size="3" min="10" max="100
 Extra Gap : <label><input type="radio" name="key" value="computer" checked /> None</label>
 <label><input type="radio" name="key" value="elmer" /> Small</label>
 <label><input type="radio" name="key" value="farnsworth" /> Large</label>
-&nbsp; &nbsp;
+&nbsp;
 <button id="play">PLAY</button>
 <button id="stop">STOP</button>
-&nbsp; &nbsp;
+&nbsp;
 <label><input type="checkbox" id="selection_only" /> Play selection only</label>
+<label><input type="checkbox" id="highlight_next" /> Highlight next letter</label>
 </p>
 <textarea id="morse">
 HL2LKL DE HL1SB K     
@@ -151,7 +156,7 @@ function MorseNode(ac, rate) {
     this._oscillator.connect(this._gain);
     this.key = 'computer';
 
-    if (rate == undefined)
+    if ("undefined" == typeof rate)
         rate = 20;
     this._dot = 1.2 / rate; // formula from Wikipedia.
 
@@ -300,19 +305,24 @@ MorseNode.prototype.playChar = function(t, c) {
     return t;
 }
 
+var timestamp = [], highlightStart, hightlightEnd, stopped = false, selectionStart = -1, selectionEnd, str;
+
 MorseNode.prototype.playString = function(t, w) {
     this.key = document.querySelector('input[name="key"]:checked').value;
+    window.localStorage.setItem('key', this.key);
     
     w = this.convertHangulAndProsign(w.toUpperCase());
+    timestamp = [];
     
     for (var n = 0; n < w.length; n++) {
+        timestamp.push(t);
         var c = w[n];
         var hangul = (c.length > 1);
         for (var i = 0; i < c.length; i++) {
             if(c[i] == ' ') {
                 t += 4 * this._dot * this.dotfac('s'); // 3 dots gap already added after ending letter before
             }
-            else if(this.MORSE[c[i]] != undefined) {
+            else if("undefined" != typeof this.MORSE[c[i]]) {
                 t = this.playChar(t, this.MORSE[c[i]]); // 1 gap after dit/dah
                 t += 2 * this._dot * this.dotfac('l'); // with this 2 more gap, whole gap between letter is 3
             }
@@ -329,12 +339,11 @@ MorseNode.prototype.convertHangulAndProsign = function(w) {
     for (var key in this.PROSIGN) {
         w = w.replace(new RegExp(key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), this.PROSIGN[key]);
     }
-    console.log(w);
     return Hangul.disassemble(w, true);
 }
 
 
-var filter, ac, morse, inited = false, volume = 1.0;
+var filter, ac, morse, volume = 1.0;
 
 var freq = document.querySelector("#freq")
 var wpm = document.querySelector("#speed");
@@ -342,51 +351,45 @@ var volctl = document.querySelector("#volume");
 var play = document.querySelector("#play");
 var stop = document.querySelector("#stop");
 var txt = document.querySelector("#morse");
+var key_computer = document.querySelector('input[name="key"][value="computer"]');
+var key_elmer = document.querySelector('input[name="key"][value="elmer"]');
+var key_farnsworth = document.querySelector('input[name="key"][value="farnsworth"]');
 var selection_only = document.querySelector("#selection_only");
+var highlight_next = document.querySelector("#highlight_next");
 
-function init() {
-    ac = new (window.AudioContext || window.webkitAudioContext)();  
+function morse_reset() {
+    ac = (ac || new (window.AudioContext || window.webkitAudioContext)());
+    morse && morse._oscillator.stop(0);
     morse = new MorseNode(ac, parseInt(wpm.value));
     
     filter = ac.createBiquadFilter(); 
     filter.frequency.value = freq.value;
     filter.Q.value = 0;
-    filter.gain.value = 0.5;
     
     morse.connect(filter);
     filter.connect(ac.destination);
     
-    inited = true;
+    morse._dot = 1.2 / parseFloat(wpm.value);
+    morse._oscillator.frequency.value = parseInt(freq.value);
 }
 stop.onclick = function() {
-    if (!inited) init();
-    
-    morse._oscillator.stop(0)
-    morse = new MorseNode(ac, parseInt(wpm.value));
-    morse.connect(filter);
-    filter.connect(ac.destination);
-    
-    morse._dot = 1.2 / parseFloat(wpm.value);
-    morse._oscillator.frequency.value = parseInt(freq.value);
+    morse_reset();
     morse.playString(ac.currentTime, " ");
-    
     txt.disabled = false;
     txt.focus();
+    if (selectionStart != -1)
+        txt.setSelectionRange(selectionStart, selectionEnd);
+    stopped = true;
 }
 play.onclick = function() {
-    if (!inited) init();
+    morse_reset();
+    txt.disabled = false; // -- not to loose focus when click play button again
+    txt.focus(); // --
     
-    morse._oscillator.stop(0)
-    morse = new MorseNode(ac, parseInt(wpm.value));
-    morse.connect(filter);
-    filter.connect(ac.destination);
-    
-    morse._dot = 1.2 / parseFloat(wpm.value);
-    morse._oscillator.frequency.value = parseInt(freq.value);
-    
-    txt.disabled = false;
-    txt.focus();
-    txt.disabled = true;
+    if (selectionStart != -1 && !stopped)
+        txt.setSelectionRange(selectionStart, selectionEnd);
+    selectionStart = txt.selectionStart;
+    selectionEnd = txt.selectionEnd;
     
     if (selection_only.checked) {
         if (txt.selectionStart == txt.selectionEnd) { // when no selection
@@ -398,20 +401,88 @@ play.onclick = function() {
         } else { // play selection
             morse.playString(ac.currentTime, txt.value.substring(txt.selectionStart, txt.selectionEnd));
         }
+        highlightStart = selectionStart;
     } else {
         morse.playString(ac.currentTime, " vvv " + txt.value);
+        highlightStart = -5;
+    }
+    txt.focus();
+    txt.disabled = true;
+    
+    stopped = false;
+    highlight();
+}
+function highlight() {
+    if (txt.value[highlightStart] == '<' && txt.value.length > highlightStart + 3 
+        && !!morse.PROSIGN[txt.value.substring(highlightStart, highlightStart + 4).toUpperCase()]) {
+        highlightEnd = highlightStart + 4;
+    } else if (txt.value.length > highlightStart) {
+        highlightEnd = highlightStart + 1;
     }
     
-    txt.disabled = false;
-    txt.focus();
+    if (highlightStart >= 0 && !stopped) {
+        txt.disabled = false;
+        txt.focus();
+        txt.setSelectionRange(highlightStart, highlightEnd);
+        txt.disabled = true;
+    }
+    
+    while (timestamp.length > 0 && ac.currentTime > timestamp[highlight_next.checked ? 0 : 1]) {
+        timestamp.shift();
+        highlightStart = highlightEnd;
+        if (txt.value[highlightStart] == '<' && txt.value.length > highlightStart + 3 
+            && !!morse.PROSIGN[txt.value.substring(highlightStart, highlightStart + 4).toUpperCase()]) {
+            highlightEnd = highlightStart + 4;
+        } else if (txt.value.length > highlightStart) {
+            highlightEnd = highlightStart + 1;
+        }
+    }
+
+    if (!stopped && timestamp.length > 0)
+        setTimeout(highlight, 10);
+}
+freq.onchange = function() {
+    window.localStorage.setItem('freq', freq.value);
+}
+wpm.onchange = function() {
+    window.localStorage.setItem('wpm', wpm.value);
 }
 volctl.onchange = function() {
     volume = volctl.value / 100.0;
+    window.localStorage.setItem('volctl', volctl.value);
 }
+key_computer.onchange = function() {
+    window.localStorage.setItem('key', document.querySelector('input[name="key"]:checked').value);
+}
+key_elmer.onchange = function() {
+    window.localStorage.setItem('key', document.querySelector('input[name="key"]:checked').value);
+}
+key_farnsworth.onchange = function() {
+    window.localStorage.setItem('key', document.querySelector('input[name="key"]:checked').value);
+}
+selection_only.onchange = function() {
+    window.localStorage.setItem('selection_only', selection_only.checked);
+}
+highlight_next.onchange = function() {
+    window.localStorage.setItem('highlight_next', highlight_next.checked);
+}
+window.onload = function() {
+    try {
+        if ("undefined" != typeof window.localStorage.getItem('freq')) freq.value = window.localStorage.getItem('freq');
+        if ("undefined" != typeof window.localStorage.getItem('wpm')) wpm.value = window.localStorage.getItem('wpm');
+        if ("undefined" != typeof window.localStorage.getItem('volctl')) volctl.value = window.localStorage.getItem('volctl');
+        volume = volctl.value / 100.0;
+        if ("undefined" != typeof window.localStorage.getItem('selection_only')) selection_only.checked = window.localStorage.getItem('selection_only') == 'true';
+        if ("undefined" != typeof window.localStorage.getItem('highlight_next')) highlight_next.checked = window.localStorage.getItem('highlight_next') == 'true';
+        if ("undefined" != typeof window.localStorage.getItem('key')) document.querySelector('input[name="key"][value='+window.localStorage.getItem('key')+']').checked = true;
+    } catch (e) {
+    }
+};
 </script>
+
 <p class="font_medium">
 <h3>Change Log</h3>
-2022.08.13. "Play selection only" support. 5 dots gap between Hangul characters. Prosign support including "KA".<br />
+2022.08.13. "Play selection only" support. 5 dots gap between Hangul characters. Prosign support including "KA". Setting auto-save. Highlight current cursor.<br />
 2022.08.12. First version of Hangul CW Trainer.<br />
 </p>
 </div>
