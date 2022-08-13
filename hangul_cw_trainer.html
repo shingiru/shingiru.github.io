@@ -94,7 +94,7 @@ Extra Gap : <label><input type="radio" name="key" value="computer" checked /> No
 <button id="stop">STOP</button>
 &nbsp;
 <label><input type="checkbox" id="selection_only" /> Play selection only</label>
-<label><input type="checkbox" id="highlight_next" /> Highlight next letter</label>
+<label><input type="checkbox" id="highlight_slowly" /> Highlight slowly</label>
 </p>
 <textarea id="morse">
 HL2LKL DE HL1SB K     
@@ -330,6 +330,7 @@ MorseNode.prototype.playString = function(t, w) {
             t += 2 * this._dot * this.dotfac('l');
         }
     }
+    timestamp.push(t);
     return t;
 }
 
@@ -354,7 +355,7 @@ var key_computer = document.querySelector('input[name="key"][value="computer"]')
 var key_elmer = document.querySelector('input[name="key"][value="elmer"]');
 var key_farnsworth = document.querySelector('input[name="key"][value="farnsworth"]');
 var selection_only = document.querySelector("#selection_only");
-var highlight_next = document.querySelector("#highlight_next");
+var highlight_slowly = document.querySelector("#highlight_slowly");
 
 function morse_reset() {
     ac = (ac || new (window.AudioContext || window.webkitAudioContext)());
@@ -394,21 +395,27 @@ play.onclick = function() {
         if (txt.selectionStart == txt.selectionEnd) { // when no selection
             if (txt.selectionStart == txt.value.length) { // when caret is at the end, start from first letter
                 morse.playString(ac.currentTime, txt.value);
+                highlightStart = highlightEnd = 0;
             } else { // when caret is in the middle, start from caret position
                 morse.playString(ac.currentTime, txt.value.substring(txt.selectionStart));
+                highlightStart = highlightEnd = selectionStart;
             }
         } else { // play selection
             morse.playString(ac.currentTime, txt.value.substring(txt.selectionStart, txt.selectionEnd));
+            highlightStart = highlightEnd = selectionStart;
         }
-        highlightStart = selectionStart;
     } else {
         morse.playString(ac.currentTime, " vvv " + txt.value);
-        highlightStart = -5;
+        highlightStart = highlightEnd = -5;
     }
     txt.focus();
     txt.disabled = true;
     
     stopped = false;
+    if (highlight_slowly.checked) {
+        highlightStart -= 1;
+        highlightEnd -= 1;
+    }
     highlight();
 }
 function highlight() {
@@ -426,7 +433,7 @@ function highlight() {
         txt.disabled = true;
     }
     
-    while (timestamp.length > 0 && ac.currentTime > timestamp[highlight_next.checked ? 0 : 1]) {
+    while (timestamp.length > 1 && ac.currentTime > timestamp[1]) {
         timestamp.shift();
         highlightStart = highlightEnd;
         if (txt.value[highlightStart] == '<' && txt.value.length > highlightStart + 3 
@@ -436,9 +443,16 @@ function highlight() {
             highlightEnd = highlightStart + 1;
         }
     }
-
-    if (!stopped && timestamp.length > 0)
+    
+    if (timestamp.length == 0) {
+        stop.click();
+    } else if (timestamp.length == 1 && ac.currentTime > timestamp[0]) {
+        timestamp.shift();
+        highlightStart = highlightEnd;
         setTimeout(highlight, 10);
+    } else if (!stopped) {
+        setTimeout(highlight, 10);
+    }
 }
 freq.onchange = function() {
     window.localStorage.setItem('freq', freq.value);
@@ -462,8 +476,8 @@ key_farnsworth.onchange = function() {
 selection_only.onchange = function() {
     window.localStorage.setItem('selection_only', selection_only.checked);
 }
-highlight_next.onchange = function() {
-    window.localStorage.setItem('highlight_next', highlight_next.checked);
+highlight_slowly.onchange = function() {
+    window.localStorage.setItem('highlight_slowly', highlight_slowly.checked);
 }
 window.onload = function() {
     try {
@@ -472,7 +486,7 @@ window.onload = function() {
         if (window.localStorage.getItem('volctl')) volctl.value = parseInt(window.localStorage.getItem('volctl'));
         volume = volctl.value / 100.0;
         if (window.localStorage.getItem('selection_only')) selection_only.checked = window.localStorage.getItem('selection_only') == 'true';
-        if (window.localStorage.getItem('highlight_next')) highlight_next.checked = window.localStorage.getItem('highlight_next') == 'true';
+        if (window.localStorage.getItem('highlight_slowly')) highlight_slowly.checked = window.localStorage.getItem('highlight_slowly') == 'true';
         if (window.localStorage.getItem('key')) document.querySelector('input[name="key"][value='+window.localStorage.getItem('key')+']').checked = true;
     } catch (e) {
     }
@@ -481,7 +495,8 @@ window.onload = function() {
 
 <p class="font_medium">
 <h3>Change Log</h3>
-2022.08.13. "Play selection only" support. 5 dots gap between Hangul characters. Prosign support including "KA". Setting auto-save. Highlight current cursor.<br />
+2022.08.14. "Highlight slowly" added.<br />
+2022.08.13. "Play selection only" added. Hangul character gap fixed : 5 dots. Prosign(inc. "KA") support added. Remember settings using localStorage. Highlight effect added.<br />
 2022.08.12. First version of Hangul CW Trainer.<br />
 </p>
 </div>
