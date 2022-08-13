@@ -467,13 +467,13 @@ highlight_next.onchange = function() {
 }
 window.onload = function() {
     try {
-        if ("undefined" != typeof window.localStorage.getItem('freq')) freq.value = parseInt(window.localStorage.getItem('freq'));
-        if ("undefined" != typeof window.localStorage.getItem('wpm')) wpm.value = parseInt(window.localStorage.getItem('wpm'));
-        if ("undefined" != typeof window.localStorage.getItem('volctl')) volctl.value = parseInt(window.localStorage.getItem('volctl'));
+        if (window.localStorage.getItem('freq')) freq.value = parseInt(window.localStorage.getItem('freq'));
+        if (window.localStorage.getItem('wpm')) wpm.value = parseInt(window.localStorage.getItem('wpm'));
+        if (window.localStorage.getItem('volctl')) volctl.value = parseInt(window.localStorage.getItem('volctl'));
         volume = volctl.value / 100.0;
-        if ("undefined" != typeof window.localStorage.getItem('selection_only')) selection_only.checked = window.localStorage.getItem('selection_only') == 'true';
-        if ("undefined" != typeof window.localStorage.getItem('highlight_next')) highlight_next.checked = window.localStorage.getItem('highlight_next') == 'true';
-        if ("undefined" != typeof window.localStorage.getItem('key')) document.querySelector('input[name="key"][value='+window.localStorage.getItem('key')+']').checked = true;
+        if (window.localStorage.getItem('selection_only')) selection_only.checked = window.localStorage.getItem('selection_only') == 'true';
+        if (window.localStorage.getItem('highlight_next')) highlight_next.checked = window.localStorage.getItem('highlight_next') == 'true';
+        if (window.localStorage.getItem('key')) document.querySelector('input[name="key"][value='+window.localStorage.getItem('key')+']').checked = true;
     } catch (e) {
     }
 };
