@@ -304,7 +304,7 @@ MorseNode.prototype.playChar = function(t, c) {
     return t;
 }
 
-var timestamp = [], highlightStart, hightlightEnd, stopped = false, selectionStart = -1, selectionEnd, str;
+var timestamp = [], highlightStart, hightlightEnd, highlightStartReal, stopped = false, selectionStart = -1, selectionEnd;
 
 MorseNode.prototype.playString = function(t, w) {
     this.key = document.querySelector('input[name="key"]:checked').value;
@@ -343,7 +343,7 @@ MorseNode.prototype.convertHangulAndProsign = function(w) {
 }
 
 
-var filter, ac, morse, volume = 1.0;
+var ac, filter, morse, volume = 1.0;
 
 var freq = document.querySelector("#freq")
 var wpm = document.querySelector("#speed");
@@ -375,7 +375,7 @@ function morse_reset() {
 stop.onclick = function() {
     morse_reset();
     morse.playString(ac.currentTime, " ");
-    txt.disabled = false;
+    txt.readOnly = false;
     txt.focus();
     if (selectionStart != -1)
         txt.setSelectionRange(selectionStart, selectionEnd);
@@ -383,8 +383,7 @@ stop.onclick = function() {
 }
 play.onclick = function() {
     morse_reset();
-    txt.disabled = false; // -- not to loose focus when click play button again
-    txt.focus(); // --
+    txt.focus();
     
     if (selectionStart != -1 && !stopped)
         txt.setSelectionRange(selectionStart, selectionEnd);
@@ -395,21 +394,22 @@ play.onclick = function() {
         if (txt.selectionStart == txt.selectionEnd) { // when no selection
             if (txt.selectionStart == txt.value.length) { // when caret is at the end, start from first letter
                 morse.playString(ac.currentTime, txt.value);
-                highlightStart = highlightEnd = 0;
+                highlightStart = highlightEnd = highlightStartReal = 0;
             } else { // when caret is in the middle, start from caret position
                 morse.playString(ac.currentTime, txt.value.substring(txt.selectionStart));
-                highlightStart = highlightEnd = selectionStart;
+                highlightStart = highlightEnd = highlightStartReal = selectionStart;
             }
         } else { // play selection
             morse.playString(ac.currentTime, txt.value.substring(txt.selectionStart, txt.selectionEnd));
-            highlightStart = highlightEnd = selectionStart;
+            highlightStart = highlightEnd = highlightStartReal = selectionStart;
         }
     } else {
         morse.playString(ac.currentTime, " vvv " + txt.value);
-        highlightStart = highlightEnd = -5;
+        highlightStart = highlightEnd = -5; // " vvv " length
+        highlightStartReal = 0;
     }
     txt.focus();
-    txt.disabled = true;
+    txt.readOnly = true;
     
     stopped = false;
     if (highlight_slowly.checked) {
@@ -426,11 +426,9 @@ function highlight() {
         highlightEnd = highlightStart + 1;
     }
     
-    if (highlightStart >= 0 && !stopped) {
-        txt.disabled = false;
+    if (highlightStart >= highlightStartReal && !stopped) {
         txt.focus();
         txt.setSelectionRange(highlightStart, highlightEnd);
-        txt.disabled = true;
     }
     
     while (timestamp.length > 1 && ac.currentTime > timestamp[1]) {
