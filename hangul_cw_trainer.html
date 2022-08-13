@@ -487,22 +487,3 @@ window.onload = function() {
 </div>
 </body>
 </html>
-" != typeof window.localStorage.getItem('wpm')) wpm.value = window.localStorage.getItem('wpm');
-        if ("undefined" != typeof window.localStorage.getItem('volctl')) volctl.value = window.localStorage.getItem('volctl');
-        volume = volctl.value / 100.0;
-        if ("undefined" != typeof window.localStorage.getItem('selection_only')) selection_only.checked = window.localStorage.getItem('selection_only') == 'true';
-        if ("undefined" != typeof window.localStorage.getItem('highlight_next')) highlight_next.checked = window.localStorage.getItem('highlight_next') == 'true';
-        if ("undefined" != typeof window.localStorage.getItem('key')) document.querySelector('input[name="key"][value='+window.localStorage.getItem('key')+']').checked = true;
-    } catch (e) {
-    }
-};
-</script>
-
-<p class="font_medium">
-<h3>Change Log</h3>
-2022.08.13. "Play selection only" support. 5 dots gap between Hangul characters. Prosign support including "KA". Setting auto-save. Highlight current cursor.<br />
-2022.08.12. First version of Hangul CW Trainer.<br />
-</p>
-</div>
-</body>
-</html>
