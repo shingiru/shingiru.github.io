@@ -9,7 +9,7 @@
 body {
     background-color: white ;
     font-family: 'Maven Pro', 'sans serif';
-	font-size: large;
+    font-size: large;
 }
 #page {
     width: 90%;
@@ -24,14 +24,14 @@ p {
     color: black;
 }
 input {
-    padding:4px;
+    padding: 4px;
     border: 1px solid lightsalmon;
     transition: box-shadow 0.3s;
     background: lightyellow;
     border-radius: 5px;
     color: black;
-	font-family: 'Maven Pro', 'sans serif';
-	font-size: large;
+    font-family: 'Maven Pro', 'sans serif';
+    font-size: large;
 }
 input:focus { 
     border: 1px solid teal;
@@ -39,8 +39,8 @@ input:focus {
 }
 button {
     color: black;
-	font-family: 'Maven Pro', 'sans serif';
-	font-size: large;
+    font-family: 'Maven Pro', 'sans serif';
+    font-size: large;
 }
 #freq { 
     width: 3em;
@@ -61,31 +61,36 @@ button {
     border-radius: 5px;
     color: black;
     font-family: 'Maven Pro', 'sans serif';
-	font-size: large;
-	line-height: 2em;
+    font-size: large;
+    line-height: 2em;
 }
 #counter {
-    text-align: right;
+    float: right;
+}
+.font_medium {
+    font-size : medium;
 }
 </style>
 </head>
 <body><div id="page">
 <p>
-<b>한글 CW 연습기 by DS1TZE</b>
+<h2>한글 CW 연습기 by DS1TZE</h2>
 </p>
 <p>
-Frequency : <input type="number" id="freq" value="600" step="10" size="4" min="200" max="1200" required>Hz
+Frequency : <input type="number" id="freq" value="600" step="10" size="4" min="200" max="1200" />Hz
 &nbsp;
-Speed : <input type="number" id="speed" value="20" size="2" min="5" max="50" required>wpm
+Speed : <input type="number" id="speed" value="20" size="2" min="5" max="50" />wpm
 &nbsp;
-Volume : <input type="number" min="10" max="100" value="100" step="10" id="volume">%
+Volume : <input type="number" id="volume" min="10" max="100" value="100" step="10" />%
 &nbsp;
-Extra Gap : <label><input type="radio" name="key" value="computer" checked> no gap</label>
-<label><input type="radio" name="key" value="elmer"> small</label>
-<label><input type="radio" name="key" value="farnsworth"> large</label>
+Extra Gap : <label><input type="radio" name="key" value="computer" checked /> no gap</label>
+<label><input type="radio" name="key" value="elmer" /> small</label>
+<label><input type="radio" name="key" value="farnsworth" /> large</label>
 &nbsp; &nbsp;
 <button id="play">PLAY</button>
 <button id="stop">STOP</button>
+&nbsp; &nbsp;
+<label><input type="checkbox" id="selection_only" /> Play selection only</label>
 </p>
 <textarea id="morse">
 HL2LKL DE HL1SB K     
@@ -108,32 +113,31 @@ E
 ※ 예문 출처 : <a href="https://www.youtube.com/watch?v=TkbhZqdAPdw" target="_blank">https://www.youtube.com/watch?v=TkbhZqdAPdw</a>
 
 <p>
-	<b>Intro.</b><br />
-	안녕하세요. DS1TZE 입니다.<br /><br />
-	위 프로그램은 한글 CW 청취 연습기입니다.<br />영문과 숫자를 포함해 원하는 내용을 입력하고 PLAY 버튼을 누르면 모스 부호로 들려줍니다.<br />
-	CW 청취 연습에 유용한 웹사이트인 Seiuchy를 사용하던 중, 그 근간이 되는 모스 코드 생성 라이브러리를 알게 되어, 한글 자모 분해 라이브러리를 붙여 만들게 되었습니다.<br />
-	많은 활용 바라며, 건의 사항은 온에어에서 말씀해주시기 바랍니다.<br />
-	<br />
-	<br />
-	
-	<b>Links</b><br />
-	Seiuchy - <a href="http://seiuchy.macache.com/" target="_blank">http://seiuchy.macache.com/</a><br />
-	Morse Code generator Javascript 라이브러리 - <a href="https://gist.github.com/eholk/0115691987090973cefe" target="_blank">https://gist.github.com/eholk/0115691987090973cefe</a><br />
-	위 라이브러리 제작 관련 글 - <a href="https://blog.theincredibleholk.org/blog/2014/06/23/generating-morse-code-with-javascript/" target="_blank">https://blog.theincredibleholk.org/blog/2014/06/23/generating-morse-code-with-javascript/</a><br />
-	위 라이브러리가 사용하는 기술인 Web Audio API - <a href="https://webaudio.github.io/web-audio-api/" target="_blank">https://webaudio.github.io/web-audio-api/<a/><br />
-	한글 자모 분해 Javascipt 라이브러리* - <a href="https://github.com/e-/Hangul.js/" target="_blank">https://github.com/e-/Hangul.js/</a><br />
-	※ 한글 CW는 26개 부호만 사용하기 때문에, 라이브러리를 살짝 수정해 "ㅖ"와 "ㅒ"는 각각 "ㅕ" + "ㅣ" 및 "ㅑ" + "ㅣ" 로 분해하도록 하고, 같은 홑낱자로 이루어진 겹낱자도 분해하도록 했습니다.<br />
-	<br />
-	<br />
+    <h3>Intro.</h3><br />
+    안녕하세요. DS1TZE 입니다.<br /><br />
+    위 프로그램은 한글 CW 청취 연습기입니다.<br />영문과 숫자를 포함해 원하는 내용을 입력하고 PLAY 버튼을 누르면 모스 부호로 들려줍니다.<br />
+    CW 청취 연습에 유용한 웹사이트인 Seiuchy를 사용하던 중, 그 근간이 되는 모스 코드 생성 라이브러리를 알게 되어, 한글 자모 분해 라이브러리를 붙여 만들게 되었습니다.<br />
+    많은 활용 바라며, 건의 사항은 온에어에서 말씀해주시기 바랍니다.<br />
+    <br />
+    <br />
+    
+    <h3>Links</h3><br />
+    Seiuchy - <a href="http://seiuchy.macache.com/" target="_blank">http://seiuchy.macache.com/</a><br />
+    Morse Code generator Javascript 라이브러리 - <a href="https://gist.github.com/eholk/0115691987090973cefe" target="_blank">https://gist.github.com/eholk/0115691987090973cefe</a><br />
+    위 라이브러리 제작 관련 글 - <a href="https://blog.theincredibleholk.org/blog/2014/06/23/generating-morse-code-with-javascript/" target="_blank">https://blog.theincredibleholk.org/blog/2014/06/23/generating-morse-code-with-javascript/</a><br />
+    위 라이브러리가 사용하는 기술인 Web Audio API - <a href="https://webaudio.github.io/web-audio-api/" target="_blank">https://webaudio.github.io/web-audio-api/<a/><br />
+    한글 자모 분해 Javascipt 라이브러리* - <a href="https://github.com/e-/Hangul.js/" target="_blank">https://github.com/e-/Hangul.js/</a><br />
+    ※ 한글 CW는 26개 부호만 사용하기 때문에, 라이브러리를 살짝 수정해 "ㅖ"와 "ㅒ"는 각각 "ㅕ" + "ㅣ" 및 "ㅑ" + "ㅣ" 로 분해하도록 하고, 같은 홑낱자로 이루어진 겹낱자도 분해하도록 했습니다.<br />
+    <br />
+    <br />
 
-	<b>DE DS1TZE</b> - <a href="https://www.qrz.com/db/DS1TZE" target="_blank">https://www.qrz.com/db/DS1TZE</a><br />
-	2022.08.12.
-	
+    <h3>DE DS1TZE - <a href="https://www.qrz.com/db/DS1TZE" target="_blank" class="font_medium">https://www.qrz.com/db/DS1TZE</a>
+	<span id="counter">
+        <a href="https://hits.seeyoufarm.com"><img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fshingiru.github.io%2Fhangul_cw_trainer.html&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false"/></a>
+    </span>
+	</h3>
+    
 </p>
-<p id="counter">
-<a href="https://hits.seeyoufarm.com"><img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fshingiru.github.io%2Fhangul_cw_trainer.html&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false"/></a>
-</p>
-</div>
 <script type="text/javascript">
 function MorseNode(ac, rate) {
     // ac is an audio context.
@@ -141,13 +145,13 @@ function MorseNode(ac, rate) {
     this._gain = ac.createGain();
 
     this._gain.gain.value = 0;
-	this._oscillator.type = 'sine';
+    this._oscillator.type = 'sine';
     this._oscillator.frequency.value = 600;
 
     this._oscillator.connect(this._gain);
-	this.key = 'computer';
+    this.key = 'computer';
 
-    if(rate == undefined)
+    if (rate == undefined)
         rate = 20;
     this._dot = 1.2 / rate; // formula from Wikipedia.
 
@@ -180,7 +184,7 @@ MorseNode.prototype.MORSE = {
     "S": "...",
     "T": "-",
     "U": "..-",
-	"V": "...-",
+    "V": "...-",
     "W": ".--",
     "X": "-..-",
     "Y": "-.--",
@@ -245,7 +249,7 @@ MorseNode.prototype.dotfac = function(t) {
             // t is type of dotvalue.  l=letter int. i=inter el. s=spaces .=dit -=dah 
         case 'computer':
             return 1;
-		case 'farnsworth': //uses farnsworth
+        case 'farnsworth': //uses farnsworth
             if (t=='s') return 6;
             if (t=='l') return 4;
         case 'elmer': //uses farnsworth
@@ -257,36 +261,36 @@ MorseNode.prototype.dotfac = function(t) {
 }
 
 MorseNode.prototype.playChar = function(t, c) {
-    for(var i = 0; i < c.length; i++) {
+    for (var i = 0; i < c.length; i++) {
         switch(c[i]) {
         case '.':
             this._gain.gain.setValueAtTime(1.0 * volume, t);
-			t += this._dot*this.dotfac('.');
+            t += this._dot * this.dotfac('.');
             this._gain.gain.setValueAtTime(0.0, t);
             break;
         case '-':
             this._gain.gain.setValueAtTime(1.0 * volume, t);
-			t += 3 * this._dot*this.dotfac('-');
+            t += 3 * this._dot * this.dotfac('-');
             this._gain.gain.setValueAtTime(0.0, t);
             break;
         }
-        t += this._dot*this.dotfac('i');
+        t += this._dot * this.dotfac('i');
     }
     return t;
 }
 
 MorseNode.prototype.playString = function(t, w) {
     this.key = document.querySelector('input[name="key"]:checked').value;
-	
+    
     w = Hangul.disassemble(w.toUpperCase());
-    for(var i = 0; i < w.length; i++) {
-		if(w[i] == ' ') {
-            t += 3 * this._dot*this.dotfac('s'); // 3 dots from before, three here, and
+    for (var i = 0; i < w.length; i++) {
+        if(w[i] == ' ') {
+            t += 3 * this._dot * this.dotfac('s'); // 3 dots from before, three here, and
                                 // 1 from the ending letter before.
         }
         else if(this.MORSE[w[i]] != undefined) {
             t = this.playChar(t, this.MORSE[w[i]]);
-            t += 2 * this._dot*this.dotfac('l');
+            t += 2 * this._dot * this.dotfac('l');
         }
     }
     return t;
@@ -302,48 +306,66 @@ var volctl=document.querySelector("#volume");
 var play = document.querySelector("#play");
 var stop = document.querySelector("#stop");
 var txt = document.querySelector("#morse");
+var selection_only = document.querySelector("#selection_only");
 
 function init() {
-    ac = new (window.AudioContext || window.webkitAudioContext)();	
+    ac = new (window.AudioContext || window.webkitAudioContext)();  
     morse = new MorseNode(ac, parseInt(wpm.value));
-	
-	filter = ac.createBiquadFilter(); 
+    
+    filter = ac.createBiquadFilter(); 
     filter.frequency.value = freq.value;
     filter.Q.value = 0;
     filter.gain.value = 0.5;
-	
+    
     morse.connect(filter);
-	filter.connect(ac.destination);
-	
-	inited = true;
+    filter.connect(ac.destination);
+    
+    inited = true;
 }
 stop.onclick = function() {
     if (!inited) init();
-	
+    
     morse._oscillator.stop(0)
     morse = new MorseNode(ac, parseInt(wpm.value));
     morse.connect(filter);
-	filter.connect(ac.destination);
-	
-	morse._dot=1.2/parseFloat(wpm.value);
+    filter.connect(ac.destination);
+    
+    morse._dot = 1.2 / parseFloat(wpm.value);
     morse._oscillator.frequency.value = parseInt(freq.value);
     morse.playString(ac.currentTime, " ");
+	
+	txt.disabled = false;
+	txt.focus();
 }
 play.onclick = function() {
-	if (!inited) init();
-	
-	morse._oscillator.stop(0)
+    if (!inited) init();
+    
+    morse._oscillator.stop(0)
     morse = new MorseNode(ac, parseInt(wpm.value));
     morse.connect(filter);
-	filter.connect(ac.destination);
-	
-	morse._dot=1.2/parseFloat(wpm.value);
+    filter.connect(ac.destination);
+    
+    morse._dot = 1.2 / parseFloat(wpm.value);
     morse._oscillator.frequency.value = parseInt(freq.value);
-    morse.playString(ac.currentTime, " vvv " + txt.value);
+	
+	txt.focus();
+	txt.disabled = true;
+	
+    if (selection_only.checked) {
+        morse.playString(ac.currentTime, txt.value.substring(txt.selectionStart, txt.selectionEnd));
+    } else {
+        morse.playString(ac.currentTime, " vvv " + txt.value);
+    }
 }
 volctl.onchange = function() {
-    volume=volctl.value/100.0;
+    volume = volctl.value / 100.0;
 }
 </script>
+<p class="font_medium">
+<h3>Change Log</h3>
+2022.08.13. "Play selection only" support.<br />
+2022.08.12. First version of Hangul CW Trainer.<br />
+</p>
+</div>
 </body>
 </html>
