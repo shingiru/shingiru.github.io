@@ -98,6 +98,7 @@ Extra Gap : <label><input type="radio" name="key" value="computer" checked /> No
 &nbsp;
 <label><input type="checkbox" id="selection_only" /> Play selection only</label>
 <label><input type="checkbox" id="highlight_slowly" /> Highlight slowly</label>
+<label><input type="checkbox" id="repeat" /> Repeat</label>
 </p>
 <p>
 <button id="hangul_qso_1">Hangul QSO Sample 1</button>
@@ -471,6 +472,10 @@ MorseNode.prototype.convertHangulAndProsign = function(w) {
     return Hangul.disassemble(w, true);
 }
 
+Morse.prototype.getSpaceDelayInMills = function() {
+    return 7 * this._dot * this.dotfac('s') * 1000;
+}
+
 
 var ac, filter, morse, vol = 1.0;
 
@@ -485,6 +490,7 @@ var keyElmer = document.querySelector('input[name="key"][value="elmer"]');
 var keyFarnsworth = document.querySelector('input[name="key"][value="farnsworth"]');
 var selectionOnly = document.querySelector("#selection_only");
 var highlightSlowly = document.querySelector("#highlight_slowly");
+var repeat = document.querySelector("#repeat");
 
 function renewMorse() {
     ac = (ac || new (window.AudioContext || window.webkitAudioContext)());
@@ -547,6 +553,9 @@ play.onclick = function() {
     }
     highlight();
 }
+function delayedRepeat() {
+    if (!stopped) play.click();
+}
 function highlight() {
     if (txt.value[highlightStart] == '<' && txt.value.length > highlightStart + 3 
         && !!morse.PROSIGN[txt.value.substring(highlightStart, highlightStart + 4).toUpperCase()]) {
@@ -573,6 +582,10 @@ function highlight() {
     
     if (timestamp.length == 0) {
         stop.click();
+        if (repeat.checked) {
+            stopped = false;
+            setTimeout(delayedRepeat, 3 * morse.getSpaceDelayInMills());
+        }
     } else if (timestamp.length == 1 && ac.currentTime > timestamp[0]) {
         timestamp.shift();
         highlightStart = highlightEnd;
@@ -606,6 +619,9 @@ selectionOnly.onchange = function() {
 highlightSlowly.onchange = function() {
     window.localStorage.setItem('highlight_slowly', highlight_slowly.checked);
 }
+repeat.onchange = function() {
+    window.localStorage.setItem('repeat', repeat.checked);
+}
 window.onload = function() {
     try {
         if (window.localStorage.getItem('freq')) freq.value = parseInt(window.localStorage.getItem('freq'));
@@ -614,6 +630,7 @@ window.onload = function() {
         vol = volume.value / 100.0;
         if (window.localStorage.getItem('selection_only')) selectionOnly.checked = window.localStorage.getItem('selection_only') == 'true';
         if (window.localStorage.getItem('highlight_slowly')) highlightSlowly.checked = window.localStorage.getItem('highlight_slowly') == 'true';
+        if (window.localStorage.getItem('repeat')) repeat.checked = window.localStorage.getItem('repeat') == 'true';
         if (window.localStorage.getItem('key')) document.querySelector('input[name="key"][value='+window.localStorage.getItem('key')+']').checked = true;
     } catch (e) {
     }
@@ -669,6 +686,7 @@ englishQso2.onclick = function() {
 
 <p class="font_medium">
 <h3>Change Log</h3>
+2022.08.15. "Repeat" added.<br />
 2022.08.14. "Highlight slowly" added. More QSO samples added.<br />
 2022.08.13. "Play selection only" added. Hangul character gap fixed : 5 dots. Prosign(inc. "KA") support added. Remember settings using localStorage. Highlight effect added.<br />
 2022.08.12. First version of Hangul CW Trainer.<br />
