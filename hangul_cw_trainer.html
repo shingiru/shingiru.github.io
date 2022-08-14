@@ -438,7 +438,6 @@ var timestamp = [], highlightStart, hightlightEnd, highlightStartReal, stopped =
 
 MorseNode.prototype.playString = function(t, w) {
     this.key = document.querySelector('input[name="key"]:checked').value;
-    window.localStorage.setItem('key', this.key);
     
     w = this.convertHangulAndProsign(w.toUpperCase());
     timestamp = [];
@@ -473,7 +472,7 @@ MorseNode.prototype.convertHangulAndProsign = function(w) {
 }
 
 MorseNode.prototype.getSpaceDelayInMills = function() {
-    return 7 * this._dot * this.dotfac('s') * 1000;
+    return 1000 * this._dot * (this.dotfac('i') + 2 * this.dotfac('l') + 4 * this.dotfac('s'));
 }
 
 
