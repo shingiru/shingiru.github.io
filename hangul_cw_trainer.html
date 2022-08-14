@@ -583,7 +583,7 @@ function highlight() {
         stop.click();
         if (repeat.checked) {
             stopped = false;
-            setTimeout(delayedRepeat, 3 * morse.getSpaceDelayInMills());
+            setTimeout(delayedRepeat, 2 * morse.getSpaceDelayInMills());
         }
     } else if (timestamp.length == 1 && ac.currentTime > timestamp[0]) {
         timestamp.shift();
@@ -630,7 +630,7 @@ window.onload = function() {
         if (window.localStorage.getItem('selection_only')) selectionOnly.checked = window.localStorage.getItem('selection_only') == 'true';
         if (window.localStorage.getItem('highlight_slowly')) highlightSlowly.checked = window.localStorage.getItem('highlight_slowly') == 'true';
         if (window.localStorage.getItem('repeat')) repeat.checked = window.localStorage.getItem('repeat') == 'true';
-        if (window.localStorage.getItem('key')) document.querySelector('input[name="key"][value='+window.localStorage.getItem('key')+']').checked = true;
+        if (window.localStorage.getItem('key')) document.querySelector('input[name="key"][value="'+window.localStorage.getItem('key')+'"]').checked = true;
     } catch (e) {
     }
 };
