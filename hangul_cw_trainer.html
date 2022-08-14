@@ -472,7 +472,7 @@ MorseNode.prototype.convertHangulAndProsign = function(w) {
     return Hangul.disassemble(w, true);
 }
 
-Morse.prototype.getSpaceDelayInMills = function() {
+MorseNode.prototype.getSpaceDelayInMills = function() {
     return 7 * this._dot * this.dotfac('s') * 1000;
 }
 
