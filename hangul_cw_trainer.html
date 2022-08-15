@@ -461,7 +461,7 @@ MorseNode.prototype.playString = function(t, w) {
     timestamp = [];
     
     for (var n = 0; n < w.length; n++) {
-        timestamp.push(t);
+        //timestamp.push(t);
         var c = w[n];
         var hangul = (c.length > 1);
         for (var i = 0; i < c.length; i++) {
@@ -476,6 +476,7 @@ MorseNode.prototype.playString = function(t, w) {
         if (hangul) {
             t += 2 * this._dot * this.dotfac('l');
         }
+        timestamp.push(t);
     }
     timestamp.push(t);
     return t;
@@ -589,7 +590,7 @@ function highlight() {
         txt.setSelectionRange(highlightStart, highlightEnd);
     }
     
-    if (timestamp.length > 1 && ac.currentTime > timestamp[1]) {
+    while (timestamp.length > 1 && ac.currentTime > timestamp[1]) {
         timestamp.shift();
         highlightStart = highlightEnd;
         if (txt.value[highlightStart] == '<' && txt.value.length > highlightStart + 3 
