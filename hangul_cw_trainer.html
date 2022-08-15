@@ -642,7 +642,7 @@ highlightSlowly.onchange = function() {
 repeat.onchange = function() {
     window.localStorage.setItem('repeat', repeat.checked);
 }
-window.onload = function() {
+window.addEventListener('DOMContentLoaded', function() {
     try {
         if (window.localStorage.getItem('freq')) freq.value = parseInt(window.localStorage.getItem('freq'));
         if (window.localStorage.getItem('wpm')) wpm.value = parseInt(window.localStorage.getItem('wpm'));
@@ -654,7 +654,7 @@ window.onload = function() {
         if (window.localStorage.getItem('key')) document.querySelector('input[name="key"][value="'+window.localStorage.getItem('key')+'"]').checked = true;
     } catch (e) {
     }
-};
+}, true);
 
 
 var hangulQso1 = document.querySelector("#hangul_qso_1");
