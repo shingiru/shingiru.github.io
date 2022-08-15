@@ -465,10 +465,10 @@ MorseNode.prototype.playString = function(t, w) {
         var c = w[n];
         var hangul = (c.length > 1);
         for (var i = 0; i < c.length; i++) {
-            if(c[i] == ' ') {
+            if (c[i] == ' ' || c[i] == '\u00A0') {
                 t += 4 * this._dot * this.dotfac('s'); // 3 dots gap already added after ending letter before
             }
-            else if("undefined" != typeof this.MORSE[c[i]]) {
+            else if ("undefined" != typeof this.MORSE[c[i]]) {
                 t = this.playChar(t, this.MORSE[c[i]]); // 1 gap after dit/dah
                 t += 2 * this._dot * this.dotfac('l'); // with this 2 more gap, whole gap between letter is 3
             }
@@ -574,20 +574,18 @@ function delayedRepeat() {
     if (!stopped) play.click();
 }
 function highlight() {
-    /*if (txt.value[highlightStart] == '<' && txt.value.length > highlightStart + 3 
-        && !!morse.PROSIGN[txt.value.substring(highlightStart, highlightStart + 4).toUpperCase()]) {
-        highlightEnd = highlightStart + 4;
-    } else if (txt.value.length > highlightStart) {
-        highlightEnd = highlightStart + 1;
+    if (timestamp.length == 0) {
+        stop.click();
+        if (repeat.checked) {
+            stopped = false;
+            repeatId = setTimeout(delayedRepeat, 2 * morse.getSpaceDelayInMills());
+        }
+        return;
     }
     
-    if (highlightStart >= highlightStartReal && !stopped) {
-        txt.focus();
-        txt.setSelectionRange(highlightStart, highlightEnd);
-    }
-    
-    while (timestamp.length > 1 && ac.currentTime > timestamp[1]) {
+    if (ac.currentTime > timestamp[0]) {        
         timestamp.shift();
+
         highlightStart = highlightEnd;
         if (txt.value[highlightStart] == '<' && txt.value.length > highlightStart + 3 
             && !!morse.PROSIGN[txt.value.substring(highlightStart, highlightStart + 4).toUpperCase()]) {
@@ -595,61 +593,17 @@ function highlight() {
         } else if (txt.value.length > highlightStart) {
             highlightEnd = highlightStart + 1;
         }
-    }
-    
-    if (timestamp.length == 0) {
-        stop.click();
-        if (repeat.checked) {
-            stopped = false;
-            repeatId = setTimeout(delayedRepeat, 2 * morse.getSpaceDelayInMills());
+
+        if (highlightStart >= highlightStartReal && !stopped) {
+            txt.focus();
+            txt.setSelectionRange(highlightStart, highlightEnd);
         }
-    } else if (timestamp.length == 1 && ac.currentTime > timestamp[0]) {
-        timestamp.shift();
-        highlightStart = highlightEnd;
-        setTimeout(highlight, 10);
-    } else if (!stopped) {
-        setTimeout(highlight, 10);
-    }
-    */
-    
-    if (timestamp.length == 0) {
-        stop.click();
-        if (repeat.checked) {
-            stopped = false;
-            repeatId = setTimeout(delayedRepeat, 2 * morse.getSpaceDelayInMills());
-        }
-        return;
     }
     
-    if (timestamp.length == 1) {
-        if (ac.currentTime > timestamp[0]) {
-            highlightNext();
-        }
-        setTimeout(highlight, 10);
-        return;
-    }
-    
-    if (ac.currentTime > timestamp[1]) {
-        highlightNext();
-    }
-    
-    setTimeout(highlight, 10);
+    if (!stopped) setTimeout(highlight, 10);
 }
 function highlightNext() {
-    timestamp.shift();
     
-    highlightStart = highlightEnd;
-    if (txt.value[highlightStart] == '<' && txt.value.length > highlightStart + 3 
-        && !!morse.PROSIGN[txt.value.substring(highlightStart, highlightStart + 4).toUpperCase()]) {
-        highlightEnd = highlightStart + 4;
-    } else if (txt.value.length > highlightStart) {
-        highlightEnd = highlightStart + 1;
-    }
-    
-    if (highlightStart >= highlightStartReal && !stopped) {
-        txt.focus();
-        txt.setSelectionRange(highlightStart, highlightEnd);
-    }
 }
 freq.onchange = function() {
     window.localStorage.setItem('freq', freq.value);
