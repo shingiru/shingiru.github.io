@@ -452,7 +452,7 @@ MorseNode.prototype.playChar = function(t, c) {
     return t;
 }
 
-var timestamp = [], highlightStart, hightlightEnd, highlightStartReal, stopped = false, selectionStart = -1, selectionEnd;
+var timestamp = [], highlightStart, hightlightEnd, highlightStartReal, stopped = false, selectionStart = -1, selectionEnd, repeatId;
 
 MorseNode.prototype.playString = function(t, w) {
     this.key = document.querySelector('input[name="key"]:checked').value;
@@ -534,6 +534,9 @@ stop.onclick = function() {
     stopped = true;
 }
 play.onclick = function() {
+    try { clearTimeout(repeatId); }
+    catch (e) {}
+
     renewMorse();
     txt.focus();
     
@@ -601,7 +604,7 @@ function highlight() {
         stop.click();
         if (repeat.checked) {
             stopped = false;
-            setTimeout(delayedRepeat, 2 * morse.getSpaceDelayInMills());
+            repeatId = setTimeout(delayedRepeat, 2 * morse.getSpaceDelayInMills());
         }
     } else if (timestamp.length == 1 && ac.currentTime > timestamp[0]) {
         timestamp.shift();
