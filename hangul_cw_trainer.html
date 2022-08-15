@@ -535,8 +535,8 @@ stop.onclick = function() {
     stopped = true;
 }
 play.onclick = function() {
-    try { clearTimeout(repeatId); }
-    catch (e) {}
+    //try { clearTimeout(repeatId); }
+    //catch (e) {}
 
     renewMorse();
     txt.focus();
@@ -568,10 +568,6 @@ play.onclick = function() {
     txt.readOnly = true;
     
     stopped = false;
-    //if (highlight_slowly.checked) {
-    //    highlightStart -= 1;
-    //    highlightEnd -= 1;
-    //}
     highlight();
 }
 function delayedRepeat() {
@@ -605,7 +601,7 @@ function highlight() {
         stop.click();
         if (repeat.checked) {
             stopped = false;
-            repeatId = setTimeout(delayedRepeat, 2 * morse.getSpaceDelayInMills());
+            /*repeatId =*/ setTimeout(delayedRepeat, 2 * morse.getSpaceDelayInMills());
         }
     } else if (timestamp.length == 1 && ac.currentTime > timestamp[0]) {
         timestamp.shift();
