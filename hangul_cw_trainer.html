@@ -84,6 +84,9 @@ textarea {
 .font_medium {
     font-size : medium;
 }
+. prevent_wrap {
+    white-space: nowrap;
+}
 ::selection {
     background-color: rgba(255, 0, 0, 0.5);
 }
@@ -105,12 +108,14 @@ Extra Gap : <label><input type="radio" name="key" value="computer" checked /> No
 <label><input type="radio" name="key" value="elmer" /> Small</label>
 <label><input type="radio" name="key" value="farnsworth" /> Large</label>
 &nbsp;
+<span class="prevent-wrap">
 <button id="play">PLAY</button>
 <button id="stop">STOP</button>
 &nbsp;
 <label><input type="checkbox" id="selection_only" /> Play selection only</label>
 <label><input type="checkbox" id="highlight_slowly" /> Highlight slowly</label>
 <label><input type="checkbox" id="repeat" /> Repeat</label>
+</span>
 </p>
 <p>
 <button id="hangul_qso_1">Hangul QSO Sample 1</button>
