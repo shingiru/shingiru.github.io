@@ -589,7 +589,7 @@ function highlight() {
         txt.setSelectionRange(highlightStart, highlightEnd);
     }
     
-    while (timestamp.length > 1 && ac.currentTime > timestamp[1]) {
+    if (timestamp.length > 1 && ac.currentTime > timestamp[1]) {
         timestamp.shift();
         highlightStart = highlightEnd;
         if (txt.value[highlightStart] == '<' && txt.value.length > highlightStart + 3 
