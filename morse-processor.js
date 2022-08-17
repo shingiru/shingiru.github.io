@@ -19,34 +19,34 @@ class MorseProcessor extends AudioWorkletProcessor {
     constructor() {
         super();
         console.log("MorseProcessor constructor");
-        this._analyser = null;
-        this._frequency = 600;
-        this._speed = 20;
+        this.analyser = null;
+        this.frequency = 600;
+        this.speed = 20;
     }
 
     get analyser() {
-        return this._analyser;
+        return this.analyser;
     }
 
     set analyser(value) {
         console.log("set analyser with " + (typeof value));
-        this._analyser = value;
+        this.analyser = value;
     }
 
     get frequency() {
-        return this._frequency;
+        return this.frequency;
     }
 
     set frequency(value) {
-        this._frequency = value;
+        this.frequency = value;
     }
 
     get speed() {
-        return this._speed;
+        return this.speed;
     }
 
     set speed(value) {
-        this._speed = value;
+        this.speed = value;
     }
 }
 registerProcessor('morse-processor', MorseProcessor);
