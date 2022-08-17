@@ -107,11 +107,11 @@ function makeCharacter() {
 	if ("undefined" != typeof MORSE[ditdahs]) {
 		var letter = MORSE[ditdahs];
 		if ("undefined" != typeof PROSIGN[letter]) {
-			if (hangul.checked) {
+			if (hangul.checked && hangulLetters.length > 0) {
 				_log2(Hangul.assemble(hangulLetters));
 				hangulLetters = [];
 			}
-			_log(PROSIGN[ditdahs]);
+			_log(PROSIGN[letter]);
 			previousLetter = "";
 		} else {
 			if (hangul.checked) {
