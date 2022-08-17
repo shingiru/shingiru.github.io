@@ -46,7 +46,7 @@ start.addEventListener("click", async () => {
                         } else if (gapAmount < maxDitDuration) { // inter-letter
                             console.log("INTER-LETTER GAP, " + gapAmount);
                             gapAmount = 0;
-                            _log(" ");
+                            //_log(" ");
                         } else {
                             console.log("WORD GAP, " + gapAmount);
                             _log(" ");
