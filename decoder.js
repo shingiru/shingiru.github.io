@@ -17,8 +17,8 @@ start.addEventListener("click", async () => {
         input.connect(gain);
 
         analyser = ac.createAnalyser();
-        analyser.minDecibels = -90;
-        analyser.maxDecibels = -10;
+        //analyser.minDecibels = -90;
+        //analyser.maxDecibels = -10;
         analyser.smoothingTymeConstant = 0;
         analyser.fftSize = 512;
         gain.connect(analyser);
