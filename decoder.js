@@ -20,7 +20,7 @@ start.addEventListener("click", async () => {
         analyser.minDecibels = -90;
         analyser.maxDecibels = -10;
         analyser.smoothingTymeConstant = 0;
-        analyser.fftSize = 512;
+        analyser.fftSize = 1024;
         gain.connect(analyser);
 
         await ac.audioWorklet.addModule('morse-processor.js');
@@ -35,7 +35,7 @@ start.addEventListener("click", async () => {
                 var dotDuration = 1.2 / parseInt(speed.value); // from wikipedia
                 var frameDuration = event.data.sampleLength / 44100.0;
 
-                var targetFrequencyIndex = parseInt(parseInt(frequency.value) / (44100 / analyser.frequencyBinCount)) - 1;
+                var targetFrequencyIndex = parseInt(parseInt(frequency.value) / (44100 / analyser.frequencyBinCount));
                 console.log("targetFrequencyIndex : " + targetFrequencyIndex + ", target - 1 : " + buffer[targetFrequencyIndex - 1] + ", target : " +  buffer[targetFrequencyIndex] + ", target + 1 : " +  buffer[targetFrequencyIndex + 1]);
                 //console.log("Speed : " + parseInt(speed.value) + ", dotDuration : " + dotDuration + ", frameDuration : " + frameDuration);
             }
@@ -47,5 +47,5 @@ start.addEventListener("click", async () => {
 }, false);
 
 stop.onclick = function() {
-    analyser.disconnect();
+    gain.disconnect(analyser);
 }
