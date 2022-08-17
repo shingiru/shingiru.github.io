@@ -1,7 +1,7 @@
 var inited = false, ac, stream, input, gain, filter, analyser, buffer;
 
 const startProcessor = async (context, input, frequency, speed) => {
-    await context.audioWorklet.addModule('morse-processor.js');
+    await context.audioWorklet.addModule('morse-processor.js?t=1');
     const processor = new AudioWorkletNode(context, 'morse-processor');
     processor.frequency = frequency;
     processor.speed = speed;
