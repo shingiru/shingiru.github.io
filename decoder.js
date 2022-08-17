@@ -25,9 +25,10 @@ start.addEventListener("click", async () => {
 
         await ac.audioWorklet.addModule('morse-processor.js');
         processor = new AudioWorkletNode(ac, 'morse-processor');
+		
+		const buffer = new Uint8Array(analyser.frequencyBinCount);
         processor.port.onmessage = (event) => {
             if (event.data.message === 'NEW_SAMPLE_LENGTH') {
-                const buffer = new Uint8Array(analyser.frequencyBinCount);
                 analyser.getByteFrequencyData(buffer);
 
                 var ditDuration = 1.2 / parseInt(speed.value); // from wikipedia
@@ -53,6 +54,7 @@ start.addEventListener("click", async () => {
                             _log(" ");
                             _log(" ");
                             gapAmount = 0;
+							makeCharacter();
                         }
                     }
                     ditdahAmount += frameDuration;
@@ -64,9 +66,11 @@ start.addEventListener("click", async () => {
                         } else if (ditdahAmount < maxDitDuration) { // dit
                             console.log("DIT, " + ditdahAmount);
                             _log("·");
+							addToLetter(true);
                         } else { // dah
                             console.log("DAH, " + ditdahAmount);
                             _log("―");
+							addToLetter(false);
                         }
                     }
                     ditdahAmount = 0;
@@ -79,6 +83,7 @@ start.addEventListener("click", async () => {
                         _log(" ");
                         _log(" ");
                         gapAmount = 0;
+						makeCharacter();
                     }
                 }
                 lastDitdah = ditdah;
@@ -91,6 +96,127 @@ start.addEventListener("click", async () => {
     });
 }, false);
 
+var ditdahs = "";
+var letters = [];
+function addToLetter(ditdah) { // ditdat - dit:true, dah:false
+	ditdahs += (ditdah ? "." : "-");
+}
+function makeCharacter() {
+	if ("undefined" != typeof MORSE[ditdahs]) {
+		var letter = MORSE[ditdahs];
+		if ("undefined" != typeof PROSIGN[ditdahs]) {
+			_log(PROSIGN[ditdahs]);
+		} else {
+			_log(letter);
+		}
+	}
+	
+	ditdahs = "";
+}
+
 stop.onclick = function() {
     analyser.disconnect(processor);
 }
+
+MORSE = {
+    ".-": "A",
+    "-...": "B",
+    "-.-.": "C",
+    "-..": "D",
+    ".": "E",
+    "..-.": "F",
+    "--.": "G",
+    "....": "H",
+    "..": "I",
+    ".---": "J",
+    "-.-": "K",
+    ".-..": "L",
+    "--": "M",
+    "-.": "N",
+    "---": "O",
+    ".--.": "P",
+    "--.-": "Q",
+    ".-.": "R",
+    "...": "S",
+    "-": "T",
+    "..-": "U",
+    "...-": "V",
+    ".--": "W",
+    "-..-": "X",
+    "-.--": "Y",
+    "--..": "Z",
+     
+    ".----": "1",
+    "..---": "2",
+    "...--": "3",
+    "....-": "4",
+    ".....": "5",
+    "-....": "6",
+    "--...": "7",
+    "---..": "8",
+    "----.": "9",
+    "-----": "0",
+     
+    ".-.-.-": ".",
+    "--..--": ",",
+    "..--..": "?",
+    "-..-.": "/",
+    ".-.-.": "+",
+    "-....-": "-",
+    "-...-": "=",
+    "---...": ":",
+    "-.-.-.": ";",
+    "-.--.": "(",
+    "-.--.-": ")",
+    ".----.": "'",
+    ".-..-.": ""\"
+    ".--.-.": "@",
+     
+    /*".-..": "ㄱ",
+    "..-.": "ㄴ",
+    "-...": "ㄷ",
+    "...-": "ㄹ",
+    "--": "ㅁ",
+    ".--": "ㅂ",
+    "--.": "ㅅ",
+    "-.-": "ㅇ",
+    ".--.": "ㅈ",
+    "-.-.": "ㅊ",
+    "-..-": "ㅋ",
+    "--..": "ㅌ",
+    "---": "ㅍ",
+    ".---": "ㅎ",
+    ".": "ㅏ",
+    "..": "ㅑ",
+    "-": "ㅓ",
+    "...": "ㅕ",
+    ".-": "ㅗ",
+    "-.": "ㅛ",
+    "....": "ㅜ",
+    ".-.": "ㅠ",
+    "-..": "ㅡ",
+    "..-": "ㅣ",
+    "-.--": "ㅔ",
+    "--.-": "ㅐ",*/
+     
+    // for prosign
+    "&": ".-...",
+    "Ŝ": "...-.",
+    // non-standard
+    "[": "-...-.-",
+    "]": "...-.-",
+    "^": "-.-.-"
+};
+
+PROSIGN = {
+    "+": "<AR>",
+    "(": "<KN>",
+    "&": "<AS>",
+    "=": "<BT>",
+    "Ŝ": "<SN>",
+    // non-standard
+    "[": "<BK>",
+    "]": "<SK>",
+    "]": "<VA>",
+    "^": "<KA>"
+};
