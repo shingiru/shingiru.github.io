@@ -39,22 +39,24 @@ start.addEventListener("click", async () => {
                 var DITDAH_THRESHOLD = 256 * 0.8;
                 var ditdah = (buffer[peak-1] > DITDAH_THRESHOLD && buffer[peak] > DITDAH_THRESHOLD && buffer[peak+1] > DITDAH_THRESHOLD);
 
-                if (ditdah) {
+                if (ditdah) { // TODO : need to determine gap after a few ditdah, not with single gap
                     if (lastDitdah == false) {
                         if (gapAmount < minDitDuration) { // noise
                             console.log("GAP NOISE, " + gapAmount);
                         } else if (gapAmount < maxDitDuration) { // inter-letter
                             console.log("INTER-LETTER GAP, " + gapAmount);
+                            gapAmount = 0;
                             _log(" ");
                         } else {
                             console.log("WORD GAP, " + gapAmount);
                             _log(" ");
                             _log(" ");
                             _log(" ");
+                            gapAmount = 0;
                         }
                     }
                     ditdahAmount += frameDuration;
-                    gapAmount = 0;
+                    
                 } else {
                     if (lastDitdah == true) {
                         if (ditdahAmount < minDitDuration) { // noise
