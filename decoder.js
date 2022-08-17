@@ -36,7 +36,7 @@ start.addEventListener("click", async () => {
                 var frameDuration = event.data.sampleLength / 44100.0;
 
                 var peak = parseInt(parseInt(frequency.value) / (44100 / 2 / analyser.frequencyBinCount)) + 1;
-                var DITDAH_THRESHOLD = 256 * 0.9;
+                var DITDAH_THRESHOLD = 256 * 0.8;
                 var ditdah = (buffer[peak-1] > DITDAH_THRESHOLD && buffer[peak] > DITDAH_THRESHOLD && buffer[peak+1] > DITDAH_THRESHOLD);
 
                 if (ditdah) {
@@ -57,7 +57,7 @@ start.addEventListener("click", async () => {
             }
         };
         input.connect(processor);
-        processor.connect(ac.destination);
+        //processor.connect(ac.destination);
 
         ac.resume();
     });
