@@ -1,7 +1,7 @@
-var inited = false, ac, stream, input, gain, filter, analyser, buffer;
+var inited = false, ac, stream, input, gain, analyser;
 
 const startProcessor = async (context, input, frequency, speed) => {
-    await context.audioWorklet.addModule('morse-processor.js?t=1');
+    await context.audioWorklet.addModule('morse-processor.js?t=2');
     const processor = new AudioWorkletNode(context, 'morse-processor');
     processor.frequency = frequency;
     processor.speed = speed;
@@ -25,16 +25,12 @@ start.addEventListener("click", async () => {
             gain = ac.createGain();
             input.connect(gain);
 
-            filter = ac.createBiquadFilter();
-            gain.connect(filter);
-
             analyser = ac.createAnalyser();
             analyser.minDecibels = -90;
             analyser.maxDecibels = -10;
             analyser.smoothingTymeConstant = 0;
             analyser.fftSize = 512;
-            filter.connect(analyser);
-            buffer = new Uint8Array(analyser.frequencyBinCount);
+            gain.connect(analyser);
 
             await startProcessor(ac, analyser, frequency.value, speed.value);
             ac.resume();
