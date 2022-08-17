@@ -1,29 +1,24 @@
 class MorseProcessor extends AudioWorkletProcessor {
 
     process(inputs, outputs, parameters) {
-        /*output.forEach((channel) => {
-            for (let i = 0; i < channel.length; i++) {
-                channel[i] = Math.random() * 2 - 1;
-            }
-        })*/
-        console.log("inputs.length : " + inputs.length + ", outputs.length : " + outputs.length + ", sample : " + outputs[0][0].length);
+        _log("inputs.length : " + inputs.length + ", outputs.length : " + outputs.length + ", sample : " + outputs[0][0].length);
         const buffer = new Uint8Array(this.analyser.frequencyBinCount);
-        console.log(this.analyser.frequencyBinCount);
+        _log(this.analyser.frequencyBinCount);
         this.analyser.getByteFrequencyData(buffer);
 
         var dotDuration = 1.2 / this.speed; // from wikipedia
         var frameDuration = outputs[0][0].length / 44100.0;
 
         var targetFrequencyIndex = parseInt(44100 / buffer.length * this.frequency) - 1;
-        console.log("Frequency : " + this.frequency + ", target - 1 : " + buffer[targetFrequencyIndex - 1] + ", target : " +  buffer[targetFrequencyIndex] + ", target + 1 : " +  buffer[targetFrequencyIndex + 1]);
-        console.log("Speed : " + this.speed + ", dotDuration : " + dotDuration + ", frameDuration : " + frameDuraton);
+        _log("Frequency : " + this.frequency + ", target - 1 : " + buffer[targetFrequencyIndex - 1] + ", target : " +  buffer[targetFrequencyIndex] + ", target + 1 : " +  buffer[targetFrequencyIndex + 1]);
+        _log("Speed : " + this.speed + ", dotDuration : " + dotDuration + ", frameDuration : " + frameDuraton);
 
         return true;
     }
 
     constructor() {
         super();
-        console.log("MorseProcessor constructor");
+        _log("MorseProcessor constructor");
         this._analyser = null;
         this._frequency = 600;
         this._speed = 20;
@@ -34,7 +29,7 @@ class MorseProcessor extends AudioWorkletProcessor {
     }
 
     set analyser(value) {
-        console.log("set analyser with " + (typeof value));
+        _log("set analyser with " + (typeof value));
         this._analyser = value;
     }
 
