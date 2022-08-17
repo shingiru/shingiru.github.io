@@ -66,7 +66,7 @@ start.addEventListener("click", async () => {
                             _log("・");
                         } else { // dah
                             console.log("DAH, " + ditdahAmount);
-                            _log("－");
+                            _log("-");
                         }
                     }
                     ditdahAmount = 0;
@@ -85,7 +85,7 @@ start.addEventListener("click", async () => {
             }
         };
         analyser.connect(processor);
-        //processor.connect(ac.destination);
+        processor.connect(ac.destination);
 
         ac.resume();
     });
