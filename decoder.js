@@ -45,11 +45,3 @@ start.addEventListener("click", async () => {
 stop.onclick = function() {
     analyser.disconnect();
 }
-
-var log = document.querySelector("#log");
-function _log(s) {
-    const div = document.createElement("div");
-    const content = document.createTextNode(s);
-    div.appendChild(content);
-    log.appendChild(div);
-}
