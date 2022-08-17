@@ -50,9 +50,9 @@ start.addEventListener("click", async () => {
                             gapAmount = 0;
                         } else {
                             console.log("WORD GAP, " + gapAmount);
+							makeCharacter();
                             _log("   ");
                             gapAmount = 0;
-							makeCharacter();
                         }
                     }
                     ditdahAmount += frameDuration;
@@ -77,9 +77,9 @@ start.addEventListener("click", async () => {
                     // when enough gapAmount
                     if (gapAmount > ditDuration * 7 * 2) { // 5 or 7
                         console.log("MAX GAP, " + gapAmount);
+						makeCharacter();
                         _log("   ");
                         gapAmount = 0;
-						makeCharacter();
                     }
                 }
                 lastDitdah = ditdah;
