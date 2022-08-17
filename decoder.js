@@ -2,6 +2,7 @@ var ac, analyser, processor, lastDitdah = false, ditdahAmount = 0, gapAmount = 0
 
 var frequency = document.querySelector("#freq");
 var speed = document.querySelector("#speed");
+var hangul = document.querySelector("#hangul");
 var start = document.querySelector("#start");
 var stop = document.querySelector("#stop");
 
@@ -97,7 +98,8 @@ start.addEventListener("click", async () => {
 }, false);
 
 var ditdahs = "";
-var letters = [];
+var hangulLetters = [];
+var previousLetter = "";
 function addToLetter(ditdah) { // ditdat - dit:true, dah:false
 	ditdahs += (ditdah ? "." : "-");
 }
@@ -105,10 +107,73 @@ function makeCharacter() {
 	if ("undefined" != typeof MORSE[ditdahs]) {
 		var letter = MORSE[ditdahs];
 		if ("undefined" != typeof PROSIGN[ditdahs]) {
+			if (hangul.checked) {
+				_log2(Hangul.assemble(hangulLetters));
+				hangulLetters = [];
+			}
 			_log(PROSIGN[ditdahs]);
+			previousLetter = "";
 		} else {
-			_log(letter);
+			if (hangul.checked) {
+				if (hangulLetters.length == 0) { // with current letter, 2 letters
+					_log(letter);
+					if ("undefined" != typeof HANGUL[ditdahs]) {
+						hangulLetters.push(HANGUL[ditdahs]);
+					}
+				} else if (hangulLetters.length = 1) { // with current letter, 3 letters
+					if ("undefined" != typeof HANGUL[ditdahs]) {
+						hangulLetters.push(HANGUL[ditdahs]);
+						var characters = Hangul.assemble(hangulLetters);
+						if (characters.length != 1) {
+							hangulLetters.shift();
+							_log(letter);
+						} else {
+							if (Hangul.isComplete(characters)) {
+								_log2(character);
+							} else {
+								_log2(character);
+								// _log2(previousLetter + letter);
+							}
+						}
+					} else {
+						hangulLetters.shift();
+						_log(letter);
+					}
+				} else { // with current letter, 3 letters or more
+					if ("undefined" != typeof HANGUL[ditdahs]) {
+						hangulLetters.push(HANGUL[ditdahs]);
+						var characters = Hangul.assemble(hangulLetters);
+						if (characters.length == 1) {
+							_log2(characters);
+						} else { // characters.length == 2
+							if (Hangul.isComplete(characters.charAt(0)) == false) {
+								_log2(previousLetter + previousLetter); // ㄲ, ㄸ, ㅃ, ㅆ, ㅉ, ㄸ
+								hangulLetters.shift();
+								hangulLetters.shift();
+								_log(letter);
+							} else {
+								_log2(characters.charAt(0));
+								var hangulCharacters = Hangul.disassemble(characters, true);
+								hangleLetters = hangulCharacters[1];
+								_log(characters.charAt(1));
+							}
+						}
+					} else {
+						var characters = Hangul.assemble(hangulLetters);
+						if (Hangul.isComplete(characters)) {
+							_log2(character);
+						} else {
+							_log2(previousLetter + previousLetter); // ㄲ, ㄸ, ㅃ, ㅆ, ㅉ, ㄸ
+						}
+						_log(letter);
+						hangulLetters = [];
+					}
+				}
+			} else {
+				_log(letter);
+			}
 		}
+		previousLetter = letter;
 	}
 	
 	ditdahs = "";
@@ -206,6 +271,35 @@ MORSE = {
     "[": "-...-.-",
     "]": "...-.-",
     "^": "-.-.-"
+};
+
+HANGUL = {
+    ".-..": "ㄱ",
+    "..-.": "ㄴ",
+    "-...": "ㄷ",
+    "...-": "ㄹ",
+    "--": "ㅁ",
+    ".--": "ㅂ",
+    "--.": "ㅅ",
+    "-.-": "ㅇ",
+    ".--.": "ㅈ",
+    "-.-.": "ㅊ",
+    "-..-": "ㅋ",
+    "--..": "ㅌ",
+    "---": "ㅍ",
+    ".---": "ㅎ",
+    ".": "ㅏ",
+    "..": "ㅑ",
+    "-": "ㅓ",
+    "...": "ㅕ",
+    ".-": "ㅗ",
+    "-.": "ㅛ",
+    "....": "ㅜ",
+    ".-.": "ㅠ",
+    "-..": "ㅡ",
+    "..-": "ㅣ",
+    "-.--": "ㅔ",
+    "--.-": "ㅐ"
 };
 
 PROSIGN = {
