@@ -30,6 +30,8 @@ start.addEventListener("click", async () => {
             processor.frequency = parseInt(frequency.value);
             processor.speed = parseInt(speed);
             input.connect(processor);
+        
+            ac.resume();
         }
     );    
 }, false);
