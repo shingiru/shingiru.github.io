@@ -132,8 +132,8 @@ function _log(s) {
 }
 function _log2(s) {
 	if (lastLog) {
-		console.log(lastLog.innerText + " -> " + s);
-		lastLog.innerText = s;
+		console.log(lastLog.innerHTML + " -> " + s);
+		lastLog.innerHTML = s;
 	} else {
 		_log(s);
 	}
