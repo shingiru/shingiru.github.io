@@ -1,4 +1,4 @@
-var inited = false, ac, stream, input, gain, analyser, lastDitdah = false, ditdahAmount = 0;
+var inited = false, ac, stream, input, gain, analyser, lastDitdah = false, ditdahAmount = 0, gapAmount = 0;
 
 var frequency = document.querySelector("#freq");
 var speed = document.querySelector("#speed");
@@ -40,18 +40,33 @@ start.addEventListener("click", async () => {
                 var ditdah = (buffer[peak-1] > DITDAH_THRESHOLD && buffer[peak] > DITDAH_THRESHOLD && buffer[peak+1] > DITDAH_THRESHOLD);
 
                 if (ditdah) {
+                    if (lastDitdah == false) {
+                        if (gapAmount < minDitDuration) { // noise
+                            console.log("GAP NOISE, " + gapAmount);
+                        } else if (gapAmount < maxDitDuration) { // inter-letter
+                            console.log("INTER-LETTER GAP, " + gapAmount);
+                            _log("&nbsp;");
+                        } else {
+                            console.log("WORD GAP, " + gapAmount);
+                            _log("&nbsp;&nbsp;&nbsp;");
+                        }
+                    }
                     ditdahAmount += frameDuration;
+                    gapAmount = 0;
                 } else {
                     if (lastDitdah == true) {
                         if (ditdahAmount < minDitDuration) { // noise
-                            console.log("NOISE, " + ditdahAmount);
+                            console.log("DITDAH NOISE, " + ditdahAmount);
                         } else if (ditdahAmount < maxDitDuration) { // dit
                             console.log("DIT, " + ditdahAmount);
+                            _log("・");
                         } else { // dah
                             console.log("DAH, " + ditdahAmount);
+                            _log("－");
                         }
                     }
                     ditdahAmount = 0;
+                    gapAmount += frameDuration;
                 }
                 lastDitdah = ditdah;
             }
