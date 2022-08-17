@@ -115,7 +115,7 @@ function makeCharacter() {
                     if ("undefined" != typeof HANGUL[ditdahs]) {
                         hangulLetters.push(HANGUL[ditdahs]);
                     }
-                } else if (hangulLetters.length = 1) { // with current letter, 3 letters
+                } else if (hangulLetters.length == 1) { // with current letter, 3 letters
                     if ("undefined" != typeof HANGUL[ditdahs]) {
                         hangulLetters.push(HANGUL[ditdahs]);
                         var characters = Hangul.assemble(hangulLetters);
@@ -138,7 +138,6 @@ function makeCharacter() {
                     if ("undefined" != typeof HANGUL[ditdahs]) {
                         hangulLetters.push(HANGUL[ditdahs]);
                         var characters = Hangul.assemble(hangulLetters);
-                        console.log(characters);
                         if (characters.length == 1) {
                             _log2(characters);
                         } else { // characters.length == 2
@@ -156,7 +155,6 @@ function makeCharacter() {
                         }
                     } else {
                         var characters = Hangul.assemble(hangulLetters);
-                        console.log(characters);
                         if (Hangul.isComplete(characters)) {
                             _log2(character);
                         } else {
