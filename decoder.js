@@ -1,4 +1,4 @@
-var inited = false, ac, stream, input, gain, analyser, lastDitdah = false, ditdahAmount = 0, gapAmount = 0;
+var ac, analyser, processor, lastDitdah = false, ditdahAmount = 0, gapAmount = 0;
 
 var frequency = document.querySelector("#freq");
 var speed = document.querySelector("#speed");
@@ -10,10 +10,10 @@ start.addEventListener("click", async () => {
 
     var constraints = { audio: true, video: false };
     navigator.mediaDevices.getUserMedia(constraints).then(async (stream) => {
-        input = ac.createMediaStreamSource(stream);
+        var input = ac.createMediaStreamSource(stream);
         //input.connect(ac.destination);
 
-        gain = ac.createGain();
+        var gain = ac.createGain();
         input.connect(gain);
 
         analyser = ac.createAnalyser();
@@ -24,7 +24,7 @@ start.addEventListener("click", async () => {
         gain.connect(analyser);
 
         await ac.audioWorklet.addModule('morse-processor.js');
-        const processor = new AudioWorkletNode(ac, 'morse-processor');
+        processor = new AudioWorkletNode(ac, 'morse-processor');
         processor.port.onmessage = (event) => {
             if (event.data.message === 'NEW_SAMPLE_LENGTH') {
                 const buffer = new Uint8Array(analyser.frequencyBinCount);
@@ -63,10 +63,10 @@ start.addEventListener("click", async () => {
                             console.log("DITDAH NOISE, " + ditdahAmount);
                         } else if (ditdahAmount < maxDitDuration) { // dit
                             console.log("DIT, " + ditdahAmount);
-                            _log("・");
+                            _log("·");
                         } else { // dah
                             console.log("DAH, " + ditdahAmount);
-                            _log("-");
+                            _log("―");
                         }
                     }
                     ditdahAmount = 0;
@@ -92,5 +92,5 @@ start.addEventListener("click", async () => {
 }, false);
 
 stop.onclick = function() {
-    gain.disconnect(analyser);
+    analyser.disconnect(processor);
 }
