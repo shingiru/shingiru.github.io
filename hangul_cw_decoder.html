@@ -109,7 +109,6 @@ function init() {
     ac = new AudioContext();
     //ac.audioWorklet.addModule('morse-processor.js');
     //processor = new AudioWorkletNode(ac, 'morse-processor');
-    processor = createMorseProcessor();
 
     var constraints = { audio: true, video: false};
     navigator.mediaDevices.getUserMedia(constraints).then(
@@ -130,6 +129,9 @@ function init() {
             analyser.fftSize = 512;
             filter.connect(analyser);
             buffer = new Uint8Array(analyser.frequencyBinCount);
+
+            processor = createMorseProcessor();
+            analyser.connect(processor);
         }
     )
     inited = true;
@@ -140,6 +142,7 @@ async function createMorseProcessor(ac) {
         await ac.resume();
         await ac.audioWorklet.addModule("morse-processor.js");
     } catch (e) {
+        console.log("fail to create morse processor");
         return null;
     }
 
@@ -153,7 +156,7 @@ var stop = document.querySelector("#stop");
 
 start.onclick = function() {
     if (!inited) init();
-    analyser.connect(processor);
+    
 }
 stop.onclick = function() {
     analyser.disconnect(processor);
