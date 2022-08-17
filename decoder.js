@@ -31,7 +31,7 @@ function init() {
             filter.connect(analyser);
             buffer = new Uint8Array(analyser.frequencyBinCount);
 
-            startProcessor(ac, analyser);
+            startProcessor(ac, analyser, frequency.value, speed.value);
         }
     )
     inited = true;
