@@ -106,7 +106,7 @@ Speed : <input type="number" id="speed" value="20" size="2" min="5" max="50" />w
 var inited = false, ac, stream, input, gain, filter, analyser, processor, buffer;
 
     ac = new (window.AudioContext || window.webkitAudioContext)();
-    ac.audioWorklet.addModule('morse-processor.js');
+    ac.audioWorklet.addModule('./morse-processor.js');
     processor = new AudioWorkletNode(ac, 'morse-processor');
 function init() {
     
