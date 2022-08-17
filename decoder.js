@@ -1,15 +1,15 @@
 var inited = false, ac, stream, input, gain, filter, analyser, processor, buffer;
 
-const startProcessor = async (context, input) => {
+const startProcessor = async (context, input, frequency, speed) => {
   await context.audioWorklet.addModule('morse-processor.js');
   const processor = new AudioWorkletNode(context, 'morse-processor');
+  processor.frequency = frequency;
+  processor.speed = speed;
   input.connect(processor);
 };
 
 function init() {
     ac = new AudioContext();
-    //ac.audioWorklet.addModule('morse-processor.js');
-    //processor = new AudioWorkletNode(ac, 'morse-processor');
 
     var constraints = { audio: true, video: false};
     navigator.mediaDevices.getUserMedia(constraints).then(
@@ -31,24 +31,10 @@ function init() {
             filter.connect(analyser);
             buffer = new Uint8Array(analyser.frequencyBinCount);
 
-            //processor = createMorseProcessor();
-            //analyser.connect(processor);
             startProcessor(ac, analyser);
         }
     )
     inited = true;
-}
-
-async function createMorseProcessor(ac) {
-    try {
-        await ac.resume();
-        await ac.audioWorklet.addModule("morse-processor.js");
-    } catch (e) {
-        console.log("fail to create morse processor");
-        return null;
-    }
-
-    return new AudioWorkletNode(ac, "morse-processor");
 }
 
 var frequency = document.querySelector("#frequency");
