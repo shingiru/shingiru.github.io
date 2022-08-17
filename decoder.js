@@ -24,21 +24,14 @@ start.addEventListener("click", async () => {
             analyser.fftSize = 512;
             gain.connect(analyser);
 
-            _log("a");
-        console.log("aaaa");
             await ac.audioWorklet.addModule('morse-processor.js');
-            _log("b");
             const processor = new AudioWorkletNode(ac, 'morse-processor');
-            _log("c");
             processor.analyser = analyser;
-            _log("d");
             processor.frequency = parseInt(frequency.value);
             processor.speed = parseInt(speed);
             input.connect(processor);
-            _log("e");
 
             ac.resume();
-            _log("f");
         }
     );    
 }, false);
