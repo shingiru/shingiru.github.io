@@ -139,7 +139,7 @@ function init() {
 
 async function createMorseProcessor(ac) {
     try {
-        await ac.resume();
+        //await ac.resume();
         await ac.audioWorklet.addModule("morse-processor.js");
     } catch (e) {
         console.log("fail to create morse processor");
