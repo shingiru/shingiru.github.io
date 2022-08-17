@@ -2,16 +2,16 @@ class MorseProcessor extends AudioWorkletProcessor {
 
     process(inputs, outputs, parameters) {
         console.log("inputs.length : " + inputs.length + ", outputs.length : " + outputs.length + ", sample : " + outputs[0][0].length);
-        const buffer = new Uint8Array(this.analyser.frequencyBinCount);
-        console.log(this.analyser.frequencyBinCount);
-        this.analyser.getByteFrequencyData(buffer);
+        const buffer = new Uint8Array(this._analyser.frequencyBinCount);
+        console.log(this._analyser.frequencyBinCount);
+        this._analyser.getByteFrequencyData(buffer);
 
-        var dotDuration = 1.2 / this.speed; // from wikipedia
+        var dotDuration = 1.2 / this._speed; // from wikipedia
         var frameDuration = outputs[0][0].length / 44100.0;
 
-        var targetFrequencyIndex = parseInt(44100 / buffer.length * this.frequency) - 1;
-        console.log("Frequency : " + this.frequency + ", target - 1 : " + buffer[targetFrequencyIndex - 1] + ", target : " +  buffer[targetFrequencyIndex] + ", target + 1 : " +  buffer[targetFrequencyIndex + 1]);
-        console.log("Speed : " + this.speed + ", dotDuration : " + dotDuration + ", frameDuration : " + frameDuraton);
+        var targetFrequencyIndex = parseInt(44100 / buffer.length * this._frequency) - 1;
+        console.log("Frequency : " + this._frequency + ", target - 1 : " + buffer[targetFrequencyIndex - 1] + ", target : " +  buffer[targetFrequencyIndex] + ", target + 1 : " +  buffer[targetFrequencyIndex + 1]);
+        console.log("Speed : " + this._speed + ", dotDuration : " + dotDuration + ", frameDuration : " + frameDuraton);
 
         return true;
     }
@@ -19,34 +19,34 @@ class MorseProcessor extends AudioWorkletProcessor {
     constructor() {
         super();
         console.log("MorseProcessor constructor");
-        this.analyser = null;
-        this.frequency = 600;
-        this.speed = 20;
+        this._analyser = null;
+        this._frequency = 600;
+        this._speed = 20;
     }
 
     get analyser() {
-        return this.analyser;
+        return this._analyser;
     }
 
     set analyser(value) {
         console.log("set analyser with " + (typeof value));
-        this.analyser = value;
+        this._analyser = value;
     }
 
     get frequency() {
-        return this.frequency;
+        return this._frequency;
     }
 
     set frequency(value) {
-        this.frequency = value;
+        this._frequency = value;
     }
 
     get speed() {
-        return this.speed;
+        return this._speed;
     }
 
     set speed(value) {
-        this.speed = value;
+        this._speed = value;
     }
 }
 registerProcessor('morse-processor', MorseProcessor);
