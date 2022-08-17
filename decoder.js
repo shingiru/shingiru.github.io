@@ -34,8 +34,8 @@ start.addEventListener("click", async () => {
         analyser.fftSize = 512;
         filter.connect(analyser);
         buffer = new Uint8Array(analyser.frequencyBinCount);
-
-        startProcessor(ac, analyser, frequency.value, speed.value);
+    }).then(() => {
+        await startProcessor(ac, analyser, frequency.value, speed.value);
         ac.resume();
     });    
 }, false);
