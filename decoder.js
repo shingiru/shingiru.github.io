@@ -26,8 +26,8 @@ start.addEventListener("click", async () => {
 
         await ac.audioWorklet.addModule('morse-processor.js');
         processor = new AudioWorkletNode(ac, 'morse-processor');
-		
-		const buffer = new Uint8Array(analyser.frequencyBinCount);
+        
+        const buffer = new Uint8Array(analyser.frequencyBinCount);
         processor.port.onmessage = (event) => {
             if (event.data.message === 'NEW_SAMPLE_LENGTH') {
                 analyser.getByteFrequencyData(buffer);
@@ -51,7 +51,7 @@ start.addEventListener("click", async () => {
                         } else {
                             console.log("WORD GAP, " + gapAmount);
                             makeCharacter();
-                            // _log("   ");
+                            //_log("   ");
                             gapAmount = 0;
                         }
                     }
@@ -64,11 +64,11 @@ start.addEventListener("click", async () => {
                         } else if (ditdahAmount < maxDitDuration) { // dit
                             console.log("DIT, " + ditdahAmount);
                             if (hangul.checked == false) _log("·");
-							addToLetter(true);
+                            addToLetter(true);
                         } else { // dah
                             console.log("DAH, " + ditdahAmount);
                             if (hangul.checked == false) _log("―");
-							addToLetter(false);
+                            addToLetter(false);
                         }
                     }
                     ditdahAmount = 0;
@@ -77,7 +77,7 @@ start.addEventListener("click", async () => {
                     // when enough gapAmount
                     if (gapAmount > ditDuration * 7 * 2) { // 5 or 7
                         console.log("MAX GAP, " + gapAmount);
-						makeCharacter();
+                        makeCharacter();
                         _log("   ");
                         gapAmount = 0;
                     }
@@ -96,82 +96,82 @@ var ditdahs = "";
 var hangulLetters = [];
 var previousLetter = "";
 function addToLetter(ditdah) { // ditdat - dit:true, dah:false
-	ditdahs += (ditdah ? "." : "-");
+    ditdahs += (ditdah ? "." : "-");
 }
 function makeCharacter() {
-	if ("undefined" != typeof MORSE[ditdahs]) {
-		var letter = MORSE[ditdahs];
-		if ("undefined" != typeof PROSIGN[letter]) {
-			if (hangul.checked && hangulLetters.length > 0) {
-				_log2(Hangul.assemble(hangulLetters));
-				hangulLetters = [];
-			}
-			_log(PROSIGN[letter]);
-			previousLetter = "";
-		} else {
-			if (hangul.checked) {
-				if (hangulLetters.length == 0) { // with current letter, 2 letters
-					_log(letter);
-					if ("undefined" != typeof HANGUL[ditdahs]) {
-						hangulLetters.push(HANGUL[ditdahs]);
-					}
-				} else if (hangulLetters.length = 1) { // with current letter, 3 letters
-					if ("undefined" != typeof HANGUL[ditdahs]) {
-						hangulLetters.push(HANGUL[ditdahs]);
-						var characters = Hangul.assemble(hangulLetters);
-						if (characters.length != 1) {
-							hangulLetters.shift();
-							_log(letter);
-						} else {
-							if (Hangul.isComplete(characters)) {
-								_log2(characters);
-							} else {
-								_log2(characters);
-								// _log2(previousLetter + letter);
-							}
-						}
-					} else {
-						hangulLetters.shift();
-						_log(letter);
-					}
-				} else { // with current letter, 3 letters or more
-					if ("undefined" != typeof HANGUL[ditdahs]) {
-						hangulLetters.push(HANGUL[ditdahs]);
-						var characters = Hangul.assemble(hangulLetters);
-						if (characters.length == 1) {
-							_log2(characters);
-						} else { // characters.length == 2
-							if (Hangul.isComplete(characters.charAt(0)) == false) {
-								_log2(previousLetter + previousLetter); // ㄲ, ㄸ, ㅃ, ㅆ, ㅉ, ㄸ
-								hangulLetters.shift();
-								hangulLetters.shift();
-								_log(letter);
-							} else {
-								_log2(characters.charAt(0));
-								var hangulCharacters = Hangul.disassemble(characters, true);
-								hangleLetters = hangulCharacters[1];
-								_log(characters.charAt(1));
-							}
-						}
-					} else {
-						var characters = Hangul.assemble(hangulLetters);
-						if (Hangul.isComplete(characters)) {
-							_log2(character);
-						} else {
-							_log2(previousLetter + previousLetter); // ㄲ, ㄸ, ㅃ, ㅆ, ㅉ, ㄸ
-						}
-						_log(letter);
-						hangulLetters = [];
-					}
-				}
-			} else {
-				_log(letter);
-			}
-		}
-		previousLetter = letter;
-	}
-	
-	ditdahs = "";
+    if ("undefined" != typeof MORSE[ditdahs]) {
+        var letter = MORSE[ditdahs];
+        if ("undefined" != typeof PROSIGN[letter]) {
+            if (hangul.checked && hangulLetters.length > 0) {
+                _log2(Hangul.assemble(hangulLetters));
+                hangulLetters = [];
+            }
+            _log(PROSIGN[letter]);
+            previousLetter = "";
+        } else {
+            if (hangul.checked) {
+                if (hangulLetters.length == 0) { // with current letter, 2 letters
+                    _log(letter);
+                    if ("undefined" != typeof HANGUL[ditdahs]) {
+                        hangulLetters.push(HANGUL[ditdahs]);
+                    }
+                } else if (hangulLetters.length = 1) { // with current letter, 3 letters
+                    if ("undefined" != typeof HANGUL[ditdahs]) {
+                        hangulLetters.push(HANGUL[ditdahs]);
+                        var characters = Hangul.assemble(hangulLetters);
+                        if (characters.length != 1) {
+                            hangulLetters.shift();
+                            _log(letter);
+                        } else {
+                            if (Hangul.isComplete(characters)) {
+                                _log2(characters);
+                            } else {
+                                _log2(characters);
+                                // _log2(previousLetter + letter);
+                            }
+                        }
+                    } else {
+                        hangulLetters.shift();
+                        _log(letter);
+                    }
+                } else { // with current letter, 3 letters or more
+                    if ("undefined" != typeof HANGUL[ditdahs]) {
+                        hangulLetters.push(HANGUL[ditdahs]);
+                        var characters = Hangul.assemble(hangulLetters);
+                        if (characters.length == 1) {
+                            _log2(characters);
+                        } else { // characters.length == 2
+                            if (Hangul.isComplete(characters.charAt(0)) == false) {
+                                _log2(previousLetter + previousLetter); // ㄲ, ㄸ, ㅃ, ㅆ, ㅉ, ㄸ
+                                hangulLetters.shift();
+                                hangulLetters.shift();
+                                _log(letter);
+                            } else {
+                                _log2(characters.charAt(0));
+                                var hangulCharacters = Hangul.disassemble(characters, true);
+                                hangleLetters = hangulCharacters[1];
+                                _log(characters.charAt(1));
+                            }
+                        }
+                    } else {
+                        var characters = Hangul.assemble(hangulLetters);
+                        if (Hangul.isComplete(characters)) {
+                            _log2(character);
+                        } else {
+                            _log2(previousLetter + previousLetter); // ㄲ, ㄸ, ㅃ, ㅆ, ㅉ, ㄸ
+                        }
+                        _log(letter);
+                        hangulLetters = [];
+                    }
+                }
+            } else {
+                _log(letter);
+            }
+        }
+        previousLetter = letter;
+    }
+    
+    ditdahs = "";
 }
 
 stop.onclick = function() {
