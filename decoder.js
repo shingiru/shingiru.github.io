@@ -8,8 +8,8 @@ const startProcessor = async (context, input) => {
 
 function init() {
     ac = new AudioContext();
-    ac.audioWorklet.addModule('morse-processor.js');
-    processor = new AudioWorkletNode(ac, 'morse-processor');
+    //ac.audioWorklet.addModule('morse-processor.js');
+    //processor = new AudioWorkletNode(ac, 'morse-processor');
 
     var constraints = { audio: true, video: false};
     navigator.mediaDevices.getUserMedia(constraints).then(
