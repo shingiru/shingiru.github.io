@@ -138,6 +138,7 @@ function makeCharacter() {
                     if ("undefined" != typeof HANGUL[ditdahs]) {
                         hangulLetters.push(HANGUL[ditdahs]);
                         var characters = Hangul.assemble(hangulLetters);
+                        console.log(characters);
                         if (characters.length == 1) {
                             _log2(characters);
                         } else { // characters.length == 2
