@@ -106,7 +106,7 @@ function addToLetter(ditdah) { // ditdat - dit:true, dah:false
 function makeCharacter() {
 	if ("undefined" != typeof MORSE[ditdahs]) {
 		var letter = MORSE[ditdahs];
-		if ("undefined" != typeof PROSIGN[ditdahs]) {
+		if ("undefined" != typeof PROSIGN[letter]) {
 			if (hangul.checked) {
 				_log2(Hangul.assemble(hangulLetters));
 				hangulLetters = [];
