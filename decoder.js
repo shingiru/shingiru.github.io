@@ -39,21 +39,19 @@ start.addEventListener("click", async () => {
                 var DITDAH_THRESHOLD = 256 * 0.75;
                 var ditdah = (buffer[peak-1] > DITDAH_THRESHOLD && buffer[peak] > DITDAH_THRESHOLD && buffer[peak+1] > DITDAH_THRESHOLD);
 
-                if (lastDitdah == true && ditdah == false) {
-                    if (ditdahAmount < minDitDuration) { // noise
-                        ditdahAmount = 0;
-                        console.log("NOISE");
-                    } else if (ditdahAmount < maxDitDuration) { // dit
-                        console.log("DIT");
-                    } else { // dah
-                        console.log("DAH");
-                    }
+                if (ditdah) {
+                    ditdahAmount += frameDuration;
                 } else {
-                    if (ditdah) {
-                        ditdahAmount += frameDuration;
-                    } else {
-                        ditdahAmount = 0;
+                    if (lastDitdah == true) {
+                        if (ditdahAmount < minDitDuration) { // noise
+                            console.log("NOISE, " + ditdahAmount);
+                        } else if (ditdahAmount < maxDitDuration) { // dit
+                            console.log("DIT, " + ditdahAmount);
+                        } else { // dah
+                            console.log("DAH, " + ditdahAmount);
+                        }
                     }
+                    ditdahAmount = 0;
                 }
                 lastDitdah = ditdah;
             }
