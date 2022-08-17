@@ -131,7 +131,7 @@ function _log(s) {
 	log.appendChild(lastNode);
 }
 function _log2(s) {
-	if (lastNode) lastNode.textContent = s;
+	if (lastNode) lastNode.innerText = s;
 	else _log(s);
 }
 </script>
