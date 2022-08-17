@@ -48,12 +48,9 @@ start.addEventListener("click", async () => {
                         } else if (gapAmount < maxDitDuration) { // inter-letter
                             console.log("INTER-LETTER GAP, " + gapAmount);
                             gapAmount = 0;
-                            //_log(" ");
                         } else {
                             console.log("WORD GAP, " + gapAmount);
-                            _log(" ");
-                            _log(" ");
-                            _log(" ");
+                            _log("   ");
                             gapAmount = 0;
 							makeCharacter();
                         }
@@ -66,11 +63,11 @@ start.addEventListener("click", async () => {
                             console.log("DITDAH NOISE, " + ditdahAmount);
                         } else if (ditdahAmount < maxDitDuration) { // dit
                             console.log("DIT, " + ditdahAmount);
-                            _log("·");
+                            if (hangul.checked == false) _log("·");
 							addToLetter(true);
                         } else { // dah
                             console.log("DAH, " + ditdahAmount);
-                            _log("―");
+                            if (hangul.checked == false) _log("―");
 							addToLetter(false);
                         }
                     }
@@ -80,9 +77,7 @@ start.addEventListener("click", async () => {
                     // when enough gapAmount
                     if (gapAmount > ditDuration * 7 * 2) { // 5 or 7
                         console.log("MAX GAP, " + gapAmount);
-                        _log(" ");
-                        _log(" ");
-                        _log(" ");
+                        _log("   ");
                         gapAmount = 0;
 						makeCharacter();
                     }
