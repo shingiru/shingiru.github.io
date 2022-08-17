@@ -1,14 +1,19 @@
 var inited = false, ac, stream, input, gain, filter, analyser, processor, buffer;
 
 const startProcessor = async (context, input, frequency, speed) => {
-  await context.audioWorklet.addModule('morse-processor.js');
-  const processor = new AudioWorkletNode(context, 'morse-processor');
-  processor.frequency = frequency;
-  processor.speed = speed;
-  input.connect(processor);
+    await context.audioWorklet.addModule('morse-processor.js');
+    const processor = new AudioWorkletNode(context, 'morse-processor');
+    processor.frequency = frequency;
+    processor.speed = speed;
+    input.connect(processor);
 };
 
-function init() {
+var frequency = document.querySelector("#freq");
+var speed = document.querySelector("#speed");
+var start = document.querySelector("#start");
+var stop = document.querySelector("#stop");
+
+start.addEventListener("click", async () => {
     ac = new AudioContext();
 
     var constraints = { audio: true, video: false};
@@ -35,17 +40,9 @@ function init() {
             ac.resume();
         }
     )
-    inited = true;
-}
+}, false);
 
-var frequency = document.querySelector("#freq");
-var speed = document.querySelector("#speed");
-var start = document.querySelector("#start");
-var stop = document.querySelector("#stop");
-
-start.addEventListener("click", async () => {
-    if (!inited) init();
-});
 stop.onclick = function() {
     analyser.disconnect(processor);
 }
+
