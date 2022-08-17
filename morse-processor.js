@@ -18,6 +18,7 @@ class MorseProcessor extends AudioWorkletProcessor {
 
     constructor() {
         super();
+                console.log("bbbb");
         _log("MorseProcessor constructor");
         this._analyser = null;
         this._frequency = 600;
