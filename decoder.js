@@ -35,7 +35,7 @@ start.addEventListener("click", async () => {
         filter.connect(analyser);
         buffer = new Uint8Array(analyser.frequencyBinCount);
 
-        await startProcessor(ac, analyser, frequency.value, speed.value);
+        startProcessor(ac, analyser, frequency.value, speed.value);
         ac.resume();
     });    
 }, false);
