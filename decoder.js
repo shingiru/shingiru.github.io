@@ -24,20 +24,20 @@ start.addEventListener("click", async () => {
             analyser.fftSize = 512;
             gain.connect(analyser);
 
-            console.log("a");
-            await context.audioWorklet.addModule('morse-processor.js?t=4');
-            console.log("b");
+            _log("a");
+            await context.audioWorklet.addModule('morse-processor.js?t=5');
+            _log("b");
             const processor = new AudioWorkletNode(context, 'morse-processor');
-            console.log("c");
+            _log("c");
             processor.analyser = analyser;
-            console.log("d");
+            _log("d");
             processor.frequency = parseInt(frequency.value);
             processor.speed = parseInt(speed);
             input.connect(processor);
-            console.log("e");
+            _log("e");
 
             ac.resume();
-            console.log("f");
+            _log("f");
         }
     );    
 }, false);
@@ -46,3 +46,10 @@ stop.onclick = function() {
     analyser.disconnect();
 }
 
+var log = document.querySelector("#stop");
+function _log(s) {
+    const div = document.createElement("div");
+    const content = document.createTextNode(s);
+    div.appendChild(content);
+    log.appendChild(div);
+}
