@@ -16,11 +16,11 @@ class MorseProcessor extends AudioWorkletProcessor {
         return true;
     }
 
-    constructor() {
+    constructor(options) {
         super();
-        this.analyser = null;
-        this.frequency = 600;
-        this.speed = 20;
+        this.analyser = options.processorOptions.analyser;
+        this.frequency = options.processorOptions.frequency;
+        this.speed = options.processorOptions.speed;
     }
 }
 registerProcessor('morse-processor', MorseProcessor);
