@@ -7,6 +7,8 @@ class MorseProcessor extends AudioWorkletProcessor {
             }
         })*/
         console.log("inputs.length : " + inputs.length + ", outputs.length : " + outputs.length + ", sample : " + outputs[0][0].length);
+        const buffer = new Uint8Array(this.analyser.frequencyBinCount);
+        console.log(this.analyser.frequencyBinCount);
         this.analyser.getByteFrequencyData(buffer);
 
         var dotDuration = 1.2 / this.speed; // from wikipedia
@@ -19,12 +21,9 @@ class MorseProcessor extends AudioWorkletProcessor {
         return true;
     }
 
-    static get parameterDescriptors() {
-        return [{name: "Morse Code Decoder"}];
-    }
-
     constructor() {
         super();
+        console.log("MorseProcessor constructor");
         this._analyser = null;
         this._frequency = 600;
         this._speed = 20;
@@ -44,7 +43,7 @@ class MorseProcessor extends AudioWorkletProcessor {
     }
 
     set frequency(value) {
-        this._frequency = parseInt(value);
+        this._frequency = value;
     }
 
     get speed() {
@@ -52,7 +51,7 @@ class MorseProcessor extends AudioWorkletProcessor {
     }
 
     set speed(value) {
-        this._speed = parseInt(value);
+        this._speed = value;
     }
 }
 registerProcessor('morse-processor', MorseProcessor);
