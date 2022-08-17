@@ -35,7 +35,7 @@ start.addEventListener("click", async () => {
                 var dotDuration = 1.2 / parseInt(speed.value); // from wikipedia
                 var frameDuration = event.data.sampleLength / 44100.0;
 
-                var targetFrequencyIndex = parseInt(parseInt(frequency.value) / (44100 / analyser.frequencyBinCount)) + 1;
+                var targetFrequencyIndex = parseInt(parseInt(frequency.value) / (44100 / 2 / analyser.frequencyBinCount)) + 1;
                 console.log("targetFrequencyIndex : " + targetFrequencyIndex + ", target : " + buffer[targetFrequencyIndex - 1] + ", target : " +  buffer[targetFrequencyIndex] + ", target + 1 : " +  buffer[targetFrequencyIndex + 1]);
                 //console.log("Speed : " + parseInt(speed.value) + ", dotDuration : " + dotDuration + ", frameDuration : " + frameDuration);
             }
