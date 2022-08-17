@@ -149,7 +149,7 @@ function makeCharacter() {
                             } else {
                                 _log2(characters.charAt(0));
                                 var hangulCharacters = Hangul.disassemble(characters, true);
-                                hangleLetters = hangulCharacters[1];
+                                hangulLetters = hangulCharacters[1];
                                 _log(characters.charAt(1));
                             }
                         }
