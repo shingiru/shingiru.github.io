@@ -16,30 +16,28 @@ var stop = document.querySelector("#stop");
 start.addEventListener("click", async () => {
     ac = new AudioContext();
 
-    var constraints = { audio: true, video: false};
-    navigator.mediaDevices.getUserMedia(constraints).then(
-        function(stream) {
-            input = ac.createMediaStreamSource(stream);
-            input.connect(ac.destination);
+    var constraints = { audio: true, video: false };
+    stream = navigator.mediaDevices.getUserMedia(constraints);
 
-            gain = ac.createGain();
-            input.connect(gain);
+    input = ac.createMediaStreamSource(stream);
+    input.connect(ac.destination);
 
-            filter = ac.createBiquadFilter();
-            gain.connect(filter);
+    gain = ac.createGain();
+    input.connect(gain);
 
-            analyser = ac.createAnalyser();
-            analyser.minDecibels = -90;
-            analyser.maxDecibels = -10;
-            analyser.smoothingTymeConstant = 0;
-            analyser.fftSize = 512;
-            filter.connect(analyser);
-            buffer = new Uint8Array(analyser.frequencyBinCount);
+    filter = ac.createBiquadFilter();
+    gain.connect(filter);
 
-            await startProcessor(ac, analyser, frequency.value, speed.value);
-            ac.resume();
-        }
-    )
+    analyser = ac.createAnalyser();
+    analyser.minDecibels = -90;
+    analyser.maxDecibels = -10;
+    analyser.smoothingTymeConstant = 0;
+    analyser.fftSize = 512;
+    filter.connect(analyser);
+    buffer = new Uint8Array(analyser.frequencyBinCount);
+
+    await startProcessor(ac, analyser, frequency.value, speed.value);
+    ac.resume();
 }, false);
 
 stop.onclick = function() {
