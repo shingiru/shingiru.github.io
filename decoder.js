@@ -39,7 +39,7 @@ start.addEventListener("click", async () => {
                 var DITDAH_THRESHOLD = 256 * 0.8;
                 var ditdah = (buffer[peak-1] > DITDAH_THRESHOLD && buffer[peak] > DITDAH_THRESHOLD && buffer[peak+1] > DITDAH_THRESHOLD);
 
-                if (ditdah) { // TODO : need to determine gap after a few ditdah, not with single gap
+                if (ditdah) { // TODO : need to determine gap after a few ditdah, not with single gap. Or, after enough gap arrived.
                     if (lastDitdah == false) {
                         if (gapAmount < minDitDuration) { // noise
                             console.log("GAP NOISE, " + gapAmount);
@@ -71,6 +71,15 @@ start.addEventListener("click", async () => {
                     }
                     ditdahAmount = 0;
                     gapAmount += frameDuration;
+
+                    // when enough gapAmount
+                    if (gapAmount > ditDuration * 7 * 2) { // 5 or 7
+                        console.log("MAX GAP, " + gapAmount);
+                        _log(" ");
+                        _log(" ");
+                        _log(" ");
+                        gapAmount = 0;
+                    }
                 }
                 lastDitdah = ditdah;
             }
