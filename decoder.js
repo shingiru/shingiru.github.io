@@ -25,9 +25,10 @@ start.addEventListener("click", async () => {
             gain.connect(analyser);
 
             _log("a");
+        console.log("aaaa");
             await ac.audioWorklet.addModule('morse-processor.js');
             _log("b");
-            const processor = new AudioWorkletNode(context, 'morse-processor');
+            const processor = new AudioWorkletNode(ac, 'morse-processor');
             _log("c");
             processor.analyser = analyser;
             _log("d");
