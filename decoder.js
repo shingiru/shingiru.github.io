@@ -1,4 +1,4 @@
-var inited = false, ac, stream, input, gain, analyser;
+var inited = false, ac, stream, input, gain, analyser, lastDitdah = false, ditdahAmount = 0;
 
 var frequency = document.querySelector("#freq");
 var speed = document.querySelector("#speed");
@@ -27,17 +27,35 @@ start.addEventListener("click", async () => {
         const processor = new AudioWorkletNode(ac, 'morse-processor');
         processor.port.onmessage = (event) => {
             if (event.data.message === 'NEW_SAMPLE_LENGTH') {
-                //console.log("sample length : " + event.data.sampleLength);
                 const buffer = new Uint8Array(analyser.frequencyBinCount);
-                //console.log("frequencyBinCount : " + analyser.frequencyBinCount);
                 analyser.getByteFrequencyData(buffer);
 
-                var dotDuration = 1.2 / parseInt(speed.value); // from wikipedia
+                var ditDuration = 1.2 / parseInt(speed.value); // from wikipedia
+                var minDitDuration = ditDuration * 0.5;
+                var maxDitDuration = ditDuration * 2.0;
                 var frameDuration = event.data.sampleLength / 44100.0;
 
-                var targetFrequencyIndex = parseInt(parseInt(frequency.value) / (44100 / 2 / analyser.frequencyBinCount)) + 1;
-                console.log("targetFrequencyIndex : " + targetFrequencyIndex + ", target - 1 : " + buffer[targetFrequencyIndex - 1] + ", target : " +  buffer[targetFrequencyIndex] + ", target + 1 : " +  buffer[targetFrequencyIndex + 1]);
-                //console.log("Speed : " + parseInt(speed.value) + ", dotDuration : " + dotDuration + ", frameDuration : " + frameDuration);
+                var peak = parseInt(parseInt(frequency.value) / (44100 / 2 / analyser.frequencyBinCount)) + 1;
+                var DITDAH_THRESHOLD = 256 * 0.75;
+                var ditdah = (buffer[peak-1] > DITDAH_THRESHOLD && buffer[peak] > DITDAH_THRESHOLD && buffer[peak+1] > DITDAH_THRESHOLD);
+
+                if (lastDitdah == true && ditdah == false) {
+                    if (ditdahAmount < minDitDuration) { // noise
+                        ditdahAmount = 0;
+                        console.log("NOISE");
+                    } else if (ditdahAmount < maxDitDuration) { // dit
+                        console.log("DIT");
+                    } else { // dah
+                        console.log("DAH");
+                    }
+                } else {
+                    if (ditdah) {
+                        ditdahAmount += frameDuration;
+                    } else {
+                        ditdahAmount = 0;
+                    }
+                }
+                lastDitdah = ditdah;
             }
         };
         input.connect(processor);
