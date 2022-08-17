@@ -6,47 +6,21 @@ class MorseProcessor extends AudioWorkletProcessor {
         console.log(this.analyser.frequencyBinCount);
         this.analyser.getByteFrequencyData(buffer);
 
-        var dotDuration = 1.2 / this._speed; // from wikipedia
+        var dotDuration = 1.2 / this.speed; // from wikipedia
         var frameDuration = outputs[0][0].length / 44100.0;
 
-        var targetFrequencyIndex = parseInt(44100 / buffer.length * this._frequency) - 1;
-        console.log("Frequency : " + this._frequency + ", target - 1 : " + buffer[targetFrequencyIndex - 1] + ", target : " +  buffer[targetFrequencyIndex] + ", target + 1 : " +  buffer[targetFrequencyIndex + 1]);
-        console.log("Speed : " + this._speed + ", dotDuration : " + dotDuration + ", frameDuration : " + frameDuraton);
+        var targetFrequencyIndex = parseInt(44100 / buffer.length * this.frequency) - 1;
+        console.log("Frequency : " + this.frequency + ", target - 1 : " + buffer[targetFrequencyIndex - 1] + ", target : " +  buffer[targetFrequencyIndex] + ", target + 1 : " +  buffer[targetFrequencyIndex + 1]);
+        console.log("Speed : " + this.speed + ", dotDuration : " + dotDuration + ", frameDuration : " + frameDuraton);
 
         return true;
     }
 
     constructor() {
         super();
-        console.log("MorseProcessor constructor");
         this.analyser = null;
-        this._frequency = 600;
-        this._speed = 20;
-    }
-
-    get analyser() {
-        return this.analyser;
-    }
-
-    set analyser(value) {
-        console.log("set analyser with " + (typeof value));
-        this.analyser = value;
-    }
-
-    get frequency() {
-        return this._frequency;
-    }
-
-    set frequency(value) {
-        this._frequency = value;
-    }
-
-    get speed() {
-        return this._speed;
-    }
-
-    set speed(value) {
-        this._speed = value;
+        this.frequency = 600;
+        this.speed = 20;
     }
 }
 registerProcessor('morse-processor', MorseProcessor);
