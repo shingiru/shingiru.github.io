@@ -109,7 +109,7 @@ var inited = false, ac, stream, input, gain, filter, analyser, processor, buffer
 function init() {
     ac = new (window.AudioContext || window.webkitAudioContext)();
     ac.audioWorklet.addModule('morse-processor.js');
-    processor = new AudioWorketletNode(ac, 'morse-processor');
+    processor = new AudioWorkletNode(ac, 'morse-processor');
 
     var constraints = { audio: true, video: false};
     navigator.mediaDevices.getUserMedia(constraints).then(
