@@ -50,8 +50,8 @@ start.addEventListener("click", async () => {
                             gapAmount = 0;
                         } else {
                             console.log("WORD GAP, " + gapAmount);
-							makeCharacter();
-                            _log("   ");
+                            makeCharacter();
+                            // _log("   ");
                             gapAmount = 0;
                         }
                     }
