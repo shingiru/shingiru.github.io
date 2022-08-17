@@ -2,8 +2,8 @@ var inited = false, ac, stream, input, gain, filter, analyser, processor, buffer
 
 function init() {
     ac = new AudioContext();
-    //ac.audioWorklet.addModule('morse-processor.js');
-    //processor = new AudioWorkletNode(ac, 'morse-processor');
+    ac.audioWorklet.addModule('morse-processor.js');
+    processor = new AudioWorkletNode(ac, 'morse-processor');
 
     var constraints = { audio: true, video: false};
     navigator.mediaDevices.getUserMedia(constraints).then(
@@ -25,7 +25,7 @@ function init() {
             filter.connect(analyser);
             buffer = new Uint8Array(analyser.frequencyBinCount);
 
-            processor = createMorseProcessor();
+            //processor = createMorseProcessor();
             analyser.connect(processor);
         }
     )
@@ -34,7 +34,7 @@ function init() {
 
 async function createMorseProcessor(ac) {
     try {
-        //await ac.resume();
+        await ac.resume();
         await ac.audioWorklet.addModule("morse-processor.js");
     } catch (e) {
         console.log("fail to create morse processor");
