@@ -37,7 +37,7 @@ function init() {
     inited = true;
 }
 
-var frequency = document.querySelector("#frequency");
+var frequency = document.querySelector("#freq");
 var speed = document.querySelector("#speed");
 var start = document.querySelector("#start");
 var stop = document.querySelector("#stop");
