@@ -11,7 +11,7 @@ start.addEventListener("click", async () => {
     var constraints = { audio: true, video: false };
     navigator.mediaDevices.getUserMedia(constraints).then(async (stream) => {
         input = ac.createMediaStreamSource(stream);
-        input.connect(ac.destination);
+        //input.connect(ac.destination);
 
         gain = ac.createGain();
         input.connect(gain);
@@ -56,8 +56,8 @@ start.addEventListener("click", async () => {
                 lastDitdah = ditdah;
             }
         };
-        input.connect(processor);
-        //processor.connect(ac.destination);
+        analyser.connect(processor);
+        processor.connect(ac.destination);
 
         ac.resume();
     });
