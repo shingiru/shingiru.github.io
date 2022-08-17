@@ -46,7 +46,7 @@ stop.onclick = function() {
     analyser.disconnect();
 }
 
-var log = document.querySelector("#stop");
+var log = document.querySelector("#log");
 function _log(s) {
     const div = document.createElement("div");
     const content = document.createTextNode(s);
