@@ -1,3 +1,4 @@
+
 <!DOCType HTML>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:fb="http://ogp.me/ns/fb#" manifest="cache.manifest">
 <head>
@@ -79,6 +80,9 @@ textarea {
 .font_medium {
     font-size : medium;
 }
+#log {
+    font-weight : bold;
+}
 .font_x-large {
     font-size : x-large;
 }
@@ -116,11 +120,8 @@ Speed : <input type="number" id="speed" value="20" size="2" min="5" max="50" />w
 <script>
 var log = document.querySelector("#log");
 function _log(s) {
-    const div = document.createElement("SPAN");
-    div.style.fontWeight = "bold";
-    const content = document.createTextNode(s);
-    div.appendChild(content);
-    log.appendChild(div);
+    log.appendChild(document.createTextNode(s));
 }
 </script>
+
 </html>
