@@ -79,6 +79,9 @@ textarea {
 .font_medium {
     font-size : medium;
 }
+.font_x-large {
+    font-size : x-large;
+}
 .prevent_wrap {
     white-space: nowrap;
 }
@@ -105,8 +108,18 @@ Speed : <input type="number" id="speed" value="20" size="2" min="5" max="50" />w
 <h3>Change Log</h3>
 2022.08.17. First version of Hangul CW Decoder.<br />
 </p>
-<p class="font_medium" id="log"></p>
+<p class="font_x-large" id="log"></p>
 </div>
 </body>
-<script type="module" src="decoder.js"></script>
+<script  src="decoder.js"></script>
+<script>
+var log = document.querySelector("#log");
+function _log(s) {
+    const div = document.createElement("SPAN");
+    div.style.fontWeight = "bold";
+    const content = document.createTextNode(s);
+    div.appendChild(content);
+    log.appendChild(div);
+}
+</script>
 </html>
