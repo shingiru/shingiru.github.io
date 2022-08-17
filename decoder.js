@@ -6,7 +6,7 @@ const startProcessor = async (context, input, frequency, speed) => {
   processor.frequency = frequency;
   processor.speed = speed;
   input.connect(processor);
-}
+};
 
 function init() {
     ac = new AudioContext();
@@ -31,7 +31,8 @@ function init() {
             filter.connect(analyser);
             buffer = new Uint8Array(analyser.frequencyBinCount);
 
-            startProcessor(ac, analyser, frequency.value, speed.value);
+            await startProcessor(ac, analyser, frequency.value, speed.value);
+            ac.resume();
         }
     )
     inited = true;
@@ -42,11 +43,9 @@ var speed = document.querySelector("#speed");
 var start = document.querySelector("#start");
 var stop = document.querySelector("#stop");
 
-start.onclick = function() {
+start.addEventListener("click", async () => {
     if (!inited) init();
-    
-}
+});
 stop.onclick = function() {
     analyser.disconnect(processor);
 }
-
