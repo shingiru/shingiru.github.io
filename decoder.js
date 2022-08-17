@@ -30,8 +30,8 @@ start.addEventListener("click", async () => {
                 if (event.data.message === 'NEW_SAMPLE_LENGTH') {
                     console.log("sample length : " + event.data.sampleLength);
                     const buffer = new Uint8Array(analyser.frequencyBinCount);
-                    console.log(analyser.frequencyBinCount);
-                    this.analyser.getByteFrequencyData(buffer);
+                    console.log("frequencyBinCount : " + analyser.frequencyBinCount);
+                    analyser.getByteFrequencyData(buffer);
 
                     var dotDuration = 1.2 / parseInt(speed.value); // from wikipedia
                     var frameDuration = event.data.sampleLength / 44100.0;
