@@ -105,10 +105,11 @@ Speed : <input type="number" id="speed" value="20" size="2" min="5" max="50" />w
 <script type="text/javascript">
 var inited = false, ac, stream, input, gain, filter, analyser, processor, buffer;
 
-function init() {
     ac = new (window.AudioContext || window.webkitAudioContext)();
-    await ac.audioWorklet.addModule('./morse-processor.js');
+    ac.audioWorklet.addModule('morse-processor.js');
     processor = new AudioWorkletNode(ac, 'morse-processor');
+function init() {
+    
 
     var constraints = { audio: true, video: false};
     navigator.mediaDevices.getUserMedia(constraints).then(
