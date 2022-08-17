@@ -123,20 +123,14 @@ Speed : <input type="number" id="speed" value="20" size="2" min="5" max="50" />w
 <script  src="decoder.js"></script>
 <script>
 var log = document.querySelector("#log");
-var lastLog = null;
+var textNode = null;
 function _log(s) {
-	var lastNode = document.createElement("SPAN");
-	var textNode = document.createTextNode(s);
-	lastNode.appendChild(textNode);
-	lastLog = log.appendChild(lastNode);
+    textNode = document.createTextNode(s);
+    log.appendChild(textNode);
 }
 function _log2(s) {
-	if (lastLog) {
-		console.log(lastLog.innerHTML + " -> " + s);
-		lastLog.innerHTML = s;
-	} else {
-		_log(s);
-	}
+    if (textNode) textNode.textContent = s;
+    else _log(s);
 }
 </script>
 
