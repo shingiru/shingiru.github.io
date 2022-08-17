@@ -6,7 +6,7 @@ const startProcessor = async (context, input, frequency, speed) => {
   processor.frequency = frequency;
   processor.speed = speed;
   input.connect(processor);
-};
+}
 
 function init() {
     ac = new AudioContext();
