@@ -36,8 +36,9 @@ start.addEventListener("click", async () => {
                 var frameDuration = event.data.sampleLength / 44100.0;
 
                 var targetFrequencyIndex = parseInt(44100 / buffer.length * parseInt(frequency.value)) - 1;
+                console.log("targetFrequencyIndex : " + targetFrequencyIndex);
                 console.log("Frequency : " + parseInt(frequency.value) + ", target - 1 : " + buffer[targetFrequencyIndex - 1] + ", target : " +  buffer[targetFrequencyIndex] + ", target + 1 : " +  buffer[targetFrequencyIndex + 1]);
-                console.log("Speed : " + parseInt(speed.value) + ", dotDuration : " + dotDuration + ", frameDuration : " + frameDuraton);
+                console.log("Speed : " + parseInt(speed.value) + ", dotDuration : " + dotDuration + ", frameDuration : " + frameDuration);
             }
         };
         input.connect(processor);
