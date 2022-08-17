@@ -25,12 +25,22 @@ start.addEventListener("click", async () => {
             gain.connect(analyser);
 
             await ac.audioWorklet.addModule('morse-processor.js');
-            const processor = new AudioWorkletNode(ac, 'morse-processor', {
-                processorOptions: {
-                    "frequency" : parseInt(frequency.value),
-                    "speed" : parseInt(speed.value)
+            const processor = new AudioWorkletNode(ac, 'morse-processor');
+            processor.port.onmessage = (event) => {
+                if (event.data.message === 'NEW_SAMPLE_LENGTH') {
+                    console.log("sample length : " + event.data.sampleLength);
+                    const buffer = new Uint8Array(analyser.frequencyBinCount);
+                    console.log(analyser.frequencyBinCount);
+                    this.analyser.getByteFrequencyData(buffer);
+
+                    var dotDuration = 1.2 / parseInt(speed.value); // from wikipedia
+                    var frameDuration = event.data.sampleLength / 44100.0;
+
+                    var targetFrequencyIndex = parseInt(44100 / buffer.length * parseInt(frequency.value) - 1;
+                    console.log("Frequency : " + parseInt(frequency.value) + ", target - 1 : " + buffer[targetFrequencyIndex - 1] + ", target : " +  buffer[targetFrequencyIndex] + ", target + 1 : " +  buffer[targetFrequencyIndex + 1]);
+                    console.log("Speed : " + parseInt(speed.value) + ", dotDuration : " + dotDuration + ", frameDuration : " + frameDuraton);
                 }
-            });
+            };
             input.connect(processor);
 
             ac.resume();
