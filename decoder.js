@@ -45,10 +45,12 @@ start.addEventListener("click", async () => {
                             console.log("GAP NOISE, " + gapAmount);
                         } else if (gapAmount < maxDitDuration) { // inter-letter
                             console.log("INTER-LETTER GAP, " + gapAmount);
-                            _log("&nbsp;");
+                            _log(" ");
                         } else {
                             console.log("WORD GAP, " + gapAmount);
-                            _log("&nbsp;&nbsp;&nbsp;");
+                            _log(" ");
+                            _log(" ");
+                            _log(" ");
                         }
                     }
                     ditdahAmount += frameDuration;
