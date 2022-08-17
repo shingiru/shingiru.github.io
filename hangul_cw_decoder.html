@@ -5,7 +5,6 @@
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name=viewport content='width=900' />
 <title>한글 CW 수신기</title>
-<script type="module" src="morse-processor.js"></script>
 <style>
 body {
     background-color: white ;
@@ -102,67 +101,7 @@ Speed : <input type="number" id="speed" value="20" size="2" min="5" max="50" />w
 <button id="start">START</button>
 <button id="stop">STOP</button>
 </p>
-<script type="text/javascript">
-var inited = false, ac, stream, input, gain, filter, analyser, processor, buffer;
-
-function init() {
-    ac = new AudioContext();
-    //ac.audioWorklet.addModule('morse-processor.js');
-    //processor = new AudioWorkletNode(ac, 'morse-processor');
-
-    var constraints = { audio: true, video: false};
-    navigator.mediaDevices.getUserMedia(constraints).then(
-        function(stream) {
-            input = ac.createMediaStreamSource(stream);
-            input.connect(ac.destination);
-
-            gain = ac.createGain();
-            input.connect(gain);
-
-            filter = ac.createBiquadFilter();
-            gain.connect(filter);
-
-            analyser = ac.createAnalyser();
-            analyser.minDecibels = -90;
-            analyser.maxDecibels = -10;
-            analyser.smoothingTymeConstant = 0;
-            analyser.fftSize = 512;
-            filter.connect(analyser);
-            buffer = new Uint8Array(analyser.frequencyBinCount);
-
-            processor = createMorseProcessor();
-            analyser.connect(processor);
-        }
-    )
-    inited = true;
-}
-
-async function createMorseProcessor(ac) {
-    try {
-        await ac.resume();
-        await ac.audioWorklet.addModule("morse-processor.js");
-    } catch (e) {
-        console.log("fail to create morse processor");
-        return null;
-    }
-
-    return new AudioWorkletNode(ac, "morse-processor");
-}
-
-var frequency = document.querySelector("#frequency");
-var speed = document.querySelector("#speed");
-var start = document.querySelector("#start");
-var stop = document.querySelector("#stop");
-
-start.onclick = function() {
-    if (!inited) init();
-    
-}
-stop.onclick = function() {
-    analyser.disconnect(processor);
-}
-
-</script>
+<script type="module" src="decoder.js"></script>
 <p class="font_medium">
 <h3>Change Log</h3>
 2022.08.15. "Repeat" added.<br />
