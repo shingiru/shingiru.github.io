@@ -6,6 +6,7 @@ class MorseProcessor extends AudioWorkletProcessor {
                 channel[i] = Math.random() * 2 - 1;
             }
         })*/
+        console.log("inputs.length : " + inputs.length + ", outputs.length : " + outputs.length + ", sample : " + outputs[0][0].length);
         this.analyser.getByteFrequencyData(buffer);
 
         var dotDuration = 1.2 / this.speed; // from wikipedia
@@ -34,9 +35,8 @@ class MorseProcessor extends AudioWorkletProcessor {
     }
 
     set analyser(value) {
-        if (value instanceOf AnalyserNode) {
-            this._analyser = value;
-        }
+        console.log("set analyser with " + (typeof value));
+        this._analyser = value;
     }
 
     get frequency() {
