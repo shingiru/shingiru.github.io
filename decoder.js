@@ -156,6 +156,7 @@ function makeCharacter() {
                         }
                     } else {
                         var characters = Hangul.assemble(hangulLetters);
+                        console.log(characters);
                         if (Hangul.isComplete(characters)) {
                             _log2(character);
                         } else {
