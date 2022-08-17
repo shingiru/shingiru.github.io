@@ -9,8 +9,8 @@ start.addEventListener("click", async () => {
     ac = new AudioContext();
 
     var constraints = { audio: true, video: false };
-    navigator.mediaDevices.getUserMedia(constraints).then((stream) => 
-        async () => {
+    navigator.mediaDevices.getUserMedia(constraints).then(async (stream) => 
+        /*async () =>*/ {
             input = ac.createMediaStreamSource(stream);
             input.connect(ac.destination);
 
@@ -25,7 +25,7 @@ start.addEventListener("click", async () => {
             gain.connect(analyser);
 
             _log("a");
-            await context.audioWorklet.addModule('morse-processor.js');
+            await ac.audioWorklet.addModule('morse-processor.js');
             _log("b");
             const processor = new AudioWorkletNode(context, 'morse-processor');
             _log("c");
