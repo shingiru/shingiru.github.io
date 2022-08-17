@@ -1,4 +1,4 @@
-var inited = false, ac, stream, input, gain, filter, analyser, processor, buffer;
+var inited = false, ac, stream, input, gain, filter, analyser, buffer;
 
 const startProcessor = async (context, input, frequency, speed) => {
     await context.audioWorklet.addModule('morse-processor.js');
@@ -43,6 +43,6 @@ start.addEventListener("click", async () => {
 }, false);
 
 stop.onclick = function() {
-    analyser.disconnect(processor);
+    analyser.disconnect();
 }
 
