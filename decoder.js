@@ -65,11 +65,11 @@ start.addEventListener("click", async () => {
                             //console.log("DITDAH NOISE, " + ditdahAmount);
                         } else if (ditdahAmount < maxDitDuration) { // dit
                             //console.log("DIT, " + ditdahAmount);
-                            if (hangul.checked == false) _log("·");
+                            //if (hangul.checked == false) _log("·");
                             addToLetter(true);
                         } else { // dah
                             //console.log("DAH, " + ditdahAmount);
-                            if (hangul.checked == false) _log("―");
+                            //if (hangul.checked == false) _log("―");
                             addToLetter(false);
                         }
                     }
