@@ -1,4 +1,4 @@
-var ac, analyser, processor, lastDitdah = false, ditdahAmount = 0, gapAmount = 0, maxGapReached = false;
+var ac, analyser, processor, lastDitdah = false, ditdahAmount = 0, gapAmount = 0, maxGapReached = false, prevTime = 0;
 
 var frequency = document.querySelector("#freq");
 var speed = document.querySelector("#speed");
@@ -35,8 +35,12 @@ start.addEventListener("click", async () => {
                 var ditDuration = 1.2 / parseInt(speed.value); // from wikipedia
                 var minDitDuration = ditDuration * 0.5;
                 var maxDitDuration = ditDuration * 2.0;
-				var leterGapDuration = ditDuration * 7.0 - ditDuration;
+				var letterGapDuration = ditDuration * 7.0 - ditDuration;
                 var frameDuration = event.data.sampleLength / 44100.0;
+var curTime = Date.now();
+if (prevTime == 0) prevTime = curTime;
+console.log(frameDuration + ", " + ((curTime - prevTime) * 0.001));
+prevTime = curTime;
 
                 var peak = parseInt(parseInt(frequency.value) / (44100 / 2 / analyser.frequencyBinCount)) + 1;
                 var DITDAH_THRESHOLD = 256 * 0.8;
@@ -52,7 +56,7 @@ start.addEventListener("click", async () => {
                         } else {
                             //console.log("WORD GAP, " + gapAmount);
                             makeCharacter();
-							if (hangul.checked == false && gapAmount > leterGapDuration) _log(" ");
+							if (hangul.checked == false && gapAmount > letterGapDuration) _log(" ");
                             gapAmount = 0;
                         }
                     }
@@ -77,7 +81,7 @@ start.addEventListener("click", async () => {
                     gapAmount += frameDuration;
 
                     // when enough gapAmount
-                    if (gapAmount > leterGapDuration * 2 && !maxGapReached) { // 5 or 7
+                    if (gapAmount > letterGapDuration * 2 && !maxGapReached) { // 5 or 7
                         //console.log("MAX GAP, " + gapAmount);
                         makeCharacter();
                         _log(" ");
