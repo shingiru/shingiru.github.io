@@ -1,4 +1,4 @@
-var ac, analyser, processor, lastDitdah = false, ditdahAmount = 0, gapAmount = 0;
+var ac, analyser, processor, lastDitdah = false, ditdahAmount = 0, gapAmount = 0, maxGapReached = false;
 
 var frequency = document.querySelector("#freq");
 var speed = document.querySelector("#speed");
@@ -35,6 +35,7 @@ start.addEventListener("click", async () => {
                 var ditDuration = 1.2 / parseInt(speed.value); // from wikipedia
                 var minDitDuration = ditDuration * 0.5;
                 var maxDitDuration = ditDuration * 2.0;
+				var leterGapDuration = ditDuration * 7.0 - ditDuration;
                 var frameDuration = event.data.sampleLength / 44100.0;
 
                 var peak = parseInt(parseInt(frequency.value) / (44100 / 2 / analyser.frequencyBinCount)) + 1;
@@ -44,29 +45,30 @@ start.addEventListener("click", async () => {
                 if (ditdah) { // TODO : need to determine gap after a few ditdah, not with single gap. Or, after enough gap arrived.
                     if (lastDitdah == false) {
                         if (gapAmount < minDitDuration) { // noise
-                            console.log("GAP NOISE, " + gapAmount);
-                        } else if (gapAmount < maxDitDuration) { // inter-letter
-                            console.log("INTER-LETTER GAP, " + gapAmount);
+                            //console.log("GAP NOISE, " + gapAmount);
+                        } else if (gapAmount < maxDitDuration) { // inter-dit-dah
+                            //console.log("INTER-DIT-DAH GAP, " + gapAmount);
                             gapAmount = 0;
                         } else {
-                            console.log("WORD GAP, " + gapAmount);
+                            //console.log("WORD GAP, " + gapAmount);
                             makeCharacter();
-                            //_log("   ");
+							if (hangul.checked == false && gapAmount > leterGapDuration) _log(" ");
                             gapAmount = 0;
                         }
                     }
                     ditdahAmount += frameDuration;
+					maxGapReached = false;
                     
                 } else {
                     if (lastDitdah == true) {
                         if (ditdahAmount < minDitDuration) { // noise
-                            console.log("DITDAH NOISE, " + ditdahAmount);
+                            //console.log("DITDAH NOISE, " + ditdahAmount);
                         } else if (ditdahAmount < maxDitDuration) { // dit
-                            console.log("DIT, " + ditdahAmount);
+                            //console.log("DIT, " + ditdahAmount);
                             if (hangul.checked == false) _log("·");
                             addToLetter(true);
                         } else { // dah
-                            console.log("DAH, " + ditdahAmount);
+                            //console.log("DAH, " + ditdahAmount);
                             if (hangul.checked == false) _log("―");
                             addToLetter(false);
                         }
@@ -75,11 +77,12 @@ start.addEventListener("click", async () => {
                     gapAmount += frameDuration;
 
                     // when enough gapAmount
-                    if (gapAmount > ditDuration * 7 * 2) { // 5 or 7
-                        console.log("MAX GAP, " + gapAmount);
+                    if (gapAmount > leterGapDuration * 2 && !maxGapReached) { // 5 or 7
+                        //console.log("MAX GAP, " + gapAmount);
                         makeCharacter();
-                        _log("   ");
+                        _log(" ");
                         gapAmount = 0;
+						maxGapReached = true;
                     }
                 }
                 lastDitdah = ditdah;
