@@ -37,10 +37,6 @@ start.addEventListener("click", async () => {
                 var maxDitDuration = ditDuration * 2.0;
 				var letterGapDuration = ditDuration * 7.0 - ditDuration;
                 var frameDuration = event.data.sampleLength / 44100.0;
-var curTime = Date.now();
-if (prevTime == 0) prevTime = curTime;
-console.log(frameDuration + ", " + ((curTime - prevTime) * 0.001));
-prevTime = curTime;
 
                 var peak = parseInt(parseInt(frequency.value) / (44100 / 2 / analyser.frequencyBinCount)) + 1;
                 var DITDAH_THRESHOLD = 256 * 0.8;
