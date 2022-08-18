@@ -156,7 +156,7 @@ function makeCharacter() {
                     } else {
                         var characters = Hangul.assemble(hangulLetters);
                         if (Hangul.isComplete(characters)) {
-                            _log2(character);
+                            _log2(characters);
                         } else {
                             _log2(previousLetter + previousLetter); // ㄲ, ㄸ, ㅃ, ㅆ, ㅉ, ㄸ
                         }
