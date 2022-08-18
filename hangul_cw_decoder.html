@@ -1,4 +1,5 @@
 
+
 <!DOCType HTML>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:fb="http://ogp.me/ns/fb#" manifest="cache.manifest">
 <head>
@@ -7,8 +8,9 @@
 <meta name=viewport content='width=900' />
 <title>한글 CW 수신기</title><script type="text/javascript">
 /*! hangul-js 2019-12-10 */
-!function(){"use strict";var r,d,g,l,t,e,h=["ㄱ",["ㄱ","ㄱ"],"ㄴ","ㄷ",["ㄷ","ㄷ"],"ㄹ","ㅁ","ㅂ",["ㅂ","ㅂ"],"ㅅ",["ㅅ","ㅅ"],"ㅇ","ㅈ",["ㅈ","ㅈ"],"ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"],p=["ㅏ","ㅐ","ㅑ",["ㅑ","ㅣ"],"ㅓ","ㅔ","ㅕ",["ㅕ","ㅣ"],"ㅗ",["ㅗ","ㅏ"],["ㅗ","ㅐ"],["ㅗ","ㅣ"],"ㅛ","ㅜ",["ㅜ","ㅓ"],["ㅜ","ㅔ"],["ㅜ","ㅣ"],"ㅠ","ㅡ",["ㅡ","ㅣ"],"ㅣ"],C=["","ㄱ",["ㄱ","ㄱ"],["ㄱ","ㅅ"],"ㄴ",["ㄴ","ㅈ"],["ㄴ","ㅎ"],"ㄷ","ㄹ",["ㄹ","ㄱ"],["ㄹ","ㅁ"],["ㄹ","ㅂ"],["ㄹ","ㅅ"],["ㄹ","ㅌ"],["ㄹ","ㅍ"],["ㄹ","ㅎ"],"ㅁ","ㅂ",["ㅂ","ㅅ"],"ㅅ",["ㅅ","ㅅ"],"ㅇ","ㅈ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"],A=44032;function n(n){for(var r=n.length,t={0:0},e=0;e<r;e++)n[e]&&(t[n[e].charCodeAt(0)]=e);return t}function o(n){for(var r,t,e=n.length,o={},i=0;i<e;i++)r=n[i][0].charCodeAt(0),t=n[i][1].charCodeAt(0),void 0===o[r]&&(o[r]={}),o[r][t]=n[i][2].charCodeAt(0);return o}function v(n){return void 0!==r[n]}function y(n){return void 0!==d[n]}function m(n){return void 0!==g[n]}function u(n){return void 0!==l[n]}function j(n){return 44032<=n&&n<=55203}function b(n,r){return!(!e[n]||!e[n][r])&&e[n][r]}function S(n,r){return!(!t[n]||!t[n][r])&&t[n][r]}r=n(["ㄱ","ㄲ","ㄳ","ㄴ","ㄵ","ㄶ","ㄷ","ㄸ","ㄹ","ㄺ","ㄻ","ㄼ","ㄽ","ㄾ","ㄿ","ㅀ","ㅁ","ㅂ","ㅃ","ㅄ","ㅅ","ㅆ","ㅇ","ㅈ","ㅉ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"]),d=n(["ㄱ","ㄲ","ㄴ","ㄷ","ㄸ","ㄹ","ㅁ","ㅂ","ㅃ","ㅅ","ㅆ","ㅇ","ㅈ","ㅉ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"]),g=n(["ㅏ","ㅐ","ㅑ","ㅒ","ㅓ","ㅔ","ㅕ","ㅖ","ㅗ","ㅘ","ㅙ","ㅚ","ㅛ","ㅜ","ㅝ","ㅞ","ㅟ","ㅠ","ㅡ","ㅢ","ㅣ"]),l=n(["","ㄱ","ㄲ","ㄳ","ㄴ","ㄵ","ㄶ","ㄷ","ㄹ","ㄺ","ㄻ","ㄼ","ㄽ","ㄾ","ㄿ","ㅀ","ㅁ","ㅂ","ㅄ","ㅅ","ㅆ","ㅇ","ㅈ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"]),t=o([["ㄱ","ㅅ","ㄳ"],["ㄴ","ㅈ","ㄵ"],["ㄴ","ㅎ","ㄶ"],["ㄹ","ㄱ","ㄺ"],["ㄹ","ㅁ","ㄻ"],["ㄹ","ㅂ","ㄼ"],["ㄹ","ㅅ","ㄽ"],["ㄹ","ㅌ","ㄾ"],["ㄹ","ㅍ","ㄿ"],["ㄹ","ㅎ","ㅀ"],["ㅂ","ㅅ","ㅄ"],["ㄱ","ㄱ","ㄲ"],["ㄷ","ㄷ","ㄸ"],["ㅂ","ㅂ","ㅃ"],["ㅅ","ㅅ","ㅆ"],["ㅈ","ㅈ","ㅉ"]]),e=o([["ㅗ","ㅏ","ㅘ"],["ㅗ","ㅐ","ㅙ"],["ㅗ","ㅣ","ㅚ"],["ㅜ","ㅓ","ㅝ"],["ㅜ","ㅔ","ㅞ"],["ㅜ","ㅣ","ㅟ"],["ㅡ","ㅣ","ㅢ"]]);function w(n,r){if(null===n)throw new Error("Arguments cannot be null");"object"==typeof n&&(n=n.join(""));for(var t,e,o,i,u,f=[],c=n.length,a=0;a<c;a++){var s=[];j(i=n.charCodeAt(a))?(e=((i-=A)-(o=i%28))/28%21,t=parseInt((i-o)/28/21),"object"==typeof h[t]?s=s.concat(h[t]):s.push(h[t]),"object"==typeof p[e]?s=s.concat(p[e]):s.push(p[e]),0<o&&("object"==typeof C[o]?s=s.concat(C[o]):s.push(C[o]))):v(i)?"string"==typeof(u=y(i)?h[d[i]]:C[l[i]])?s.push(u):s=s.concat(u):m(i)?"string"==typeof(u=p[g[i]])?s.push(u):s=s.concat(u):s.push(n.charAt(a)),r?f.push(s):f=f.concat(s)}return f}function i(n){return"string"!=typeof n?"":(n=w(n)).join("")}function f(c){"string"==typeof c&&(c=w(c));var n,r,a=[],t=c.length,e=0,s=-1,h=!1;function o(n){var r,t,e,o,i=0,u="";if(h=!1,!(n<s+1))for(var f=1;;f++){if(1===f){if(m(r=c[s+f].charCodeAt(0)))return s+f+1<=n&&m(t=c[s+f+1].charCodeAt(0))?a.push(String.fromCharCode(b(r,t))):a.push(c[s+f]),void(s=n);if(!y(r))return a.push(c[s+f]),void(s=n);u=c[s+f]}else if(2===f){if(y(t=c[s+f].charCodeAt(0)))return r=S(r,t),u=String.fromCharCode(r),a.push(u),void(s=n);u=String.fromCharCode(28*(21*d[r]+g[t])+A)}else 3===f?(b(t,e=c[s+f].charCodeAt(0))?t=b(t,e):i=e,u=String.fromCharCode(28*(21*d[r]+g[t])+l[i]+A)):4===f?(i=S(i,o=c[s+f].charCodeAt(0))?S(i,o):o,u=String.fromCharCode(28*(21*d[r]+g[t])+l[i]+A)):5===f&&(i=S(i,o=c[s+f].charCodeAt(0)),u=String.fromCharCode(28*(21*d[r]+g[t])+l[i]+A));if(n<=s+f)return a.push(u),void(s=n)}}for(var i=0;i<t;i++)y(n=c[i].charCodeAt(0))||m(n)||u(n)?(0===e?y(n)?e=1:m(n)&&(e=4):1==e?m(n)?e=2:S(r,n)?e=5:o(i-1):2==e?u(n)?e=3:m(n)?b(r,n)||(o(i-1),e=4):(o(i-1),e=1):3==e?u(n)?!h&&S(r,n)?h=!0:(o(i-1),e=1):y(n)?(o(i-1),e=1):m(n)&&(o(i-2),e=2):4==e?m(n)?b(r,n)?(o(i),e=0):o(i-1):(o(i-1),e=1):5==e&&(e=m(n)?(o(i-2),2):(o(i-1),1)),r=n):(o(i-1),o(i),e=0);return o(i-1),a.join("")}function c(n){this.string=n,this.disassembled=w(n).join("")}c.prototype.search=function(n){return w(n).join("").indexOf(this.disassembled)};var a={disassemble:w,d:w,disassembleToString:i,ds:i,assemble:f,a:f,search:function(n,r){var t=w(n).join(""),e=w(r).join("");return t.indexOf(e)},rangeSearch:function(n,r){var t,e=w(n).join(""),o=w(r).join(""),i=w(n,!0),u=new RegExp(o,"gi"),f=[];if(!r.length)return[];for(;t=u.exec(e);)f.push(t.index);return f.map(function(n){return[function(n){for(var r=0,t=0;r<i.length;++r)if(n<(t+=i[r].length))return r}(n),function(n){for(var r=0,t=0;r<i.length;++r)if(t+=i[r].length,n+o.length<=t)return r}(n)]})},Searcher:c,endsWithConsonant:function(n){"object"==typeof n&&(n=n.join(""));var r=n.charCodeAt(n.length-1);if(j(r)){if(0<(r-=A)%28)return!0}else if(v(r))return!0;return!1},endsWith:function(n,r){return w(n).pop()===r},isHangul:function(n){return"string"==typeof n&&(n=n.charCodeAt(0)),j(n)},isComplete:function(n){return"string"==typeof n&&(n=n.charCodeAt(0)),j(n)},isConsonant:function(n){return"string"==typeof n&&(n=n.charCodeAt(0)),v(n)},isVowel:function(n){return"string"==typeof n&&(n=n.charCodeAt(0)),m(n)},isCho:function(n){return"string"==typeof n&&(n=n.charCodeAt(0)),y(n)},isJong:function(n){return"string"==typeof n&&(n=n.charCodeAt(0)),u(n)},isHangulAll:function(n){if("string"!=typeof n)return!1;for(var r=0;r<n.length;r++)if(!j(n.charCodeAt(r)))return!1;return!0},isCompleteAll:function(n){if("string"!=typeof n)return!1;for(var r=0;r<n.length;r++)if(!j(n.charCodeAt(r)))return!1;return!0},isConsonantAll:function(n){if("string"!=typeof n)return!1;for(var r=0;r<n.length;r++)if(!v(n.charCodeAt(r)))return!1;return!0},isVowelAll:function(n){if("string"!=typeof n)return!1;for(var r=0;r<n.length;r++)if(!m(n.charCodeAt(r)))return!1;return!0},isChoAll:function(n){if("string"!=typeof n)return!1;for(var r=0;r<n.length;r++)if(!y(n.charCodeAt(r)))return!1;return!0},isJongAll:function(n){if("string"!=typeof n)return!1;for(var r=0;r<n.length;r++)if(!u(n.charCodeAt(r)))return!1;return!0}};"function"==typeof define&&define.amd?define(function(){return a}):"undefined"!=typeof module?module.exports=a:window.Hangul=a}();
+//!function(){"use strict";var r,d,g,l,t,e,h=["ㄱ",["ㄱ","ㄱ"],"ㄴ","ㄷ",["ㄷ","ㄷ"],"ㄹ","ㅁ","ㅂ",["ㅂ","ㅂ"],"ㅅ",["ㅅ","ㅅ"],"ㅇ","ㅈ",["ㅈ","ㅈ"],"ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"],p=["ㅏ","ㅐ","ㅑ",["ㅑ","ㅣ"],"ㅓ","ㅔ","ㅕ",["ㅕ","ㅣ"],"ㅗ",["ㅗ","ㅏ"],["ㅗ","ㅐ"],["ㅗ","ㅣ"],"ㅛ","ㅜ",["ㅜ","ㅓ"],["ㅜ","ㅔ"],["ㅜ","ㅣ"],"ㅠ","ㅡ",["ㅡ","ㅣ"],"ㅣ"],C=["","ㄱ",["ㄱ","ㄱ"],["ㄱ","ㅅ"],"ㄴ",["ㄴ","ㅈ"],["ㄴ","ㅎ"],"ㄷ","ㄹ",["ㄹ","ㄱ"],["ㄹ","ㅁ"],["ㄹ","ㅂ"],["ㄹ","ㅅ"],["ㄹ","ㅌ"],["ㄹ","ㅍ"],["ㄹ","ㅎ"],"ㅁ","ㅂ",["ㅂ","ㅅ"],"ㅅ",["ㅅ","ㅅ"],"ㅇ","ㅈ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"],A=44032;function n(n){for(var r=n.length,t={0:0},e=0;e<r;e++)n[e]&&(t[n[e].charCodeAt(0)]=e);return t}function o(n){for(var r,t,e=n.length,o={},i=0;i<e;i++)r=n[i][0].charCodeAt(0),t=n[i][1].charCodeAt(0),void 0===o[r]&&(o[r]={}),o[r][t]=n[i][2].charCodeAt(0);return o}function v(n){return void 0!==r[n]}function y(n){return void 0!==d[n]}function m(n){return void 0!==g[n]}function u(n){return void 0!==l[n]}function j(n){return 44032<=n&&n<=55203}function b(n,r){return!(!e[n]||!e[n][r])&&e[n][r]}function S(n,r){return!(!t[n]||!t[n][r])&&t[n][r]}r=n(["ㄱ","ㄲ","ㄳ","ㄴ","ㄵ","ㄶ","ㄷ","ㄸ","ㄹ","ㄺ","ㄻ","ㄼ","ㄽ","ㄾ","ㄿ","ㅀ","ㅁ","ㅂ","ㅃ","ㅄ","ㅅ","ㅆ","ㅇ","ㅈ","ㅉ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"]),d=n(["ㄱ","ㄲ","ㄴ","ㄷ","ㄸ","ㄹ","ㅁ","ㅂ","ㅃ","ㅅ","ㅆ","ㅇ","ㅈ","ㅉ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"]),g=n(["ㅏ","ㅐ","ㅑ","ㅒ","ㅓ","ㅔ","ㅕ","ㅖ","ㅗ","ㅘ","ㅙ","ㅚ","ㅛ","ㅜ","ㅝ","ㅞ","ㅟ","ㅠ","ㅡ","ㅢ","ㅣ"]),l=n(["","ㄱ","ㄲ","ㄳ","ㄴ","ㄵ","ㄶ","ㄷ","ㄹ","ㄺ","ㄻ","ㄼ","ㄽ","ㄾ","ㄿ","ㅀ","ㅁ","ㅂ","ㅄ","ㅅ","ㅆ","ㅇ","ㅈ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"]),t=o([["ㄱ","ㅅ","ㄳ"],["ㄴ","ㅈ","ㄵ"],["ㄴ","ㅎ","ㄶ"],["ㄹ","ㄱ","ㄺ"],["ㄹ","ㅁ","ㄻ"],["ㄹ","ㅂ","ㄼ"],["ㄹ","ㅅ","ㄽ"],["ㄹ","ㅌ","ㄾ"],["ㄹ","ㅍ","ㄿ"],["ㄹ","ㅎ","ㅀ"],["ㅂ","ㅅ","ㅄ"],["ㄱ","ㄱ","ㄲ"],["ㄷ","ㄷ","ㄸ"],["ㅂ","ㅂ","ㅃ"],["ㅅ","ㅅ","ㅆ"],["ㅈ","ㅈ","ㅉ"]]),e=o([["ㅗ","ㅏ","ㅘ"],["ㅗ","ㅐ","ㅙ"],["ㅗ","ㅣ","ㅚ"],["ㅜ","ㅓ","ㅝ"],["ㅜ","ㅔ","ㅞ"],["ㅜ","ㅣ","ㅟ"],["ㅡ","ㅣ","ㅢ"]]);function w(n,r){if(null===n)throw new Error("Arguments cannot be null");"object"==typeof n&&(n=n.join(""));for(var t,e,o,i,u,f=[],c=n.length,a=0;a<c;a++){var s=[];j(i=n.charCodeAt(a))?(e=((i-=A)-(o=i%28))/28%21,t=parseInt((i-o)/28/21),"object"==typeof h[t]?s=s.concat(h[t]):s.push(h[t]),"object"==typeof p[e]?s=s.concat(p[e]):s.push(p[e]),0<o&&("object"==typeof C[o]?s=s.concat(C[o]):s.push(C[o]))):v(i)?"string"==typeof(u=y(i)?h[d[i]]:C[l[i]])?s.push(u):s=s.concat(u):m(i)?"string"==typeof(u=p[g[i]])?s.push(u):s=s.concat(u):s.push(n.charAt(a)),r?f.push(s):f=f.concat(s)}return f}function i(n){return"string"!=typeof n?"":(n=w(n)).join("")}function f(c){"string"==typeof c&&(c=w(c));var n,r,a=[],t=c.length,e=0,s=-1,h=!1;function o(n){var r,t,e,o,i=0,u="";if(h=!1,!(n<s+1))for(var f=1;;f++){if(1===f){if(m(r=c[s+f].charCodeAt(0)))return s+f+1<=n&&m(t=c[s+f+1].charCodeAt(0))?a.push(String.fromCharCode(b(r,t))):a.push(c[s+f]),void(s=n);if(!y(r))return a.push(c[s+f]),void(s=n);u=c[s+f]}else if(2===f){if(y(t=c[s+f].charCodeAt(0)))return r=S(r,t),u=String.fromCharCode(r),a.push(u),void(s=n);u=String.fromCharCode(28*(21*d[r]+g[t])+A)}else 3===f?(b(t,e=c[s+f].charCodeAt(0))?t=b(t,e):i=e,u=String.fromCharCode(28*(21*d[r]+g[t])+l[i]+A)):4===f?(i=S(i,o=c[s+f].charCodeAt(0))?S(i,o):o,u=String.fromCharCode(28*(21*d[r]+g[t])+l[i]+A)):5===f&&(i=S(i,o=c[s+f].charCodeAt(0)),u=String.fromCharCode(28*(21*d[r]+g[t])+l[i]+A));if(n<=s+f)return a.push(u),void(s=n)}}for(var i=0;i<t;i++)y(n=c[i].charCodeAt(0))||m(n)||u(n)?(0===e?y(n)?e=1:m(n)&&(e=4):1==e?m(n)?e=2:S(r,n)?e=5:o(i-1):2==e?u(n)?e=3:m(n)?b(r,n)||(o(i-1),e=4):(o(i-1),e=1):3==e?u(n)?!h&&S(r,n)?h=!0:(o(i-1),e=1):y(n)?(o(i-1),e=1):m(n)&&(o(i-2),e=2):4==e?m(n)?b(r,n)?(o(i),e=0):o(i-1):(o(i-1),e=1):5==e&&(e=m(n)?(o(i-2),2):(o(i-1),1)),r=n):(o(i-1),o(i),e=0);return o(i-1),a.join("")}function c(n){this.string=n,this.disassembled=w(n).join("")}c.prototype.search=function(n){return w(n).join("").indexOf(this.disassembled)};var a={disassemble:w,d:w,disassembleToString:i,ds:i,assemble:f,a:f,search:function(n,r){var t=w(n).join(""),e=w(r).join("");return t.indexOf(e)},rangeSearch:function(n,r){var t,e=w(n).join(""),o=w(r).join(""),i=w(n,!0),u=new RegExp(o,"gi"),f=[];if(!r.length)return[];for(;t=u.exec(e);)f.push(t.index);return f.map(function(n){return[function(n){for(var r=0,t=0;r<i.length;++r)if(n<(t+=i[r].length))return r}(n),function(n){for(var r=0,t=0;r<i.length;++r)if(t+=i[r].length,n+o.length<=t)return r}(n)]})},Searcher:c,endsWithConsonant:function(n){"object"==typeof n&&(n=n.join(""));var r=n.charCodeAt(n.length-1);if(j(r)){if(0<(r-=A)%28)return!0}else if(v(r))return!0;return!1},endsWith:function(n,r){return w(n).pop()===r},isHangul:function(n){return"string"==typeof n&&(n=n.charCodeAt(0)),j(n)},isComplete:function(n){return"string"==typeof n&&(n=n.charCodeAt(0)),j(n)},isConsonant:function(n){return"string"==typeof n&&(n=n.charCodeAt(0)),v(n)},isVowel:function(n){return"string"==typeof n&&(n=n.charCodeAt(0)),m(n)},isCho:function(n){return"string"==typeof n&&(n=n.charCodeAt(0)),y(n)},isJong:function(n){return"string"==typeof n&&(n=n.charCodeAt(0)),u(n)},isHangulAll:function(n){if("string"!=typeof n)return!1;for(var r=0;r<n.length;r++)if(!j(n.charCodeAt(r)))return!1;return!0},isCompleteAll:function(n){if("string"!=typeof n)return!1;for(var r=0;r<n.length;r++)if(!j(n.charCodeAt(r)))return!1;return!0},isConsonantAll:function(n){if("string"!=typeof n)return!1;for(var r=0;r<n.length;r++)if(!v(n.charCodeAt(r)))return!1;return!0},isVowelAll:function(n){if("string"!=typeof n)return!1;for(var r=0;r<n.length;r++)if(!m(n.charCodeAt(r)))return!1;return!0},isChoAll:function(n){if("string"!=typeof n)return!1;for(var r=0;r<n.length;r++)if(!y(n.charCodeAt(r)))return!1;return!0},isJongAll:function(n){if("string"!=typeof n)return!1;for(var r=0;r<n.length;r++)if(!u(n.charCodeAt(r)))return!1;return!0}};"function"==typeof define&&define.amd?define(function(){return a}):"undefined"!=typeof module?module.exports=a:window.Hangul=a}();
 </script>
+<script src="hangul_for_cw.js"></script>
 <style>
 body {
     background-color: white ;
@@ -84,7 +86,18 @@ textarea {
     font-size : medium;
 }
 #log {
-    font-weight : bold;
+    width : 100%;
+    height : 16em;
+    overflow-y: auto;
+    padding: 10px;
+    border: 1px solid lightsalmon;
+    transition: box-shadow 0.3s;
+    background: lightyellow;
+    border-radius: 5px;
+    color: black;
+    font-family: 'Helvetica', 'sans serif';
+    font-size: x-large;
+    line-height: 1.5;
 }
 .font_x-large {
     font-size : x-large;
@@ -112,16 +125,347 @@ Speed : <input type="number" id="speed" value="20" size="2" min="5" max="50" />w
 <button id="start">START</button>
 <button id="stop">STOP</button>
 </p>
-<h3>Dit Dah Log</h3>
 <p class="font_x-large" id="log"></p>
+<p class="font_medium" id="log1"></p>
 <p class="font_medium">
 <h3>Change Log</h3>
-2022.08.17. First version of Hangul CW Decoder.<br />
+2022.08.19. First version of Hangul CW Decoder.<br />
 </p>
 </div>
 </body>
-<script  src="decoder.js"></script>
-<script>
+<script type="text/javascript">
+
+MORSE = {
+    ".-": "A",
+    "-...": "B",
+    "-.-.": "C",
+    "-..": "D",
+    ".": "E",
+    "..-.": "F",
+    "--.": "G",
+    "....": "H",
+    "..": "I",
+    ".---": "J",
+    "-.-": "K",
+    ".-..": "L",
+    "--": "M",
+    "-.": "N",
+    "---": "O",
+    ".--.": "P",
+    "--.-": "Q",
+    ".-.": "R",
+    "...": "S",
+    "-": "T",
+    "..-": "U",
+    "...-": "V",
+    ".--": "W",
+    "-..-": "X",
+    "-.--": "Y",
+    "--..": "Z",
+     
+    ".----": "1",
+    "..---": "2",
+    "...--": "3",
+    "....-": "4",
+    ".....": "5",
+    "-....": "6",
+    "--...": "7",
+    "---..": "8",
+    "----.": "9",
+    "-----": "0",
+     
+    ".-.-.-": ".",
+    "--..--": ",",
+    "..--..": "?",
+    "-..-.": "/",
+    ".-.-.": "+",
+    "-....-": "-",
+    "-...-": "=",
+    "---...": ":",
+    "-.-.-.": ";",
+    "-.--.": "(",
+    "-.--.-": ")",
+    ".----.": "'",
+    ".-..-.": "\"",
+    ".--.-.": "@",
+     
+    // for prosign
+    ".-...": "&",
+    "...-.": "Ŝ",
+    // non-standard
+    "-...-.-": "[",
+    "...-.-": "]",
+    "-.-.-": "^"
+};
+
+HANGUL = {
+    ".-..": "ㄱ",
+    "..-.": "ㄴ",
+    "-...": "ㄷ",
+    "...-": "ㄹ",
+    "--": "ㅁ",
+    ".--": "ㅂ",
+    "--.": "ㅅ",
+    "-.-": "ㅇ",
+    ".--.": "ㅈ",
+    "-.-.": "ㅊ",
+    "-..-": "ㅋ",
+    "--..": "ㅌ",
+    "---": "ㅍ",
+    ".---": "ㅎ",
+    ".": "ㅏ",
+    "..": "ㅑ",
+    "-": "ㅓ",
+    "...": "ㅕ",
+    ".-": "ㅗ",
+    "-.": "ㅛ",
+    "....": "ㅜ",
+    ".-.": "ㅠ",
+    "-..": "ㅡ",
+    "..-": "ㅣ",
+    "-.--": "ㅔ",
+    "--.-": "ㅐ"
+};
+
+PROSIGN = {
+    "+": "<AR>",
+    "(": "<KN>",
+    "&": "<AS>",
+    "=": "<BT>",
+    "Ŝ": "<SN>",
+    // non-standard
+    "[": "<BK>",
+    "]": "<SK>",
+    "]": "<VA>",
+    "^": "<KA>"
+};
+var initialized = false, ac, analyser, lastDitdah = false, ditdahAmount = 0, gapAmount = 0, maxGapReached = false, binCount = 256;
+
+var freq = document.querySelector("#freq");
+var wpm = document.querySelector("#speed");
+var hangul = document.querySelector("#hangul");
+var start = document.querySelector("#start");
+var stop = document.querySelector("#stop");
+
+start.addEventListener("click", async () => {
+    stop.click();
+
+    if (!initialized) { 
+        ac = new AudioContext();
+
+        var constraints = { audio: true, video: false };
+        navigator.mediaDevices.getUserMedia(constraints).then(async (stream) => {
+            var input = ac.createMediaStreamSource(stream);
+            //input.connect(ac.destination);
+
+            var gain = ac.createGain();
+            input.connect(gain);
+
+            analyser = ac.createAnalyser();
+            analyser.minDecibels = -40;
+            analyser.maxDecibels = -30;
+            analyser.smoothingTymeConstant = 0;
+            analyser.fftSize = 512;
+            binCount = analyser.frequencyBinCount;
+            gain.connect(analyser);
+            //analyser.connect(ac.destination); // important! this should be commented out
+            ac.resume();
+
+            processMorse();
+        });
+        initialized = true;
+    } else {
+        processMorse();
+    }
+}, false);
+
+var buffer = null, ditDuration, minDitDuration, maxDitDuration, letterGapDuration, peak, prevTime = 0, timerId;
+var DITDAH_THRESHOLD = 256 * 0.95;
+var firstDitDahStarted = false;
+function processMorse() {
+    if (buffer == null) buffer = new Uint8Array(binCount);
+    ditDuration = 1.2 / parseInt(wpm.value); // from wikipedia
+    minDitDuration = ditDuration * 0.5;
+    maxDitDuration = ditDuration * 2.0;
+    letterGapDuration = ditDuration * 7.0 - ditDuration;
+    peak = parseInt(parseInt(freq.value) / (44100 / 2 / binCount)) + 1;
+
+    analyser.getByteFrequencyData(buffer);
+    var curTime = performance.now();
+    if (prevTime == 0) prevTime = curTime;
+    var frameDuration = (curTime - prevTime) * 0.001;
+    prevTime = curTime;
+
+    var ditdah = buffer[peak] > DITDAH_THRESHOLD;// && (buffer[peak-1] > DITDAH_THRESHOLD && buffer[peak+1] > DITDAH_THRESHOLD);
+    //console.log("ditdah : " + ditdah + ", peak index : " + peak + ", peak - 1 : " + buffer[peak - 1] + ", peak : " + buffer[peak] + ", peak + 1 : " + buffer[peak + 1]);
+    //if (firstDitDahStarted) _log1(ditdah ? "+" : "-");
+    //else if (ditdah) {firstDitDahStarted = true; _log1(ditdah ? "+" : "-");}
+    if (ditdah) { // TODO : need to determine gap after a few ditdah, not with single gap. Or, after enough gap arrived.
+        
+        if (lastDitdah == false) {
+            if (gapAmount < minDitDuration) { // noise
+                //console.log("GAP NOISE, " + gapAmount);
+            } else if (gapAmount < maxDitDuration) { // inter-dit-dah
+                //console.log("INTER-DIT-DAH GAP, " + gapAmount);
+                gapAmount = 0;
+            } else {
+                //console.log("WORD GAP, " + gapAmount);
+                makeCharacter(hangul.checked);
+                if (hangul.checked == false && gapAmount > letterGapDuration) _log(" ");
+                gapAmount = 0;
+            }
+        }
+        ditdahAmount += frameDuration;
+        maxGapReached = false;
+        
+    } else {
+        if (lastDitdah == true) {
+            if (ditdahAmount < minDitDuration) { // noise
+                //console.log("DITDAH NOISE, " + ditdahAmount);
+            } else if (ditdahAmount < maxDitDuration) { // dit
+                //console.log("DIT, " + ditdahAmount);
+                //if (hangul.checked == false) _log("·");
+                addToLetter(true);
+            } else { // dah
+                //console.log("DAH, " + ditdahAmount);
+                //if (hangul.checked == false) _log("―");
+                addToLetter(false);
+            }
+        }
+        ditdahAmount = 0;
+        gapAmount += frameDuration;
+
+        // when enough gapAmount
+        if (gapAmount > letterGapDuration * 2 && !maxGapReached) { // 5 or 7
+            //console.log("MAX GAP, " + gapAmount);
+            makeCharacter(hangul.checked);
+            flushCharacter(hangul.checked);
+            _logln(" ");
+            gapAmount = 0;
+            maxGapReached = true;
+        }
+    }
+    lastDitdah = ditdah;
+    
+    timerId = setTimeout(processMorse);
+}
+
+var ditdahs = "";
+var hangulLetters = [];
+var previousLetter = "";
+function addToLetter(ditdah) { // ditdat - dit:true, dah:false
+    ditdahs += (ditdah ? "." : "-");
+}
+var HANGUL2ALPHABET = null;
+function hangulToAlphabet(letter) {
+    if (HANGUL2ALPHABET == null) {
+        HANGUL2ALPHABET = {};
+        for (var key in HANGUL) {
+            HANGUL2ALPHABET[HANGUL[key]] = MORSE[key];
+        }
+    }
+    return HANGUL2ALPHABET[letter];
+}
+function flushCharacter(makeHangul) {
+    if (makeHangul && hangulLetters.length > 0) {
+        var characters = Hangul.assemble(hangulLetters);
+        if (characters.length == 1) {
+            if (Hangul.isComplete(characters)) _log2(characters);
+            else {
+                var s = "";
+                for (var value of hangulLetters) s += hangulToAlphabet(value);
+                _log2(s);
+            }
+        } else { // characters.length == 2
+            _log2(characters.charAt(0));
+            if (Hangul.isComplete(characters.charAt(1))) _log(characters.charAt(1));
+            else {
+                var s = "";
+                for (var value of Hangul.disassemble(characters.charAt(1))) s += hangulToAlphabet(value);
+                _log(s);
+            }
+        }
+        hangulLetters = [];
+    }
+    previousLetter = "";
+}
+function makeCharacter(makeHangul) {
+    if ("undefined" != typeof MORSE[ditdahs]) {
+        var letter = MORSE[ditdahs];
+        if ("undefined" != typeof PROSIGN[letter]) {
+            flushCharacter(makeHangul);
+            _log(PROSIGN[letter]);
+        } else {
+            if (makeHangul) {
+                if (hangulLetters.length == 0) {
+                    _log(letter);
+                    if ("undefined" != typeof HANGUL[ditdahs]) {
+                        hangulLetters.push(HANGUL[ditdahs]);
+                    }
+                } else if (hangulLetters.length == 1) { // with current letter, 2 letters
+                    if ("undefined" != typeof HANGUL[ditdahs]) {
+                        hangulLetters.push(HANGUL[ditdahs]);
+                        var characters = Hangul.assemble(hangulLetters);
+                        if (characters.length == 1) {
+                            _log2(characters);
+                        } else {
+                            hangulLetters.shift();
+                            _log(letter);
+                        }
+                    } else {
+                        hangulLetters.shift();
+                        _log(letter);
+                    }
+                } else { // with current letter, 3 letters or more
+                    if ("undefined" != typeof HANGUL[ditdahs]) {
+                        hangulLetters.push(HANGUL[ditdahs]);
+                        var characters = Hangul.assemble(hangulLetters);
+                        if (characters.length == 1) {
+                            _log2(characters);
+                        } else { // characters.length == 2
+                            _log2(characters.charAt(0));
+                            var hangulCharacters = Hangul.disassemble(characters, true);
+                            hangulLetters = hangulCharacters[1];
+                            _log(characters.charAt(1));
+                        }
+                    } else {
+                        var characters = Hangul.assemble(hangulLetters);
+                        if (characters.length == 1) {
+                            if (Hangul.isComplete(characters)) _log2(characters);
+                            else {
+                                var s = "";
+                                for (var value of hangulLetters) s += hangulToAlphabet(value);
+                                _log2(s);
+                            }
+                        } else { // characters.length == 2
+                            _log2(characters.charAt(0));
+                            if (Hangul.isComplete(characters.charAt(1))) _log(characters.charAt(1));
+                            else {
+                                var s = "";
+                                for (var value of Hangul.disassemble(characters.charAt(1))) s += hangulToAlphabet(value);
+                                _log(s);
+                            }
+                        }
+                        hangulLetters = [];
+                        _log(letter);
+                    }
+                }
+            } else {
+                _log(letter);
+            }
+        }
+        previousLetter = letter;
+    }
+    
+    ditdahs = "";
+}
+
+stop.onclick = function() {
+    try { clearTimeout(timerId); }
+    catch (e) {}
+}
+
+
 var log = document.querySelector("#log");
 var textNode = null;
 function _log(s) {
@@ -132,6 +476,33 @@ function _log2(s) {
     if (textNode) textNode.textContent = s;
     else _log(s);
 }
+function _logln(s) {
+    var el = document.createElement("DIV");
+    log.appendChild(el);
+    var tn = document.createTextNode(s);
+    el.appendChild(tn);
+}
+var log1 = document.querySelector("#log1");
+function _log1(s) {
+    log1.appendChild(document.createTextNode(s));
+}
+freq.onchange = function() {
+    window.localStorage.setItem('freq', freq.value);
+}
+wpm.onchange = function() {
+    window.localStorage.setItem('wpm', wpm.value);
+}
+hangul.onchange = function() {
+    window.localStorage.setItem('hangul', hangul.checked);
+}
+window.addEventListener('DOMContentLoaded', function() {
+    try {
+        if (window.localStorage.getItem('freq')) freq.value = parseInt(window.localStorage.getItem('freq'));
+        if (window.localStorage.getItem('wpm')) wpm.value = parseInt(window.localStorage.getItem('wpm'));
+        if (window.localStorage.getItem('hangul')) hangul.checked = window.localStorage.getItem('hangul') == 'true';
+    } catch (e) {
+    }
+}, true);
 </script>
 
 </html>
