@@ -193,7 +193,8 @@ MORSE = {
     // non-standard
     "-...-.-": "[",
     "...-.-": "]",
-    "-.-.-": "^"
+    "-.-.-": "^",
+    "........": "※"
 };
 
 HANGUL = {
@@ -235,7 +236,8 @@ PROSIGN = {
     "[": "<BK>",
     "]": "<SK>",
     "]": "<VA>",
-    "^": "<KA>"
+    "^": "<KA>",
+    "※": "<HH>"
 };
 var initialized = false, ac, analyser, lastDitdah = false, ditdahAmount = 0, gapAmount = 0, maxGapReached = false, binCount = 256;
 
