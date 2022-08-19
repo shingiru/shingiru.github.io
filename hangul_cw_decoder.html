@@ -96,28 +96,30 @@ textarea {
 }
 .log_container_ditdah {
     width : 100%;
-    height : 5em;
-    overflow-y: auto;
+    height : 16px;
+    overflow: hidden;
     padding: 10px;
     border: 1px solid lightsalmon;
     transition: box-shadow 0.3s;
-    background: white;
+    background: lightyellow;
     border-radius: 5px;
     color: black;
     font-family: 'monospace';
     font-size: small;
     display: none;
+	white-space: nowrap;
+}
+#log1 {
+    height:10px;
+	float: right;
 }
 .ditdah_bar {
-    background: lightgreen;
+    background: green;
     height: 10px;
-    margin-bottom: 5px;
     display: inline-block;
 }
 .ditdah_gap {
-    background: white;
     height: 10px;
-    margin-bottom: 5px;
     display: inline-block;
 }
 .font_x-large {
@@ -141,16 +143,27 @@ Frequency : <input type="number" id="freq" value="600" step="10" size="4" min="2
 &nbsp;
 Speed : <input type="number" id="speed" value="20" size="2" min="5" max="50" />wpm
 &nbsp;
-MIC Gain : <input type="number" id="mic" value="100" size="3" min="10" max="100" step="10" />%
+Mic Gain : <input type="number" id="mic" value="100" size="3" min="5" max="100" step="5" />%
 &nbsp;
 <label><input type="checkbox" id="hangul" /> Hangul</label>
 <label><input type="checkbox" id="debug" /> DitDah Bar</label>
 <span class="prevent_wrap">
 <button id="start">START</button>
 <button id="stop">STOP</button>
+</span>
+<br />
 </p>
+<p class="log_container_ditdah"><span id="log1"></span></p>
 <p class="log_container"><span id="log"></span></p>
-<p class="log_container_ditdah"><span id="log1"></span><br /><span id="log2"></span></p>
+<div>
+	<h4>[IMPORTANT] Setting Guide.</h4>
+	1. Check and open DitDah Bar first. It helps setting process.<br />
+	2. Set target speed ±5wpm.<br />
+	3. Set target frequency ±50Hz.<br />
+	4. Set Mic Gain properly. Too high or too low value is not good. When matched, you can see some stick graph pops up in DitDah Bar area.<br />
+	5. Repeat step 3 & 4 until you can see the stick perfectly matched to signal sound. Focus on the DitDah sticks' length and gap between them.<br />
+	※ When settings are perfect, it can decode over 30wpm signal.
+</div>
 <p>
     <h3>Intro.</h3><br />
     안녕하세요. DS1TZE 입니다.<br /><br />
@@ -161,7 +174,7 @@ MIC Gain : <input type="number" id="mic" value="100" size="3" min="10" max="100"
     <br />
     <br />
     
-    <h3>Links</h3><br />
+    <h3>Links</h3>
 	Hangul CW Trainer - <a href="hangul_cw_trainer.html" target="_blank">http://shingiru.github.io/hangul_cw_trainer.html</a><br />
     위 라이브러리가 사용하는 기술인 Web Audio API - <a href="https://webaudio.github.io/web-audio-api/" target="_blank">https://webaudio.github.io/web-audio-api/<a/><br />
     한글 자모 합성 Javascipt 라이브러리* - <a href="https://github.com/e-/Hangul.js/" target="_blank">https://github.com/e-/Hangul.js/</a><br />
@@ -179,6 +192,7 @@ MIC Gain : <input type="number" id="mic" value="100" size="3" min="10" max="100"
 <p class="font_medium">
 <h3>Change Log</h3>
 2022.08.19. First version of Hangul CW Decoder.<br />
+2022.08.20. DitDah Bar and Setting Guide added.<br />
 </p>
 </div>
 </body>
@@ -316,10 +330,11 @@ start.addEventListener("click", async () => {
             input.connect(gain);
 
             analyser = ac.createAnalyser();
-            //analyser.minDecibels = -90;
-            //analyser.maxDecibels = -30;
-            analyser.smoothingTymeConstant = 0.1;//0.85; // when THRESHOLD is hight, this value is not important
+            analyser.minDecibels = -90;
+            analyser.maxDecibels = -30;
+            analyser.smoothingTymeConstant = 0; // when THRESHOLD is hight, this value is not important
             //analyser.fftSize = 512;
+			analyser.fftSize = 1024;
             binCount = analyser.frequencyBinCount;
             gain.connect(analyser);
             //analyser.connect(ac.destination); // important! this should be commented out
@@ -350,15 +365,15 @@ function agc(target, gap) {
 }
 
 var buffer = null, ditDuration, minDitDuration, maxDitDuration, letterGapDuration, peak, prevTime = 0, timerId;
-var DITDAH_THRESHOLD = 254;//parseInt(256 * 0.95);
+var DITDAH_THRESHOLD = parseInt(256 * 0.98);
 var firstDitDahStarted = false;
 function processMorse() {
     if (buffer == null) buffer = new Uint8Array(binCount);
     ditDuration = parseInt(1.2 / parseInt(wpm.value) * 1000); // from wikipedia
-    minDitDuration = parseInt(ditDuration * 0.25);
+    minDitDuration = parseInt(ditDuration * 0.1);
     maxDitDuration = parseInt(ditDuration * 2.0);
     letterGapDuration = ditDuration * 6;
-    peak = parseInt(parseInt(freq.value) / (44100 / 2 / binCount)) + 1;
+    peak = parseInt(parseInt(freq.value) / (44100 / 2 / binCount)) - 1;
 
     analyser.getByteFrequencyData(buffer);
     var curTime = performance.now();
@@ -369,7 +384,7 @@ function processMorse() {
     var ditdah = (buffer[peak] > DITDAH_THRESHOLD || buffer[peak-1] > DITDAH_THRESHOLD || buffer[peak+1] > DITDAH_THRESHOLD);
     //console.log("ditdah : " + ditdah + ", peak index : " + peak + ", peak - 1 : " + buffer[peak - 1] + ", peak : " + buffer[peak] + ", peak + 1 : " + buffer[peak + 1]);
     //if (buffer[peak] > 0) console.log("ditdah : " + (ditdah ? 1 : 0) + ", peak index : " + peak + ", peak : " + buffer[peak] + ", frameDuration : " + frameDuration);
-    if (debug.checked && buffer[peak] > 0) _log1(ditdah, parseInt(frameDuration*0.5));
+    if (debug.checked && buffer[peak] > 0) _log1(ditdah, frameDuration);
     
     if (ditdah) { // TODO : need to determine gap after a few ditdah, not with single gap. Or, after enough gap arrived.
         
@@ -399,11 +414,11 @@ function processMorse() {
                 if (debug.checked) console.log("DITDAH NOISE, " + ditdahAmount);
             } else if (ditdahAmount < maxDitDuration) { // dit
                 if (debug.checked) console.log("DIT, " + ditdahAmount);
-                if (debug.checked && hangul.checked == false) _log("·");
+                //if (debug.checked && hangul.checked == false) _log("·");
                 addToLetter(true);
             } else { // dah
                 if (debug.checked) console.log("DAH, " + ditdahAmount);
-                if (debug.checked && hangul.checked == false) _log("-");
+                //if (debug.checked && hangul.checked == false) _log("-");
                 addToLetter(false);
             }
         }
@@ -561,15 +576,21 @@ function _logln(s) {
     el.appendChild(tn);
 }
 var log1 = document.querySelector("#log1");
-var log2 = document.querySelector("#log2");
+var last = false, lastWidth = 0;
 function _log1(ditdah, len) {
-    //log1.appendChild(document.createTextNode(ditdah ? "+" : "-"));
-
+    if (ditdah == last && log1.childNodes.length > 0 && lastWidth < 256) {
+		var span = log1.lastChild;
+		lastWidth += len;
+		span.style.width = (parseInt(lastWidth) >> 3) + "px";
+		return;
+	}
     var span = document.createElement("SPAN");
-    span.className = ditdah ? "ditdah_bar" : "ditdah_gap";
-    span.style.width = len + "px";
-    log2.appendChild(span);
-    log2.scrollIntoView(false);
+    span.className = ditdah ? "ditdah_bar" : "ditdah_gap";	
+	span.style.width = parseInt(len >> 3) + "px";
+    log1.appendChild(span);
+	if (log1.childNodes.length > 256) log1.removeChild(log1.firstChild);
+	last = ditdah;
+	lastWidth = len;
 }
 freq.onchange = function() {
     window.localStorage.setItem('freq', freq.value);
