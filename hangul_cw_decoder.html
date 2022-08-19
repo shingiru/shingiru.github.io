@@ -1,5 +1,3 @@
-
-
 <!DOCType HTML>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:fb="http://ogp.me/ns/fb#" manifest="cache.manifest">
 <head>
@@ -57,7 +55,7 @@ button {
 #speed {
     width: 3em;
 }
-#volume {
+#mic {
     width: 3em;
 }
 textarea {
@@ -142,6 +140,8 @@ textarea {
 Frequency : <input type="number" id="freq" value="600" step="10" size="4" min="200" max="1200" />Hz
 &nbsp;
 Speed : <input type="number" id="speed" value="20" size="2" min="5" max="50" />wpm
+&nbsp;
+MIC Gain : <input type="number" id="mic" value="100" size="3" min="10" max="100" step="10" />%
 &nbsp;
 <label><input type="checkbox" id="hangul" /> Hangul</label>
 <label><input type="checkbox" id="debug" /> DitDah Bar</label>
@@ -265,10 +265,11 @@ PROSIGN = {
     "^": "<KA>",
     "※": "<HH>"
 };
-var initialized = false, ac, analyser, lastDitdah = false, ditdahAmount = 0, gapAmount = 0, maxGapReached = false, binCount = 256;
+var initialized = false, ac, gain, analyser, lastDitdah = false, ditdahAmount = 0, gapAmount = 0, maxGapReached = false, binCount = 256;
 
 var freq = document.querySelector("#freq");
 var wpm = document.querySelector("#speed");
+var mic = document.querySelector("#mic");
 var hangul = document.querySelector("#hangul");
 var debug = document.querySelector("#debug");
 var start = document.querySelector("#start");
@@ -280,18 +281,19 @@ start.addEventListener("click", async () => {
     if (!initialized) { 
         ac = new AudioContext();
 
-        var constraints = { audio: true, video: false };
+        var constraints = { audio: {echoCancellation: false, noiseSuppression: false, autoGainControl: false}, video: false };
         navigator.mediaDevices.getUserMedia(constraints).then(async (stream) => {
             var input = ac.createMediaStreamSource(stream);
             //input.connect(ac.destination);
 
-            var gain = ac.createGain();
+            gain = ac.createGain();
+			gain.gain.value = parseInt(mic.value) * 0.01;
             input.connect(gain);
 
             analyser = ac.createAnalyser();
             //analyser.minDecibels = -90;
             //analyser.maxDecibels = -30;
-            analyser.smoothingTymeConstant = 0.1;//0.85;
+            analyser.smoothingTymeConstant = 0.1;//0.85; // when THRESHOLD is hight, this value is not important
             //analyser.fftSize = 512;
             binCount = analyser.frequencyBinCount;
             gain.connect(analyser);
@@ -305,6 +307,22 @@ start.addEventListener("click", async () => {
         processMorse();
     }
 }, false);
+
+var gaps = [];
+function agc(target, gap) {
+	gaps.push(gap);
+	if (gaps.length == 32) {
+		var sum = 0;
+		for (var value of gaps) sum += value;
+		var avg = sum / gaps.length;
+		var diff = 1 + (avg - target) / target;
+		diff = Math.min(1.1, Math.max(0.9, diff));
+		var fix = gain.gain.value * diff;
+		if (debug.checked) console.log("[AGC] target gap : " + target + ", current gap : " + parseInt(avg) + ", current gain : " + gain.gain.value + ", fix gain : " + fix);
+		//gain.gain.value = Math.min(1, Math.max(0, fix));
+		gaps = [];
+	}
+}
 
 var buffer = null, ditDuration, minDitDuration, maxDitDuration, letterGapDuration, peak, prevTime = 0, timerId;
 var DITDAH_THRESHOLD = 254;//parseInt(256 * 0.95);
@@ -335,6 +353,7 @@ function processMorse() {
                 if (debug.checked) console.log("GAP NOISE, " + gapAmount);
             } else if (gapAmount < maxDitDuration) { // inter-dit-dah
                 if (debug.checked) console.log("INTER-DITDAH GAP, " + gapAmount);
+				agc(ditDuration, parseInt(gapAmount));
                 gapAmount = 0;
             } else {
                 if (debug.checked) console.log("WORD GAP, " + gapAmount);
@@ -533,6 +552,11 @@ freq.onchange = function() {
 wpm.onchange = function() {
     window.localStorage.setItem('wpm', wpm.value);
 }
+mic.onchange = function() {
+    window.localStorage.setItem('mic', mic.value);
+	try { gain.gain.value = parseInt(mic.value) * 0.01; }
+	catch (e) {}
+}
 hangul.onchange = function() {
     window.localStorage.setItem('hangul', hangul.checked);
 }
@@ -543,12 +567,12 @@ debug.onchange = function() {
 window.addEventListener('DOMContentLoaded', function() {
     try {
         if (window.localStorage.getItem('freq')) freq.value = parseInt(window.localStorage.getItem('freq'));
-        if (window.localStorage.getItem('wpm')) wpm.value = parseInt(window.localStorage.getItem('wpm'));
+        if (window.localStorage.getItem('wpm')) wpm.value = parseInt(window.localStorage.getItem('wpm'));	
+        if (window.localStorage.getItem('mic')) mic.value = parseInt(window.localStorage.getItem('mic'));
         if (window.localStorage.getItem('hangul')) hangul.checked = window.localStorage.getItem('hangul') == 'true';
         if (window.localStorage.getItem('debug')) debug.checked = window.localStorage.getItem('debug') == 'true';
         document.querySelector(".log_container_ditdah").style.display = debug.checked ? "block" : "none";
-    } catch (e) {
-    }
+    } catch (e) {}
 }, true);
 </script>
 
