@@ -426,7 +426,7 @@ function processMorse() {
         gapAmount += frameDuration;
 
         // when enough gapAmount
-        if (gapAmount > letterGapDuration * 2 && !maxGapReached) { // 5 or 7
+        if (gapAmount > letterGapDuration * 5 && !maxGapReached) { // 5 or 7
             if (debug.checked) console.log("MAX GAP, " + gapAmount);
             makeCharacter(hangul.checked);
             flushCharacter(hangul.checked);
