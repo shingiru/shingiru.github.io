@@ -369,14 +369,15 @@ function try_agc(fix) {
 	
 	if ((performance.now() - bottomCheckStartAt) > 3000) {
 		gain.gain.value = Math.min(1, gainBottom * 1.25);
-		//console.error("[AGC SET] bottom : " + gainBottom + ", set : " + gain.gain.value);
+		console.error("[AGC SET] bottom : " + gainBottom + ", set : " + gain.gain.value);
 		needToAgc = false;
 		return;
 	}
 	
 	if (fix) {
 		gainBottom -= AGC_FIX_AMOUNT;
-		//console.log("[AGC SET] change gain : " + gain.gain.value + " => " + gainBottom);
+		gainBottom = Math.max(0.05, gainBottom);
+		console.log("[AGC SET] change gain : " + gain.gain.value + " => " + gainBottom);
 		gain.gain.value = gainBottom;
 		bottomCheckStartAt = performance.now();
 	}
@@ -425,7 +426,7 @@ function processMorse() {
 			peakCount++;
 	
 	agcElapsed += frameDuration;
-	if (agcElapsed >= 10) {
+	if (agcElapsed >= 50) {
 		if (peak > DITDAH_THRESHOLD * 0.5 && peak < DITDAH_THRESHOLD) {
 			try_agc(false);
 		} else if (peakCount > 2) {
