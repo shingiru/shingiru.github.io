@@ -377,7 +377,7 @@ function processMorse() {
     }
     lastDitdah = ditdah;
     
-    timerId = setTimeout(processMorse, 172);
+    timerId = setTimeout(processMorse, if(isAndroid ? 172 : 0));
 }
 
 var ditdahs = "";
