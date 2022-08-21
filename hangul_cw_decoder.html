@@ -417,7 +417,7 @@ function processMorse() {
 	//console.log(buffer.join(","));
 
     var ditdah = (peak > DITDAH_THRESHOLD);
-	//if (ditdah) console.log("ditdah : " + ditdah + ", peak index : " + peakIndex + ", peak - 1 : " + buffer[peakIndex - 1] + ", peak : " + buffer[peakIndex] + ", peak + 1 : " + buffer[peakIndex + 1]);
+	if (ditdah) console.log("ditdah : " + ditdah + ", peak index : " + peakIndex + ", peak - 1 : " + buffer[peakIndex - 1] + ", peak : " + buffer[peakIndex] + ", peak + 1 : " + buffer[peakIndex + 1]);
 	if (debug.checked && peak > 0) _log1(ditdah, frameDuration);
 	
 	var peakCount = 0;
