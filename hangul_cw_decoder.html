@@ -368,7 +368,7 @@ function try_agc(fix) {
 	if (!needToAgc) return;
 	
 	if ((performance.now() - bottomCheckStartAt) > 3000) {
-		gain.gain.value = Math.min(1, gainBottom * 1.25);
+		gain.gain.value = Math.min(1, gainBottom * (isAndroid ? 1 : 1.25));
 		console.error("[AGC SET] bottom : " + gainBottom + ", set : " + gain.gain.value);
 		needToAgc = false;
 		return;
@@ -387,7 +387,7 @@ var toneBuffer = null, ditDuration, minDitDuration, maxDitDuration, letterGapDur
 var DITDAH_THRESHOLD = parseInt(256 * 0.98);
 var ua = navigator.userAgent.toLowerCase();
 var isAndroid = ua.indexOf("android") > -1;
-if (isAndroid) DITDAH_THRESHOLD = parseInt(256 * 0.5);
+if (isAndroid) DITDAH_THRESHOLD = parseInt(256 * 0.65);
 var firstDitDahStarted = false;
 var agcElapsed = 0;
 function processMorse() {
