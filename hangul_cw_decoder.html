@@ -322,7 +322,7 @@ start.addEventListener("click", async () => {
             analyser = ac.createAnalyser();
             analyser.minDecibels = -90;
             analyser.maxDecibels = -30;
-            //analyser.smoothingTimeConstant = 0; // when THRESHOLD is hight, this value is not important
+            if (isAndroid) analyser.smoothingTimeConstant = 0; // when THRESHOLD is hight, this value is not important
             //analyser.fftSize = 1024;
             binCount = analyser.frequencyBinCount;
             gain.connect(analyser);
@@ -386,7 +386,7 @@ var toneBuffer = null, ditDuration, minDitDuration, maxDitDuration, letterGapDur
 var DITDAH_THRESHOLD = parseInt(256 * 0.98);
 var ua = navigator.userAgent.toLowerCase();
 var isAndroid = ua.indexOf("android") > -1;
-if (isAndroid) DITDAH_THRESHOLD = parseInt(256 * 0.65);
+if (isAndroid) DITDAH_THRESHOLD = parseInt(256 * 0.5);
 var firstDitDahStarted = false;
 var agcElapsed = 0;
 function processMorse() {
