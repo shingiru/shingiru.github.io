@@ -429,7 +429,7 @@ function processMorse() {
 	if (agcElapsed >= 20) {
 		if (peak > DITDAH_THRESHOLD * 0.5 && peak < DITDAH_THRESHOLD) {
 			try_agc(false);
-		} else if (peakCount > 2) {
+		} else if (peakCount > (isAndroid ? 1 : 2)) {
 			try_agc(true);
 		}
 		agcElapsed = 0;
