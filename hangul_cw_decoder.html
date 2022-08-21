@@ -351,7 +351,7 @@ function agc(target, gap) {
 		diff = Math.min(1.1, Math.max(0.9, diff));
 		var fix = gain.gain.value * diff;
 		if (debug.checked) console.log("[AGC] target gap : " + target + ", current gap : " + parseInt(avg) + ", current gain : " + gain.gain.value + ", fix gain : " + fix);
-		if (!needToAgc) gain.gain.value = Math.min(1, Math.max(0, fix));
+		if (!needToAgc && !isAndroid) gain.gain.value = Math.min(1, Math.max(0, fix));
 		gaps = [];
 	}
 }
@@ -426,7 +426,7 @@ function processMorse() {
 			peakCount++;
 	
 	agcElapsed += frameDuration;
-	if (agcElapsed >= 50) {
+	if (agcElapsed >= 10) {
 		if (peak > DITDAH_THRESHOLD * 0.5 && peak < DITDAH_THRESHOLD) {
 			try_agc(false);
 		} else if (peakCount > 2) {
