@@ -387,7 +387,7 @@ var toneBuffer = null, ditDuration, minDitDuration, maxDitDuration, letterGapDur
 var DITDAH_THRESHOLD = parseInt(256 * 0.98);
 var ua = navigator.userAgent.toLowerCase();
 var isAndroid = ua.indexOf("android") > -1;
-if (isAndroid) DITDAH_THRESHOLD = parseInt(256 * 0.35);
+if (isAndroid) DITDAH_THRESHOLD = parseInt(256 * 0.5);
 var firstDitDahStarted = false;
 var agcElapsed = 0;
 function processMorse() {
@@ -426,7 +426,7 @@ function processMorse() {
 			peakCount++;
 	
 	agcElapsed += frameDuration;
-	if (agcElapsed >= 10) {
+	if (agcElapsed >= 20) {
 		if (peak > DITDAH_THRESHOLD * 0.5 && peak < DITDAH_THRESHOLD) {
 			try_agc(false);
 		} else if (peakCount > 2) {
