@@ -310,7 +310,7 @@ start.addEventListener("click", async () => {
         ac = new AudioContext();
 
         var constraints = { audio: {echoCancellation: false, noiseSuppression: false, autoGainControl: false}, video: false };
-        if (isAndroid) constraints = { audio: {echoCancellation: true, noiseSuppression: true, autoGainControl: true}, video: false };
+        if (isAndroid) constraints = { audio: {echoCancellation: true, noiseSuppression: false, autoGainControl: true}, video: false };
         navigator.mediaDevices.getUserMedia(constraints).then(async (stream) => {
             var input = ac.createMediaStreamSource(stream);
             //input.connect(ac.destination);
