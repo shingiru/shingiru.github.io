@@ -214,7 +214,7 @@ start.addEventListener("click", async () => {
             analyser.minDecibels = -90;
             analyser.maxDecibels = -30;
             if (isAndroid) analyser.smoothingTimeConstant = 0; // when THRESHOLD is hight, this value is not important
-            if (isAndroid) analyser.fftSize = 256;
+            //if (isAndroid) analyser.fftSize = 1024;
             binCount = analyser.frequencyBinCount;
             gain.connect(analyser);
             //analyser.connect(ac.destination); // important! this should be commented out
