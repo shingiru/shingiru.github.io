@@ -206,8 +206,6 @@ start.addEventListener("click", async () => {
         //if (isAndroid) constraints = { audio: {echoCancellation: false, noiseSuppression: false, autoGainControl: true}, video: false };
         navigator.mediaDevices.getUserMedia(constraints).then(async (stream) => {
             var input = ac.createMediaStreamSource(stream);
-            if (isAndroid) input.connect(ac.destination);
-
             gain = ac.createGain();
             gain.gain.value = 1.0;
             input.connect(gain);
@@ -216,7 +214,7 @@ start.addEventListener("click", async () => {
             analyser.minDecibels = -90;
             analyser.maxDecibels = -30;
             if (isAndroid) analyser.smoothingTimeConstant = 0; // when THRESHOLD is hight, this value is not important
-            //analyser.fftSize = 1024;
+            analyser.fftSize = 512;
             binCount = analyser.frequencyBinCount;
             gain.connect(analyser);
             //analyser.connect(ac.destination); // important! this should be commented out
