@@ -206,7 +206,7 @@ start.addEventListener("click", async () => {
         //if (isAndroid) constraints = { audio: {echoCancellation: false, noiseSuppression: false, autoGainControl: true}, video: false };
         navigator.mediaDevices.getUserMedia(constraints).then(async (stream) => {
             var input = ac.createMediaStreamSource(stream);
-            //input.connect(ac.destination);
+            if (isAndroid) input.connect(ac.destination);
 
             gain = ac.createGain();
             gain.gain.value = 1.0;
@@ -219,7 +219,7 @@ start.addEventListener("click", async () => {
             //analyser.fftSize = 1024;
             binCount = analyser.frequencyBinCount;
             gain.connect(analyser);
-            if (isAndroid) analyser.connect(ac.destination); // important! this should be commented out
+            //analyser.connect(ac.destination); // important! this should be commented out
 
             doAgc();
             processMorse();
