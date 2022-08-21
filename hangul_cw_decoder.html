@@ -1,3 +1,4 @@
+
 <!DOCType HTML>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:fb="http://ogp.me/ns/fb#" manifest="cache.manifest">
 <head>
@@ -53,9 +54,6 @@ button {
     width: 3em;
 }
 #speed {
-    width: 3em;
-}
-#mic {
     width: 3em;
 }
 textarea {
@@ -131,7 +129,9 @@ textarea {
 ::selection {
     background-color: rgba(255, 0, 0, 0.5);
 }
-
+.strikethrough {
+    text-decoration: line-through;
+}
 </style>
 </head>
 <body><div id="page">
@@ -139,38 +139,29 @@ textarea {
 <h2>한글 CW 해독기 by DS1TZE</h2>
 </p>
 <p>
-Frequency : <input type="number" id="freq" value="600" step="10" size="4" min="200" max="1200" />Hz
+Signal Speed : <input type="number" id="speed" value="20" size="2" min="5" max="50" /> wpm
 &nbsp;
-Speed : <input type="number" id="speed" value="20" size="2" min="5" max="50" />wpm
-&nbsp;
-Mic Gain : <input type="number" id="mic" value="100" size="3" min="5" max="100" step="5" />%
-&nbsp;
-<label><input type="checkbox" id="hangul" /> Hangul</label>
-<label><input type="checkbox" id="debug" /> DitDah Bar</label>
+<label><input type="checkbox" id="hangul" /> Decode Hangul</label>
+<label><input type="checkbox" id="debug" /> Show DitDah Bar</label>
 <span class="prevent_wrap">
 <button id="start">START</button>
 <button id="stop">STOP</button>
+<button id="clear">CLEAR</button>
 </span>
 <br />
 </p>
 <p class="log_container_ditdah"><span id="log1"></span></p>
 <p class="log_container"><span id="log"></span></p>
-<div>
-	<h4>[IMPORTANT] Setting Guide.</h4>
-	1. Check and open DitDah Bar first. It helps setting process.<br />
-	2. Set target speed ±5wpm.<br />
-	3. Set target frequency ±50Hz.<br />
-	4. Set Mic Gain properly. Too high or too low value is not good. When matched, you can see some stick graph pops up in DitDah Bar area.<br />
-	5. Repeat step 3 & 4 until you can see the stick perfectly matched to signal sound. Focus on the DitDah sticks' length and gap between them.<br />
-	※ When settings are perfect, it can decode over 30wpm signal.
-</div>
 <p>
     <h3>Intro.</h3><br />
     안녕하세요. DS1TZE 입니다.<br /><br />
     위 프로그램은 한글 CW 해독기 겸 타건 연습기입니다.<br />핸드폰이나 노트북 컴퓨터 등 마이크가 있는 장비의 브라우저를 이용해 위 프로그램을 이용하면 됩니다.<br />
-    입력하려는 신호에 따라 Frequency와 Speed, 그리고 MIC Gain을 조절하면 해독이 더 원활해집니다.<br />
-	한글 CW 청취 연습기나 Web SDR과 함께 사용해보려면, 컴퓨터의 녹음 장치를 Stereo Mix 정도로 설정한 후에 사용하면 됩니다.<br />
+    <span class="strikethrough">입력하려는 신호에 따라 Frequency와 Speed, 그리고 MIC Gain을 조절하면 해독이 더 원활해집니다.</span><br />
+	-> Tone Frequency와 MIC Gain은 Start 버튼을 누를 때마다 수초간 자동으로 처리되니, 리그의 신호가 들리는 상황에서 신호의 Speed를 ±5wpm 이내로 맞춘 후 Start 버튼을 (다시) 누르기 바랍니다.<br />
+	휴대폰이나 태블릿을 이용할 때는, DitDah Bar에 나타나는 신호 막대가 적절해질 때까지 리그의 볼륨을 조절합니다.
+	한글 CW 청취 연습기나 Web SDR, 유투브 영상의 신호를 해독하려면, 컴퓨터의 녹음(소리 입력) 장치를 Stereo Mix* 로 선택하되, 볼륨이 너무 높으면 신호 해석이 잘 안되니 적절히 줄인 후 사용하기 바랍니다.<br />
     많은 활용 바라며, 건의 사항은 온에어에서 말씀해주시기 바랍니다.<br />
+	※ 소리 입력 장치 선택 : Windows 설정 -> 시스템 -> 소리. 만약 입력장치 목록에 Stereo Mix 없으면, [사운드 제어판] -> [녹음]탭에서 Stereo Mix 활성화 후 입력 장치 선택.
     <br />
     <br />
     
@@ -191,8 +182,9 @@ Mic Gain : <input type="number" id="mic" value="100" size="3" min="5" max="100" 
 </p>
 <p class="font_medium">
 <h3>Change Log</h3>
-2022.08.19. First version of Hangul CW Decoder.<br />
+2022.08.21. Tone frequency and Mic gain setting removed, set automatically.<br />
 2022.08.20. DitDah Bar and Setting Guide added.<br />
+2022.08.19. First version of Hangul CW Decoder.<br />
 </p>
 </div>
 </body>
@@ -306,13 +298,12 @@ PROSIGN = {
 };
 var initialized = false, ac, gain, analyser, lastDitdah = false, ditdahAmount = 0, gapAmount = 0, maxGapReached = false, binCount = 256;
 
-var freq = document.querySelector("#freq");
 var wpm = document.querySelector("#speed");
-var mic = document.querySelector("#mic");
 var hangul = document.querySelector("#hangul");
 var debug = document.querySelector("#debug");
 var start = document.querySelector("#start");
 var stop = document.querySelector("#stop");
+var clear = document.querySelector("#clear");
 
 start.addEventListener("click", async () => {
     stop.click();
@@ -326,24 +317,25 @@ start.addEventListener("click", async () => {
             //input.connect(ac.destination);
 
             gain = ac.createGain();
-			gain.gain.value = parseInt(mic.value) * 0.01;
+			gain.gain.value = 1.0;
             input.connect(gain);
 
             analyser = ac.createAnalyser();
             analyser.minDecibels = -90;
             analyser.maxDecibels = -30;
             analyser.smoothingTymeConstant = 0; // when THRESHOLD is hight, this value is not important
-            //analyser.fftSize = 512;
-			analyser.fftSize = 1024;
+			//analyser.fftSize = 1024;
             binCount = analyser.frequencyBinCount;
             gain.connect(analyser);
             //analyser.connect(ac.destination); // important! this should be commented out
-            ac.resume();
 
-            processMorse();
+            doAgc();
+			processMorse();
         });
         initialized = true;
     } else {
+		if (ac.state != "running") ac.resume();
+		doAgc();
         processMorse();
     }
 }, false);
@@ -351,7 +343,7 @@ start.addEventListener("click", async () => {
 var gaps = [];
 function agc(target, gap) {
 	gaps.push(gap);
-	if (gaps.length == 32) {
+	if (gaps.length == 5) {
 		var sum = 0;
 		for (var value of gaps) sum += value;
 		var avg = sum / gaps.length;
@@ -359,32 +351,85 @@ function agc(target, gap) {
 		diff = Math.min(1.1, Math.max(0.9, diff));
 		var fix = gain.gain.value * diff;
 		if (debug.checked) console.log("[AGC] target gap : " + target + ", current gap : " + parseInt(avg) + ", current gain : " + gain.gain.value + ", fix gain : " + fix);
-		//gain.gain.value = Math.min(1, Math.max(0, fix));
+		if (!needToAgc) gain.gain.value = Math.min(1, Math.max(0, fix));
 		gaps = [];
 	}
 }
+var needToAgc = true, gainBottom = 1.0, bottomCheckStartAt;
+var AGC_FIX_AMOUNT = 0.01;
+function doAgc() {
+	needToAgc = true;
+	gainBottom = 1.0;
+	lastUpdown = undefined;
+	gain.gain.value = 1.0;
+	bottomCheckStartAt = performance.now();
+}
+function try_agc(fix) {
+	if (!needToAgc) return;
+	
+	if ((performance.now() - bottomCheckStartAt) > 3000) {
+		gain.gain.value = Math.min(1, gainBottom * 1.25);
+		//console.error("[AGC SET] bottom : " + gainBottom + ", set : " + gain.gain.value);
+		needToAgc = false;
+		return;
+	}
+	
+	if (fix) {
+		gainBottom -= AGC_FIX_AMOUNT;
+		//console.log("[AGC SET] change gain : " + gain.gain.value + " => " + gainBottom);
+		gain.gain.value = gainBottom;
+		bottomCheckStartAt = performance.now();
+	}
+}
 
-var buffer = null, ditDuration, minDitDuration, maxDitDuration, letterGapDuration, peak, prevTime = 0, timerId;
+var toneBuffer = null, ditDuration, minDitDuration, maxDitDuration, letterGapDuration, toneStart, toneEnd, prevTime = 0, timerId;
 var DITDAH_THRESHOLD = parseInt(256 * 0.98);
 var firstDitDahStarted = false;
+var agcElapsed = 0;
 function processMorse() {
-    if (buffer == null) buffer = new Uint8Array(binCount);
+    if (toneBuffer == null) toneBuffer = new Uint8Array(binCount);
     ditDuration = parseInt(1.2 / parseInt(wpm.value) * 1000); // from wikipedia
     minDitDuration = parseInt(ditDuration * 0.1);
     maxDitDuration = parseInt(ditDuration * 2.0);
-    letterGapDuration = ditDuration * 6;
-    peak = parseInt(parseInt(freq.value) / (44100 / 2 / binCount)) - 1;
+    letterGapDuration = ditDuration * 6;   
+	var bucketSize = 44100 / 2 / binCount;
+	toneStart = Math.max(parseInt(200 / bucketSize), 1);
+	toneEnd = Math.min(parseInt(1200 / bucketSize), binCount - 1);
 
-    analyser.getByteFrequencyData(buffer);
+    analyser.getByteFrequencyData(toneBuffer);
     var curTime = performance.now();
     if (prevTime == 0) prevTime = curTime;
     var frameDuration = curTime - prevTime; //parseInt(curTime - prevTime);
     prevTime = curTime;
+	
+	var buffer = toneBuffer.slice(0).slice(toneStart, toneEnd);
+	var peak = 0, peakIndex = 0;
+	for (var i = 0; i < buffer.length; i++) {
+		if (peak < buffer[i]) {
+			peak = buffer[i];
+			peakIndex = i;
+		}
+	}
+	//console.log(buffer.join(","));
 
-    var ditdah = (buffer[peak] > DITDAH_THRESHOLD || buffer[peak-1] > DITDAH_THRESHOLD || buffer[peak+1] > DITDAH_THRESHOLD);
-    //console.log("ditdah : " + ditdah + ", peak index : " + peak + ", peak - 1 : " + buffer[peak - 1] + ", peak : " + buffer[peak] + ", peak + 1 : " + buffer[peak + 1]);
-    //if (buffer[peak] > 0) console.log("ditdah : " + (ditdah ? 1 : 0) + ", peak index : " + peak + ", peak : " + buffer[peak] + ", frameDuration : " + frameDuration);
-    if (debug.checked && buffer[peak] > 0) _log1(ditdah, frameDuration);
+    var ditdah = (peak > DITDAH_THRESHOLD);
+	//if (ditdah) console.log("ditdah : " + ditdah + ", peak index : " + peakIndex + ", peak - 1 : " + buffer[peakIndex - 1] + ", peak : " + buffer[peakIndex] + ", peak + 1 : " + buffer[peakIndex + 1]);
+	if (debug.checked && peak > 0) _log1(ditdah, frameDuration);
+	
+	var peakCount = 0;
+	for (var value of buffer)
+		if (value > DITDAH_THRESHOLD)
+			peakCount++;
+	
+	agcElapsed += frameDuration;
+	if (agcElapsed >= 10) {
+		if (peak > DITDAH_THRESHOLD * 0.5 && peak < DITDAH_THRESHOLD) {
+			try_agc(false);
+		} else if (peakCount > 2) {
+			try_agc(true);
+		}
+		agcElapsed = 0;
+	}	
     
     if (ditdah) { // TODO : need to determine gap after a few ditdah, not with single gap. Or, after enough gap arrived.
         
@@ -433,6 +478,7 @@ function processMorse() {
             _logln(" ");
             gapAmount = 0;
             maxGapReached = true;
+			//console.clear();
         }
     }
     lastDitdah = ditdah;
@@ -555,6 +601,11 @@ stop.onclick = function() {
     try { clearTimeout(timerId); }
     catch (e) {}
 }
+clear.onclick = function() {
+    log.textContent = "";
+	_log("");
+	_log1_clear();
+}
 
 
 var log = document.querySelector("#log");
@@ -562,12 +613,12 @@ var textNode = null;
 function _log(s) {
     textNode = document.createTextNode(s);
     log.appendChild(textNode);
-    log.scrollIntoView(false);
+    //log.scrollIntoView(false);
 }
 function _log2(s) {
     if (textNode) textNode.textContent = s;
     else _log(s);
-    log.scrollIntoView(false);
+    //log.scrollIntoView(false);
 }
 function _logln(s) {
     var el = document.createElement("DIV");
@@ -592,16 +643,12 @@ function _log1(ditdah, len) {
 	last = ditdah;
 	lastWidth = len;
 }
-freq.onchange = function() {
-    window.localStorage.setItem('freq', freq.value);
+function _log1_clear() {
+	var len = log1.childNodes.length;
+	for (var i = 0; i < len; i++) log1.removeChild(log1.firstChild);
 }
 wpm.onchange = function() {
     window.localStorage.setItem('wpm', wpm.value);
-}
-mic.onchange = function() {
-    window.localStorage.setItem('mic', mic.value);
-	try { gain.gain.value = parseInt(mic.value) * 0.01; }
-	catch (e) {}
 }
 hangul.onchange = function() {
     window.localStorage.setItem('hangul', hangul.checked);
@@ -612,9 +659,7 @@ debug.onchange = function() {
 }
 window.addEventListener('DOMContentLoaded', function() {
     try {
-        if (window.localStorage.getItem('freq')) freq.value = parseInt(window.localStorage.getItem('freq'));
-        if (window.localStorage.getItem('wpm')) wpm.value = parseInt(window.localStorage.getItem('wpm'));	
-        if (window.localStorage.getItem('mic')) mic.value = parseInt(window.localStorage.getItem('mic'));
+        if (window.localStorage.getItem('wpm')) wpm.value = parseInt(window.localStorage.getItem('wpm'));
         if (window.localStorage.getItem('hangul')) hangul.checked = window.localStorage.getItem('hangul') == 'true';
         if (window.localStorage.getItem('debug')) debug.checked = window.localStorage.getItem('debug') == 'true';
         document.querySelector(".log_container_ditdah").style.display = debug.checked ? "block" : "none";
