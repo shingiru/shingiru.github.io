@@ -211,7 +211,6 @@ start.addEventListener("click", async () => {
         //if (isAndroid) constraints = { audio: {echoCancellation: false, noiseSuppression: false, autoGainControl: true}, video: false };
         navigator.mediaDevices.getUserMedia(constraints).then(async (stream) => {
             var input = ac.createMediaStreamSource(stream);
-            if (isAndroid) input.connect(ac.destination);
             gain = ac.createGain();
             gain.gain.value = 1.0;
             input.connect(gain);
