@@ -222,7 +222,7 @@ start.addEventListener("click", async () => {
             //if (isAndroid) analyser.fftSize = 1024;
             binCount = analyser.frequencyBinCount;
             gain.connect(analyser);
-            //analyser.connect(ac.destination); // important! this should be commented out
+            if (isAndroid) analyser.connect(ac.destination); // important! this should be commented out
 
             doAgc();
             processMorse();
