@@ -103,7 +103,7 @@ textarea {
     color: black;
     font-family: 'monospace';
     font-size: small;
-    display: none;
+    display: block;
     white-space: nowrap;
 }
 #log1 {
@@ -141,7 +141,7 @@ textarea {
 Signal Speed : <input type="number" id="speed" value="20" size="2" min="5" max="50" /> wpm
 &nbsp;
 <label><input type="checkbox" id="hangul" /> Decode Hangul</label>
-<label><input type="checkbox" id="debug" /> Show DitDah Bar</label>
+<label><input type="checkbox" id="debug" checked /> Show DitDah Bar</label>
 <span class="prevent_wrap">
 <button id="start">START</button>
 <button id="stop">STOP</button>
@@ -312,7 +312,7 @@ function processMorse() {
     //console.log(buffer.join(","));
 
     var ditdah = (peak > DITDAH_THRESHOLD);
-    if (ditdah) console.log("ditdah : " + ditdah + ", peak index : " + peakIndex + ", peak - 1 : " + buffer[peakIndex - 1] + ", peak : " + buffer[peakIndex] + ", peak + 1 : " + buffer[peakIndex + 1] + ", frameDuration : " + frameDuration);
+    //if (ditdah) console.log("ditdah : " + ditdah + ", peak index : " + peakIndex + ", peak - 1 : " + buffer[peakIndex - 1] + ", peak : " + buffer[peakIndex] + ", peak + 1 : " + buffer[peakIndex + 1] + ", frameDuration : " + frameDuration);
     if (debug.checked && peak > 0) _log1(ditdah, frameDuration);
     
     var peakCount = 0;
@@ -370,10 +370,14 @@ function processMorse() {
         gapAmount += frameDuration;
 
         // when enough gapAmount
-        if (gapAmount > letterGapDuration * 5 && !maxGapReached) { // 5 or 7
-            if (debug.checked) console.log("MAX GAP, " + gapAmount);
+        if (gapAmount > letterGapDuration) {
             makeCharacter(hangul.checked);
             flushCharacter(hangul.checked);
+        }
+        if (gapAmount > letterGapDuration * 5 && !maxGapReached) { // 5 or 7
+            if (debug.checked) console.log("MAX GAP, " + gapAmount);
+            //makeCharacter(hangul.checked);
+            //flushCharacter(hangul.checked);
             _logln(" ");
             gapAmount = 0;
             maxGapReached = true;
