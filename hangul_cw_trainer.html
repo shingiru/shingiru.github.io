@@ -1,4 +1,3 @@
-
 <!DOCType HTML>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:fb="http://ogp.me/ns/fb#" manifest="cache.manifest">
 <head>
@@ -6,6 +5,13 @@
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name=viewport content='width=900' />
 <title>한글 CW 연습기</title>
+<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.8/codemirror.css'>
+<script>
+window.console = window.console || function(t) {};
+</script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.8/codemirror.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.8/mode/xml/xml.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.8/addon/selection/mark-selection.js'></script>
 <script type="text/javascript">
 /*! hangul-js 2019-12-10 */
 !function(){"use strict";var r,d,g,l,t,e,h=["ㄱ",["ㄱ","ㄱ"],"ㄴ","ㄷ",["ㄷ","ㄷ"],"ㄹ","ㅁ","ㅂ",["ㅂ","ㅂ"],"ㅅ",["ㅅ","ㅅ"],"ㅇ","ㅈ",["ㅈ","ㅈ"],"ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"],p=["ㅏ","ㅐ","ㅑ",["ㅑ","ㅣ"],"ㅓ","ㅔ","ㅕ",["ㅕ","ㅣ"],"ㅗ",["ㅗ","ㅏ"],["ㅗ","ㅐ"],["ㅗ","ㅣ"],"ㅛ","ㅜ",["ㅜ","ㅓ"],["ㅜ","ㅔ"],["ㅜ","ㅣ"],"ㅠ","ㅡ",["ㅡ","ㅣ"],"ㅣ"],C=["","ㄱ",["ㄱ","ㄱ"],["ㄱ","ㅅ"],"ㄴ",["ㄴ","ㅈ"],["ㄴ","ㅎ"],"ㄷ","ㄹ",["ㄹ","ㄱ"],["ㄹ","ㅁ"],["ㄹ","ㅂ"],["ㄹ","ㅅ"],["ㄹ","ㅌ"],["ㄹ","ㅍ"],["ㄹ","ㅎ"],"ㅁ","ㅂ",["ㅂ","ㅅ"],"ㅅ",["ㅅ","ㅅ"],"ㅇ","ㅈ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"],A=44032;function n(n){for(var r=n.length,t={0:0},e=0;e<r;e++)n[e]&&(t[n[e].charCodeAt(0)]=e);return t}function o(n){for(var r,t,e=n.length,o={},i=0;i<e;i++)r=n[i][0].charCodeAt(0),t=n[i][1].charCodeAt(0),void 0===o[r]&&(o[r]={}),o[r][t]=n[i][2].charCodeAt(0);return o}function v(n){return void 0!==r[n]}function y(n){return void 0!==d[n]}function m(n){return void 0!==g[n]}function u(n){return void 0!==l[n]}function j(n){return 44032<=n&&n<=55203}function b(n,r){return!(!e[n]||!e[n][r])&&e[n][r]}function S(n,r){return!(!t[n]||!t[n][r])&&t[n][r]}r=n(["ㄱ","ㄲ","ㄳ","ㄴ","ㄵ","ㄶ","ㄷ","ㄸ","ㄹ","ㄺ","ㄻ","ㄼ","ㄽ","ㄾ","ㄿ","ㅀ","ㅁ","ㅂ","ㅃ","ㅄ","ㅅ","ㅆ","ㅇ","ㅈ","ㅉ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"]),d=n(["ㄱ","ㄲ","ㄴ","ㄷ","ㄸ","ㄹ","ㅁ","ㅂ","ㅃ","ㅅ","ㅆ","ㅇ","ㅈ","ㅉ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"]),g=n(["ㅏ","ㅐ","ㅑ","ㅒ","ㅓ","ㅔ","ㅕ","ㅖ","ㅗ","ㅘ","ㅙ","ㅚ","ㅛ","ㅜ","ㅝ","ㅞ","ㅟ","ㅠ","ㅡ","ㅢ","ㅣ"]),l=n(["","ㄱ","ㄲ","ㄳ","ㄴ","ㄵ","ㄶ","ㄷ","ㄹ","ㄺ","ㄻ","ㄼ","ㄽ","ㄾ","ㄿ","ㅀ","ㅁ","ㅂ","ㅄ","ㅅ","ㅆ","ㅇ","ㅈ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"]),t=o([["ㄱ","ㅅ","ㄳ"],["ㄴ","ㅈ","ㄵ"],["ㄴ","ㅎ","ㄶ"],["ㄹ","ㄱ","ㄺ"],["ㄹ","ㅁ","ㄻ"],["ㄹ","ㅂ","ㄼ"],["ㄹ","ㅅ","ㄽ"],["ㄹ","ㅌ","ㄾ"],["ㄹ","ㅍ","ㄿ"],["ㄹ","ㅎ","ㅀ"],["ㅂ","ㅅ","ㅄ"],["ㄱ","ㄱ","ㄲ"],["ㄷ","ㄷ","ㄸ"],["ㅂ","ㅂ","ㅃ"],["ㅅ","ㅅ","ㅆ"],["ㅈ","ㅈ","ㅉ"]]),e=o([["ㅗ","ㅏ","ㅘ"],["ㅗ","ㅐ","ㅙ"],["ㅗ","ㅣ","ㅚ"],["ㅜ","ㅓ","ㅝ"],["ㅜ","ㅔ","ㅞ"],["ㅜ","ㅣ","ㅟ"],["ㅡ","ㅣ","ㅢ"]]);function w(n,r){if(null===n)throw new Error("Arguments cannot be null");"object"==typeof n&&(n=n.join(""));for(var t,e,o,i,u,f=[],c=n.length,a=0;a<c;a++){var s=[];j(i=n.charCodeAt(a))?(e=((i-=A)-(o=i%28))/28%21,t=parseInt((i-o)/28/21),"object"==typeof h[t]?s=s.concat(h[t]):s.push(h[t]),"object"==typeof p[e]?s=s.concat(p[e]):s.push(p[e]),0<o&&("object"==typeof C[o]?s=s.concat(C[o]):s.push(C[o]))):v(i)?"string"==typeof(u=y(i)?h[d[i]]:C[l[i]])?s.push(u):s=s.concat(u):m(i)?"string"==typeof(u=p[g[i]])?s.push(u):s=s.concat(u):s.push(n.charAt(a)),r?f.push(s):f=f.concat(s)}return f}function i(n){return"string"!=typeof n?"":(n=w(n)).join("")}function f(c){"string"==typeof c&&(c=w(c));var n,r,a=[],t=c.length,e=0,s=-1,h=!1;function o(n){var r,t,e,o,i=0,u="";if(h=!1,!(n<s+1))for(var f=1;;f++){if(1===f){if(m(r=c[s+f].charCodeAt(0)))return s+f+1<=n&&m(t=c[s+f+1].charCodeAt(0))?a.push(String.fromCharCode(b(r,t))):a.push(c[s+f]),void(s=n);if(!y(r))return a.push(c[s+f]),void(s=n);u=c[s+f]}else if(2===f){if(y(t=c[s+f].charCodeAt(0)))return r=S(r,t),u=String.fromCharCode(r),a.push(u),void(s=n);u=String.fromCharCode(28*(21*d[r]+g[t])+A)}else 3===f?(b(t,e=c[s+f].charCodeAt(0))?t=b(t,e):i=e,u=String.fromCharCode(28*(21*d[r]+g[t])+l[i]+A)):4===f?(i=S(i,o=c[s+f].charCodeAt(0))?S(i,o):o,u=String.fromCharCode(28*(21*d[r]+g[t])+l[i]+A)):5===f&&(i=S(i,o=c[s+f].charCodeAt(0)),u=String.fromCharCode(28*(21*d[r]+g[t])+l[i]+A));if(n<=s+f)return a.push(u),void(s=n)}}for(var i=0;i<t;i++)y(n=c[i].charCodeAt(0))||m(n)||u(n)?(0===e?y(n)?e=1:m(n)&&(e=4):1==e?m(n)?e=2:S(r,n)?e=5:o(i-1):2==e?u(n)?e=3:m(n)?b(r,n)||(o(i-1),e=4):(o(i-1),e=1):3==e?u(n)?!h&&S(r,n)?h=!0:(o(i-1),e=1):y(n)?(o(i-1),e=1):m(n)&&(o(i-2),e=2):4==e?m(n)?b(r,n)?(o(i),e=0):o(i-1):(o(i-1),e=1):5==e&&(e=m(n)?(o(i-2),2):(o(i-1),1)),r=n):(o(i-1),o(i),e=0);return o(i-1),a.join("")}function c(n){this.string=n,this.disassembled=w(n).join("")}c.prototype.search=function(n){return w(n).join("").indexOf(this.disassembled)};var a={disassemble:w,d:w,disassembleToString:i,ds:i,assemble:f,a:f,search:function(n,r){var t=w(n).join(""),e=w(r).join("");return t.indexOf(e)},rangeSearch:function(n,r){var t,e=w(n).join(""),o=w(r).join(""),i=w(n,!0),u=new RegExp(o,"gi"),f=[];if(!r.length)return[];for(;t=u.exec(e);)f.push(t.index);return f.map(function(n){return[function(n){for(var r=0,t=0;r<i.length;++r)if(n<(t+=i[r].length))return r}(n),function(n){for(var r=0,t=0;r<i.length;++r)if(t+=i[r].length,n+o.length<=t)return r}(n)]})},Searcher:c,endsWithConsonant:function(n){"object"==typeof n&&(n=n.join(""));var r=n.charCodeAt(n.length-1);if(j(r)){if(0<(r-=A)%28)return!0}else if(v(r))return!0;return!1},endsWith:function(n,r){return w(n).pop()===r},isHangul:function(n){return"string"==typeof n&&(n=n.charCodeAt(0)),j(n)},isComplete:function(n){return"string"==typeof n&&(n=n.charCodeAt(0)),j(n)},isConsonant:function(n){return"string"==typeof n&&(n=n.charCodeAt(0)),v(n)},isVowel:function(n){return"string"==typeof n&&(n=n.charCodeAt(0)),m(n)},isCho:function(n){return"string"==typeof n&&(n=n.charCodeAt(0)),y(n)},isJong:function(n){return"string"==typeof n&&(n=n.charCodeAt(0)),u(n)},isHangulAll:function(n){if("string"!=typeof n)return!1;for(var r=0;r<n.length;r++)if(!j(n.charCodeAt(r)))return!1;return!0},isCompleteAll:function(n){if("string"!=typeof n)return!1;for(var r=0;r<n.length;r++)if(!j(n.charCodeAt(r)))return!1;return!0},isConsonantAll:function(n){if("string"!=typeof n)return!1;for(var r=0;r<n.length;r++)if(!v(n.charCodeAt(r)))return!1;return!0},isVowelAll:function(n){if("string"!=typeof n)return!1;for(var r=0;r<n.length;r++)if(!m(n.charCodeAt(r)))return!1;return!0},isChoAll:function(n){if("string"!=typeof n)return!1;for(var r=0;r<n.length;r++)if(!y(n.charCodeAt(r)))return!1;return!0},isJongAll:function(n){if("string"!=typeof n)return!1;for(var r=0;r<n.length;r++)if(!u(n.charCodeAt(r)))return!1;return!0}};"function"==typeof define&&define.amd?define(function(){return a}):"undefined"!=typeof module?module.exports=a:window.Hangul=a}();
@@ -73,10 +79,8 @@ textarea {
     color: black;
     font-family: 'Helvetica', 'sans serif';
     font-size: x-large;
+    font-weight: bold;
     line-height: 1.5;
-}
-.hidden_sample {
-    display : none;
 }
 #counter {
     float: right;
@@ -90,7 +94,56 @@ textarea {
 ::selection {
     background-color: rgba(255, 0, 0, 0.5);
 }
+.hidden_sample {
+    display : none;
+}
 
+.CodeMirror {
+    width : 100%;
+    height : 24em;
+    padding: 10px;
+    border: 1px solid lightsalmon;
+    transition: box-shadow 0.3s;
+    background: lightyellow;
+    border-radius: 5px;
+    color: black;
+    font-family: 'Helvetica', 'sans serif';
+    font-size: x-large;
+    font-weight: bold;
+    line-height: 1.5;
+}
+.CodeMirror-selected { background-color: rgba(255, 0, 0, 0.5); }
+.CodeMirror-focused .CodeMirror-selected { background-color: rgba(255, 0, 0, 0.5); }
+.hide_markText { background-color: black; }
+.show_markText { background-color: inherit; }
+
+.log_container_ditdah {
+    width : 100%;
+    height : 16px;
+    overflow: hidden;
+    padding: 10px;
+    border: 1px solid lightsalmon;
+    transition: box-shadow 0.3s;
+    background: lightyellow;
+    border-radius: 5px;
+    color: black;
+    font-family: 'monospace';
+    font-size: small;
+    white-space: nowrap;
+}
+#ditdah {
+    height:10px;
+    float: right;
+}
+.ditdah_bar {
+    background: green;
+    height: 10px;
+    display: inline-block;
+}
+.ditdah_gap {
+    height: 10px;
+    display: inline-block;
+}
 </style>
 </head>
 <body><div id="page">
@@ -116,6 +169,7 @@ Extra Gap : <label><input type="radio" name="key" value="computer" checked /> No
 &nbsp;
 <label><input type="checkbox" id="selection_only" /> Play selection only</label>
 <label><input type="checkbox" id="highlight_slowly" /> Highlight slowly</label>
+<label><input type="checkbox" id="hide_text" /> Hide text</label>
 <label><input type="checkbox" id="repeat" /> Repeat</label>
 </span>
 </p>
@@ -128,7 +182,9 @@ Extra Gap : <label><input type="radio" name="key" value="computer" checked /> No
 <button id="english_qso_2">English Sample 2</button>
 <button id="user_qso">User Text</button>
 </p>
-<textarea id="hangul_txt_1" rows="16" spellcheck="false">
+<p class="log_container_ditdah"><span id="ditdah"></span></p>
+
+<textarea id="hangul_txt_1" rows="16">
 CQ CQ CQ DE HL5KY HL5KY <AR> K   
 
 HL5KY DE DS1ABC DS1ABC K   
@@ -225,7 +281,7 @@ E
 <div id="hangul_txt_4_caption" class="hidden_sample">※ QSO Sample from : HL1SB Youtube Channel <a href="https://www.youtube.com/watch?v=TkbhZqdAPdw" target="_blank">https://www.youtube.com/watch?v=TkbhZqdAPdw</a></div>
 
 <textarea id="english_txt_1" rows="16" class="hidden_sample">
-CQ CQ CQ DE DS1TWO DS1TWO K   
+CQ CQ CQ DE DS1TWO DS1TWO <AR>   
 
 DS1TWO DE 6K2KXY 6K2KXY <KN>   
 
@@ -281,7 +337,7 @@ TU E E
     <br />
     
     <h3>Links</h3><br />
-	Hangul CW Decoder - <a href="hangul_cw_decoder.html" target="_blank">http://shingiru.github.io/hangul_cw_decoder.html</a><br />
+    Hangul CW Decoder - <a href="hangul_cw_decoder.html" target="_blank">http://shingiru.github.io/hangul_cw_decoder.html</a><br />
     Seiuchy - <a href="http://seiuchy.macache.com/" target="_blank">http://seiuchy.macache.com/</a><br />
     Morse Code generator Javascript 라이브러리 - <a href="https://gist.github.com/eholk/0115691987090973cefe" target="_blank">https://gist.github.com/eholk/0115691987090973cefe</a><br />
     위 라이브러리 제작 관련 글 - <a href="https://blog.theincredibleholk.org/blog/2014/06/23/generating-morse-code-with-javascript/" target="_blank">https://blog.theincredibleholk.org/blog/2014/06/23/generating-morse-code-with-javascript/</a><br />
@@ -462,7 +518,7 @@ MorseNode.prototype.playChar = function(t, c) {
     return t;
 }
 
-var timestamp = [], highlightStart, hightlightEnd, highlightStartReal, stopped = true, selectionStart = -1, selectionEnd, repeatId;
+var timestamp = [];
 
 MorseNode.prototype.playString = function(t, w) {
     this.key = document.querySelector('input[name="key"]:checked').value;
@@ -471,7 +527,7 @@ MorseNode.prototype.playString = function(t, w) {
     timestamp = [];
     
     for (var n = 0; n < w.length; n++) {
-        if (!highlight_slowly.checked) timestamp.push(t);
+        if (!highlightSlowly.checked) timestamp.push(t);
         var c = w[n];
         var hangul = (c.length > 1);
         for (var i = 0; i < c.length; i++) {
@@ -486,7 +542,7 @@ MorseNode.prototype.playString = function(t, w) {
         if (hangul) {
             t += 2 * this._dot * this.dotfac('l');
         }
-        if (highlight_slowly.checked) timestamp.push(t);
+        if (highlightSlowly.checked) timestamp.push(t);
     }
     timestamp.push(t);
     return t;
@@ -512,12 +568,12 @@ var wpm = document.querySelector("#speed");
 var volume = document.querySelector("#volume");
 var play = document.querySelector("#play");
 var stop = document.querySelector("#stop");
-var txt = document.querySelector("#hangul_txt_1");
 var keyComputer = document.querySelector('input[name="key"][value="computer"]');
 var keyElmer = document.querySelector('input[name="key"][value="elmer"]');
 var keyFarnsworth = document.querySelector('input[name="key"][value="farnsworth"]');
 var selectionOnly = document.querySelector("#selection_only");
 var highlightSlowly = document.querySelector("#highlight_slowly");
+var hideText = document.querySelector("#hide_text");
 var repeat = document.querySelector("#repeat");
 
 function renewMorse() {
@@ -537,13 +593,20 @@ function renewMorse() {
     morse._dot = 1.2 / parseFloat(wpm.value);
     morse._oscillator.frequency.value = parseInt(freq.value);
 }
+var stopped = true;
+var cm, doc, txtValue, cursorFrom = null, cursorTo, cursorTempFrom, cursorTempTo, cursorTempEnd, highlightStart, hightlightEnd, repeatId, marker = null;
 stop.onclick = function() {
+    try { clearTimeout(repeatId); }
+    catch (e) {}
+    
     renewMorse();
     morse.playString(ac.currentTime, " ");
-    txt.readOnly = false;
-    txt.focus();
-    if (selectionStart != -1)
-        txt.setSelectionRange(selectionStart, selectionEnd);
+    doc.readOnly = false;
+    clearMarker();
+    if (cursorFrom != null) {
+        doc.setSelection(cursorFrom, cursorTo);
+        cm.refresh();
+    }
     stopped = true;
 }
 play.onclick = function() {
@@ -551,42 +614,67 @@ play.onclick = function() {
     catch (e) {}
 
     renewMorse();
-    txt.focus();
     
-    if (selectionStart != -1 && !stopped)
-        txt.setSelectionRange(selectionStart, selectionEnd);
-    selectionStart = txt.selectionStart;
-    selectionEnd = txt.selectionEnd;
+    clearMarker();
+    if (cursorFrom != null && !stopped) {
+        doc.setSelection(cursorFrom, cursorTo);
+        cm.refresh();
+		previousTime = 0;
+    } else clearDitdah();
     
-    if (selection_only.checked) {
-        if (txt.selectionStart == txt.selectionEnd) { // when no selection
-            if (txt.selectionStart == txt.value.length) { // when caret is at the end, start from first letter
-                morse.playString(ac.currentTime, txt.value);
-                highlightStart = highlightEnd = highlightStartReal = 0;
+    cursorFrom = doc.getCursor("from");
+    cursorTo = doc.getCursor("to");
+    txtValue = doc.getSelection();
+    
+    var lastLine = doc.lastLine();
+    var lastLineLength = doc.getLine(lastLine).length;
+    
+    if (selectionOnly.checked) {
+        if (txtValue == '') { // when no selection  
+            if (cursorTo.line == lastLine && cursorTo.ch == lastLineLength) { // when caret is at the end, start from first letter
+                txtValue = doc.getValue();
+                morse.playString(ac.currentTime, txtValue);
+                cursorTempFrom = {line: 0, ch: 0};
+                cursorTempTo = {line: 0, ch: 0};
+                cursorTempEnd = {line: lastLine, ch: lastLineLength};
             } else { // when caret is in the middle, start from caret position
-                morse.playString(ac.currentTime, txt.value.substring(txt.selectionStart));
-                highlightStart = highlightEnd = highlightStartReal = selectionStart;
+                doc.setSelection(cursorFrom, {line: lastLine, ch: lastLineLength});
+                txtValue = doc.getSelection();
+                doc.setSelection(cursorFrom, cursorTo);
+                morse.playString(ac.currentTime, txtValue);
+                cursorTempFrom = {line: cursorFrom.line, ch: cursorFrom.ch};
+                cursorTempTo = {line: cursorFrom.line, ch: cursorFrom.ch};
+                cursorTempEnd = {line: lastLine, ch: lastLineLength}
             }
         } else { // play selection
-            morse.playString(ac.currentTime, txt.value.substring(txt.selectionStart, txt.selectionEnd));
-            highlightStart = highlightEnd = highlightStartReal = selectionStart;
+            morse.playString(ac.currentTime, txtValue);
+            cursorTempFrom = {line: cursorFrom.line, ch: cursorFrom.ch};
+            cursorTempTo = {line: cursorFrom.line, ch: cursorFrom.ch};
+            cursorTempEnd = {line: cursorTo.line, ch: cursorTo.ch};
         }
     } else {
-        morse.playString(ac.currentTime, " vvv " + txt.value);
-        highlightStart = highlightEnd = -5; // " vvv " length
-        highlightStartReal = 0;
+        txtValue = doc.getValue();
+        morse.playString(ac.currentTime, txtValue);
+        cursorTempFrom = {line: 0, ch: 0};
+        cursorTempTo = {line: 0, ch: 0};
+        cursorTempEnd = {line: lastLine, ch: lastLineLength};
     }
-    txt.focus();
-    txt.readOnly = true;
+    highlightStart = highlightEnd = 0;
+    
+    doc.readOnly = true;
 
-    window.localStorage.setItem('user_txt', document.querySelector("#user_txt").value);
+    window.localStorage.setItem('user_txt', userTxt.CodeMirror.doc.getValue());
     
     stopped = false;
-    highlight();
+    if (highlightSlowly.checked) doc.setSelection(cursorTempFrom, cursorTempFrom);
+    if (hideText.checked) setMarker(cursorTempFrom, cursorTempEnd);
+    if (selectionOnly.checked == false) repeatId = setTimeout(highlight, 3000);
+    else highlight();
 }
 function delayedRepeat() {
     if (!stopped) play.click();
 }
+var previousTime = 0;
 function highlight() {
     if (timestamp.length == 0) {
         stop.click();
@@ -597,28 +685,77 @@ function highlight() {
         return;
     }
     
-    if (ac.currentTime > timestamp[0]) {        
+    if (previousTime != 0) addDitdah(morse._gain.gain.value > 0, parseInt((ac.currentTime - previousTime)*1000));
+    previousTime = ac.currentTime;
+    
+    if (ac.currentTime > timestamp[0]) {
         timestamp.shift();
-
+        
         highlightStart = highlightEnd;
-        if (txt.value[highlightStart] == '<' && txt.value.length > highlightStart + 3 
-            && !!morse.PROSIGN[txt.value.substring(highlightStart, highlightStart + 4).toUpperCase()]) {
+        cursorTempFrom.line = cursorTempTo.line, cursorTempFrom.ch = cursorTempTo.ch;
+        
+        if (txtValue[highlightStart] == '<' && txtValue.length > highlightStart + 3 
+            && !!morse.PROSIGN[txtValue.substring(highlightStart, highlightStart + 4).toUpperCase()]) {
             highlightEnd = highlightStart + 4;
-        } else if (txt.value.length > highlightStart) {
+            cursorTempTo.ch = cursorTempFrom.ch + 4;
+        } else if (txtValue.length > highlightStart) {
             highlightEnd = highlightStart + 1;
+            if (txtValue[highlightStart] == '\n') {
+                cursorTempTo.line++;
+                cursorTempTo.ch = 0;
+            } else {
+                cursorTempTo.ch = cursorTempFrom.ch + 1;
+            }
         }
 
-        if (highlightStart >= highlightStartReal && !stopped) {
-            txt.focus();
-            txt.setSelectionRange(highlightStart, highlightEnd);
+        if (!stopped && cursorTempTo.ch != 0) {
+            doc.setSelection(cursorTempFrom, cursorTempTo);
+                
+            if (hideText.checked) {
+                setMarker(cursorTempTo, cursorTempEnd);
+            }
+            
+            cm.refresh();
         }
     }
     
-    if (!stopped) setTimeout(highlight, 10);
+    if (!stopped) setTimeout(highlight);
 }
-function highlightNext() {
+function setMarker(start, end) {
+    clearMarker();
+    marker = cm.markText(start, end, {className: "hide_markText"});
+}
+function clearMarker() {
+    if (marker == null) return;
     
+    marker.clear();
+    marker = null;
 }
+
+var ditdah = document.querySelector("#ditdah");
+var last = false, lastWidth = 0;
+function addDitdah(bar, len) {
+    if (bar == last && ditdah.childNodes.length > 0 && lastWidth < 256) {
+        var span = ditdah.lastChild;
+        lastWidth += len;
+        span.style.width = (parseInt(lastWidth) >> 3) + "px";
+        return;
+    }
+    var span = document.createElement("SPAN");
+    span.className = bar ? "ditdah_bar" : "ditdah_gap";  
+    span.style.width = parseInt(len >> 3) + "px";
+    ditdah.appendChild(span);
+    if (ditdah.childNodes.length > 256) ditdah.removeChild(ditdah.firstChild);
+    last = bar;
+    lastWidth = len;
+}
+function clearDitdah() {
+    var len = ditdah.childNodes.length;
+    for (var i = 0; i < len; i++) ditdah.removeChild(ditdah.firstChild);
+    
+    previousTime = 0;
+}
+
 freq.onchange = function() {
     window.localStorage.setItem('freq', freq.value);
 }
@@ -639,10 +776,13 @@ keyFarnsworth.onchange = function() {
     window.localStorage.setItem('key', document.querySelector('input[name="key"]:checked').value);
 }
 selectionOnly.onchange = function() {
-    window.localStorage.setItem('selection_only', selection_only.checked);
+    window.localStorage.setItem('selection_only', selectionOnly.checked);
 }
 highlightSlowly.onchange = function() {
-    window.localStorage.setItem('highlight_slowly', highlight_slowly.checked);
+    window.localStorage.setItem('highlight_slowly', highlightSlowly.checked);
+}
+hideText.onchange = function() {
+    window.localStorage.setItem('hide_text', hideText.checked);
 }
 repeat.onchange = function() {
     window.localStorage.setItem('repeat', repeat.checked);
@@ -654,15 +794,33 @@ window.addEventListener('DOMContentLoaded', function() {
         if (window.localStorage.getItem('volume')) volume.value = parseInt(window.localStorage.getItem('volume'));
         vol = volume.value / 100.0;
         if (window.localStorage.getItem('selection_only')) selectionOnly.checked = window.localStorage.getItem('selection_only') == 'true';
-        if (window.localStorage.getItem('highlight_slowly')) highlightSlowly.checked = window.localStorage.getItem('highlight_slowly') == 'true';
+        if (window.localStorage.getItem('highlight_slowly')) highlightSlowly.checked = window.localStorage.getItem('highlight_slowly') == 'true';       
+        if (window.localStorage.getItem('hide_text')) hideText.checked = window.localStorage.getItem('hide_text') == 'true';
         if (window.localStorage.getItem('repeat')) repeat.checked = window.localStorage.getItem('repeat') == 'true';
         if (window.localStorage.getItem('key')) document.querySelector('input[name="key"][value="'+window.localStorage.getItem('key')+'"]').checked = true;
-        if (window.localStorage.getItem('user_txt')) document.querySelector("#user_txt").value = window.localStorage.getItem('user_txt');
+        if (window.localStorage.getItem('user_txt')) userTxt.CodeMirror.doc.setValue(window.localStorage.getItem('user_txt'));
         if (window.localStorage.getItem('qso_sample')) changeQsoSample(window.localStorage.getItem('qso_sample'));
+        else changeQsoSample("hangul_txt_1");
     } catch (e) {
     }
 }, true);
 
+function makeEditor(textArea, display) {
+    var editor = CodeMirror(function(el) {
+        el.id = textArea.id;
+        el.className = el.className + " " + textArea.className;
+        textArea.parentNode.replaceChild(el, textArea);
+    }, {value: textArea.value, mode: "xml", lineWrapping: true, styleSelectedText: true});
+}
+makeEditor(document.querySelector("#hangul_txt_1"));
+makeEditor(document.querySelector("#hangul_txt_2"));
+makeEditor(document.querySelector("#hangul_txt_3"));
+makeEditor(document.querySelector("#hangul_txt_4"));
+makeEditor(document.querySelector("#english_txt_1"));
+makeEditor(document.querySelector("#english_txt_2"));
+makeEditor(document.querySelector("#user_txt"));
+var txt = document.querySelector("#hangul_txt_1");
+var userTxt = document.querySelector("#user_txt");
 
 var hangulQso1 = document.querySelector("#hangul_qso_1");
 var hangulQso2 = document.querySelector("#hangul_qso_2");
@@ -674,14 +832,14 @@ var userQso = document.querySelector("#user_qso");
 
 function changeQsoSample(newTxtId) {
     var newTxt = document.querySelector("#" + newTxtId);
-    if (txt == newTxt) return;
+    //if (txt == newTxt) return;
 
     var txtCaption = document.querySelector("#" + txt.id + "_caption");
     var newTxtCaption = document.querySelector("#" + newTxtId + "_caption");
     if (!txtCaption || !newTxtCaption) return;
     
     if (!stopped) stop.click();
-    selectionStart = -1;
+    cursorFrom = null;
     
     txt.style.display = "none";
     txtCaption.style.display = "none";
@@ -690,11 +848,15 @@ function changeQsoSample(newTxtId) {
     txtCaption = newTxtCaption;
     
     txt.style.display = "block";
-    txt.spellcheck = false;
     txtCaption.style.display = "block";
+    
+    txt.classList.toggle('active');
+    cm = txt.CodeMirror;
+    doc = cm.doc;
+    cm.refresh();
 
     window.localStorage.setItem('qso_sample', newTxtId);
-    window.localStorage.setItem('user_txt', document.querySelector("#user_txt").value);
+    window.localStorage.setItem('user_txt', userTxt.CodeMirror.doc.getValue());
 }
 hangulQso1.onclick = function() {
     changeQsoSample("hangul_txt_1");
@@ -722,6 +884,7 @@ userQso.onclick = function() {
 
 <p class="font_medium">
 <h3>Change Log</h3>
+2022.08.26. Rich Editor(Code Mirror) Adopted. "Hide text" added.<br />
 2022.08.24. "User Text" added.<br />
 2022.08.15. "Repeat" added.<br />
 2022.08.14. "Highlight slowly" added. More QSO samples added.<br />
