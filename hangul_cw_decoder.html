@@ -103,7 +103,7 @@ textarea {
     color: black;
     font-family: 'monospace';
     font-size: small;
-    display: block;
+    display: none;
     white-space: nowrap;
 }
 #log1 {
@@ -141,28 +141,25 @@ textarea {
 Signal Speed : <input type="number" id="speed" value="20" size="2" min="5" max="50" /> wpm
 &nbsp;
 <label><input type="checkbox" id="hangul" /> Decode Hangul</label>
-<label><input type="checkbox" id="debug" checked /> Show DitDah Bar</label>
+<label><input type="checkbox" id="debug" /> Show DitDah Bar</label>
 <span class="prevent_wrap">
 <button id="start">START</button>
 <button id="stop">STOP</button>
 <button id="clear">CLEAR</button>
 </span><br />
-Android : FireFox Good. Chrome support 7 wpm max. iOS/Mac/PC : Chrome, FireFox, Safari, all OK.
+Android : Use FireFox. Chrome support 7 wpm max. iOS / Mac / PC : Chrome, FireFox, Safari are OK.
 </p>
 <p class="log_container_ditdah"><span id="log1"></span></p>
 <p class="log_container"><span id="log"></span></p>
 <p>
     <h3>Intro.</h3><br />
     안녕하세요. DS1TZE 입니다.<br /><br />
-    위 프로그램은 한글 CW 해독기 겸 타건 연습기입니다.<br />
-    핸드폰이나 노트북 컴퓨터 등 마이크가 있는 장비의 웹브라우저를 통해 이용하면 됩니다.<br />
-    리그 앞에 휴대폰이나 컴퓨터 마이크를 둔 후 Start 버튼을 누르기만 하면 대부분 됩니다. Speed는 여유 오차가 넉넉합니다.<br />
-    AGC 로직을 갖추고 있어 Start 버튼을 누른 후 몇 초 동안과 신호가 들어오는 동안 주기적으로 로직이 동작하여 부호의 길이와 갭 파악이 점차 정확해집니다.<br />
-    만약 주파수를 변경해서 새롭게 선국했거나 신호를 보내오는 상대가 달라지면 Start 버튼을 한 번씩 눌러주는 것이 좋습니다.<br />
-    DitDah Bar 영역에선 파악한 신호를 막대로 보여줍니다. 막대가 보이지 않는다면 마이크와 리그 스피커의 간격을 조금 좁히고 리그의 볼륨을 조절해 막대가 나타나도록 한 후 Start 버튼을 다시 눌러주면 됩니다.<br />
-    <a href="hangul_cw_trainer.html" target="_blank">[한글 CW 청취 연습기]</a> 혹은 PC용 SDR, 유투브 영상 등의 신호를 해독해보려면, 컴퓨터의 녹음(소리 입력) 장치를 Stereo Mix* 로 선택하고 볼륨을 20~30% 수준으로 세팅하면 됩니다.<br />
-    휴대폰에서는, 파이어폭스나 크롬 브라우저를 이용해, 탭 하나엔 해독기를 열어두고 다른 탭엔 청취 연습기를 열어서 소리는 내면서 해독을 시도해봐도 잘 됩니다.<br />
-    많은 활용 바라며, 기능 제안은 온에어에서 말씀해주시기 바랍니다.<br />
+    위 프로그램은 한글 CW 해독기 겸 타건 연습기입니다.<br />핸드폰이나 노트북 컴퓨터 등 마이크가 있는 장비의 브라우저(반드시 최신 버전 크롬 브라우저)를 이용해 위 프로그램을 이용하면 됩니다.<br />
+    <span class="strikethrough">입력하려는 신호에 따라 Frequency와 Speed, 그리고 MIC Gain을 조절하면 해독이 더 원활해집니다.</span><br />
+    -> Tone Frequency와 MIC Gain은 Start 버튼을 누를 때마다 자동으로 처리되니, 리그 앞에 휴대폰을 두고 Start 버튼을 누르기만 하면 됩니다.<br />
+    DitDah Bar에 나타나는 신호 막대가 신호와 맞을 때까지 들리는 소리의 크기를 조절합니다. 소리가 너무 크면 오히려 해독이 안됩니다.<br />
+    한글 CW 청취 연습기나 Web SDR, 유투브 영상의 신호를 해독하려면, 컴퓨터의 녹음(소리 입력) 장치를 Stereo Mix* 로 선택하되, 볼륨이 너무 높으면 신호 해석이 잘 안되니 적절히 줄인 후 사용하기 바랍니다.<br />
+    많은 활용 바라며, 건의 사항은 온에어에서 말씀해주시기 바랍니다.<br />
     ※ 소리 입력 장치 선택 : Windows 설정 -> 시스템 -> 소리. 만약 입력장치 목록에 Stereo Mix 없으면, [사운드 제어판] -> [녹음]탭에서 Stereo Mix 활성화 후 입력 장치 선택.
     <br />
     <br />
@@ -225,12 +222,14 @@ start.addEventListener("click", async () => {
             //analyser.connect(ac.destination); // important! this should be commented out
 
             doAgc();
+            prevTime = 0;
             processMorse();
         });
         initialized = true;
     } else {
         if (ac.state != "running") ac.resume();
         doAgc();
+        prevTime = 0;
         processMorse();
     }
 }, false);
@@ -312,7 +311,7 @@ function processMorse() {
     //console.log(buffer.join(","));
 
     var ditdah = (peak > DITDAH_THRESHOLD);
-    //if (ditdah) console.log("ditdah : " + ditdah + ", peak index : " + peakIndex + ", peak - 1 : " + buffer[peakIndex - 1] + ", peak : " + buffer[peakIndex] + ", peak + 1 : " + buffer[peakIndex + 1] + ", frameDuration : " + frameDuration);
+    if (ditdah) console.log("ditdah : " + ditdah + ", peak index : " + peakIndex + ", peak - 1 : " + buffer[peakIndex - 1] + ", peak : " + buffer[peakIndex] + ", peak + 1 : " + buffer[peakIndex + 1] + ", frameDuration : " + frameDuration);
     if (debug.checked && peak > 0) _log1(ditdah, frameDuration);
     
     var peakCount = 0;
@@ -370,14 +369,10 @@ function processMorse() {
         gapAmount += frameDuration;
 
         // when enough gapAmount
-        if (gapAmount > letterGapDuration) {
-            makeCharacter(hangul.checked);
-            flushCharacter(hangul.checked);
-        }
         if (gapAmount > letterGapDuration * 5 && !maxGapReached) { // 5 or 7
             if (debug.checked) console.log("MAX GAP, " + gapAmount);
-            //makeCharacter(hangul.checked);
-            //flushCharacter(hangul.checked);
+            makeCharacter(hangul.checked);
+            flushCharacter(hangul.checked);
             _logln(" ");
             gapAmount = 0;
             maxGapReached = true;
@@ -549,6 +544,8 @@ function _log1(ditdah, len) {
 function _log1_clear() {
     var len = log1.childNodes.length;
     for (var i = 0; i < len; i++) log1.removeChild(log1.firstChild);
+    
+    prevTime = 0;
 }
 wpm.onchange = function() {
     window.localStorage.setItem('wpm', wpm.value);
@@ -558,7 +555,7 @@ hangul.onchange = function() {
 }
 debug.onchange = function() {
     window.localStorage.setItem('debug', debug.checked);
-    document.querySelector(".log_container_ditdah").style.display = debug.checked ? "block" : "none";
+    document.querySelector(".`").style.display = debug.checked ? "block" : "none";
 }
 window.addEventListener('DOMContentLoaded', function() {
     try {
