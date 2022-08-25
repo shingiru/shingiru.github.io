@@ -595,6 +595,7 @@ function renewMorse() {
 }
 var stopped = true;
 var cm, doc, txtValue, cursorFrom = null, cursorTo, cursorTempFrom, cursorTempTo, cursorTempEnd, highlightStart, hightlightEnd, repeatId, marker = null;
+var DELAY_AMOUNT = 3; // 3s
 stop.onclick = function() {
     try { clearTimeout(repeatId); }
     catch (e) {}
@@ -633,7 +634,6 @@ play.onclick = function() {
         if (txtValue == '') { // when no selection  
             if (cursorTo.line == lastLine && cursorTo.ch == lastLineLength) { // when caret is at the end, start from first letter
                 txtValue = doc.getValue();
-                morse.playString(ac.currentTime, txtValue);
                 cursorTempFrom = {line: 0, ch: 0};
                 cursorTempTo = {line: 0, ch: 0};
                 cursorTempEnd = {line: lastLine, ch: lastLineLength};
@@ -641,25 +641,24 @@ play.onclick = function() {
                 doc.setSelection(cursorFrom, {line: lastLine, ch: lastLineLength});
                 txtValue = doc.getSelection();
                 doc.setSelection(cursorFrom, cursorTo);
-                morse.playString(ac.currentTime, txtValue);
                 cursorTempFrom = {line: cursorFrom.line, ch: cursorFrom.ch};
                 cursorTempTo = {line: cursorFrom.line, ch: cursorFrom.ch};
                 cursorTempEnd = {line: lastLine, ch: lastLineLength}
             }
         } else { // play selection
-            morse.playString(ac.currentTime, txtValue);
             cursorTempFrom = {line: cursorFrom.line, ch: cursorFrom.ch};
             cursorTempTo = {line: cursorFrom.line, ch: cursorFrom.ch};
             cursorTempEnd = {line: cursorTo.line, ch: cursorTo.ch};
         }
     } else {
         txtValue = doc.getValue();
-        morse.playString(ac.currentTime, txtValue);
         cursorTempFrom = {line: 0, ch: 0};
         cursorTempTo = {line: 0, ch: 0};
         cursorTempEnd = {line: lastLine, ch: lastLineLength};
     }
     highlightStart = highlightEnd = 0;
+	
+	morse.playString(ac.currentTime + (selectionOnly.checked == false ? DELAY_AMOUNT : 0), txtValue);
     
     doc.readOnly = true;
 
@@ -668,7 +667,7 @@ play.onclick = function() {
     stopped = false;
     if (highlightSlowly.checked) doc.setSelection(cursorTempFrom, cursorTempFrom);
     if (hideText.checked) setMarker(cursorTempFrom, cursorTempEnd);
-    if (selectionOnly.checked == false) repeatId = setTimeout(highlight, 3000);
+    if (selectionOnly.checked == false) repeatId = setTimeout(highlight, DELAY_AMOUNT * 1000);
     else highlight();
 }
 function delayedRepeat() {
