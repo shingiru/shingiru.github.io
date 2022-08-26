@@ -357,8 +357,8 @@ function processMorse() {
     maxDitDuration = parseInt(ditDuration * 2.0);
     letterGapDuration = ditDuration * 6;   
     var bucketSize = 44100 / 2 / binCount;
-    toneStart = Math.max(parseInt(200 / bucketSize), 1);
-    toneEnd = Math.min(parseInt(1200 / bucketSize), binCount - 1);
+    toneStart = Math.max(parseInt(400 / bucketSize), 1);
+    toneEnd = Math.min(parseInt(800 / bucketSize), binCount - 1);
 
     analyser.getByteFrequencyData(toneBuffer);
     var curTime = performance.now();
