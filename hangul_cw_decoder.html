@@ -148,7 +148,13 @@ Signal Speed : <input type="number" id="speed" value="20" size="2" min="5" max="
 <button id="start">START</button>
 <button id="stop">STOP</button>
 <button id="clear">CLEAR</button>
-</span><br />
+</span>
+&nbsp;
+<span class="prevent_wrap">
+<label><input type="checkbox" id="record" /> Screen Record</label>
+<a id="download_link"></a>
+</span>
+<br />
 Android : FireFox Good. Chrome support 7 wpm max. iOS/Mac/PC : Chrome, FireFox, Safari, all OK.
 </p>
 <p class="log_container_ditdah"><span id="log1"></span></p>
@@ -186,6 +192,7 @@ Android : FireFox Good. Chrome support 7 wpm max. iOS/Mac/PC : Chrome, FireFox, 
 </p>
 <p class="font_medium">
 <h3>Change Log</h3>
+2022.08.26. Screen Record support.<br />
 2022.08.22. Android Support.<br />
 2022.08.21. Tone frequency and Mic gain setting removed, set automatically.<br />
 2022.08.20. DitDah Bar and Setting Guide added.<br />
@@ -194,7 +201,7 @@ Android : FireFox Good. Chrome support 7 wpm max. iOS/Mac/PC : Chrome, FireFox, 
 </div>
 </body>
 <script type="text/javascript">
-var initialized = false, ac, gain, analyser, lastDitdah = false, ditdahAmount = 0, gapAmount = 0, maxGapReached = false, binCount = 256;
+var audioInitialized = videoInitialized = false, ac, gain, analyser, lastDitdah = false, ditdahAmount = 0, gapAmount = 0, maxGapReached = false, binCount = 256;
 
 var wpm = document.querySelector("#speed");
 var hangul = document.querySelector("#hangul");
@@ -202,16 +209,35 @@ var debug = document.querySelector("#debug");
 var start = document.querySelector("#start");
 var stop = document.querySelector("#stop");
 var clear = document.querySelector("#clear");
+var record = document.querySelector("#record");
 
 start.addEventListener("click", async () => {
     stop.click();
+	
+	if (record.checked) {
+		if (!videoInitialized) {
+			var constraints = {
+				audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false, sampleRate: 44100 },
+				video: { mediaSource: "screen" }
+			};
+			navigator.mediaDevices.getDisplayMedia(constraints).then(async (stream) => {
+				mediaRecorder = createRecorder(stream, "video/webm");
+				mediaRecorder.start(200);
+				videoInitialized = true;
+			});
+		} else {
+			mediaRecorder.start(200);
+		}
+	}
 
-    if (!initialized) { 
+    if (!audioInitialized) {
         ac = new AudioContext();
 
-        var constraints = { audio: {echoCancellation: false, noiseSuppression: false, autoGainControl: false}, video: false };
-        //if (isAndroid) constraints = { audio: {echoCancellation: false, noiseSuppression: false, autoGainControl: true}, video: false };
-        navigator.mediaDevices.getUserMedia(constraints).then(async (stream) => {
+        var constraints = {
+			audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false, sampleRate: 44100 },
+			video: false
+		};
+		navigator.mediaDevices.getUserMedia(constraints).then(async (stream) => {
             var input = ac.createMediaStreamSource(stream);
             gain = ac.createGain();
             gain.gain.value = 1.0;
@@ -220,17 +246,17 @@ start.addEventListener("click", async () => {
             analyser = ac.createAnalyser();
             analyser.minDecibels = -90;
             analyser.maxDecibels = -30;
-            if (isAndroid) analyser.smoothingTimeConstant = 0; // when THRESHOLD is hight, this value is not important
-            //if (isAndroid) analyser.fftSize = 1024;
+            if (isAndroid) analyser.smoothingTimeConstant = 0; // when THRESHOLD is high, this value is not important
             binCount = analyser.frequencyBinCount;
             gain.connect(analyser);
             //analyser.connect(ac.destination); // important! this should be commented out
-
-            doAgc();
+			
+			doAgc();
             prevTime = 0;
             processMorse();
+			
+			audioInitialized = true;
         });
-        initialized = true;
     } else {
         if (ac.state != "running") ac.resume();
         doAgc();
@@ -238,6 +264,40 @@ start.addEventListener("click", async () => {
         processMorse();
     }
 }, false);
+
+var mediaRecorder = null;
+function createRecorder(stream, mimeType) {
+	let chunks = [];
+	const mr = new MediaRecorder(stream);
+	
+	mr.ondataavailable = function(e) {
+		if (e.data.size > 0)
+			chunks.push(e.data);
+	};
+	mr.onstop = function() {
+		saveFile(chunks);
+		chunks = [];
+	}
+	mr.onstart = function() {
+		var anchor = document.querySelector("#download_link");
+		anchor.removeChild(anchor.firstChild);
+	}
+	return mr;
+}
+function saveFile(chunks) {
+	const blob = new Blob(chunks, { type: "video/webm" });
+	let link = document.createElement("A");
+	link.href = URL.createObjectURL(blob);
+	link.appendChild(document.createTextNode("[DOWNLOAD]"));
+	const filename = (new Date()).toISOString().replace(/[\-\:T]/ig, '').substring(0, 14);
+	link.download = filename + ".webm";
+	
+	var anchor = document.querySelector("#download_link");
+	link.id = anchor.id;
+	anchor.parentNode.replaceChild(link, anchor);
+	// link.click();
+	// URL.revokeOjectURL(blob); // clear from memory
+}
 
 var gaps = [];
 function agc(target, gap) {
@@ -507,6 +567,8 @@ function makeCharacter(makeHangul) {
 stop.onclick = function() {
     try { clearTimeout(timerId); }
     catch (e) {}
+	
+	if (mediaRecorder != null) mediaRecorder.stop();
 }
 clear.onclick = function() {
     log.textContent = "";
