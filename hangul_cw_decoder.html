@@ -220,6 +220,7 @@ start.addEventListener("click", async () => {
 				audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false },
 				video: { mediaSource: "screen" }
 			};
+			contraints = { audio : true, video : true };
 			navigator.mediaDevices.getDisplayMedia(constraints).then(async (stream) => {
 				mediaRecorder = createRecorder(stream, "video/webm");
 				mediaRecorder.start(200);
