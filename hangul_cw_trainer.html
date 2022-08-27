@@ -88,7 +88,20 @@ textarea {
 .font_medium {
     font-size : medium;
 }
-.prevent_wrap {
+.setting {
+	line-height: 2;
+}
+.setting_bold {
+	font-weight: 600;
+}
+.setting_group {
+	padding: 4px 5px;
+	margin-right: 10px;
+	border: 1px dotted teal;
+    white-space: nowrap;
+}
+.setting_group_2 {
+	margin-right: 10px;
     white-space: nowrap;
 }
 ::selection {
@@ -150,29 +163,34 @@ textarea {
 <p>
 <h2>한글 CW 연습기 by DS1TZE</h2>
 </p>
-<p>
-Frequency : <input type="number" id="freq" value="600" step="10" size="4" min="200" max="1200" />Hz
+<p class="setting">
+<span class="setting_group_2">
+<span class="setting_bold">Frequency</span> : <input type="number" id="freq" value="600" step="10" size="4" min="200" max="1200" /> Hz
 &nbsp;
-Speed : <input type="number" id="speed" value="20" size="2" min="5" max="50" />wpm
+<span class="setting_bold">Speed</span> : <input type="number" id="speed" value="20" size="2" min="5" max="50" /> wpm
 &nbsp;
-Volume : <input type="number" id="volume" value="100" size="3" min="10" max="100" step="10" />%
-&nbsp;
-<span class="prevent_wrap">
-Extra Gap : <label><input type="radio" name="key" value="computer" checked /> None</label>
+<span class="setting_bold">Volume</span> : <input type="number" id="volume" value="100" size="3" min="10" max="100" step="10" /> %
+</span>
+<span class="setting_group">
+<span class="setting_bold">Extra Gap</span> : <label><input type="radio" name="key" value="computer" checked /> None</label>
 <label><input type="radio" name="key" value="elmer" /> Small</label>
 <label><input type="radio" name="key" value="farnsworth" /> Large</label>
 </span>
-&nbsp;
-<span class="prevent_wrap">
+<span class="setting_group_2">
 <button id="play">PLAY</button>
 <button id="stop">STOP</button>
 </span>
-&nbsp;
-<span class="prevent_wrap">
-<label><input type="checkbox" id="selection_only" /> Selection only</label>
-<label><input type="checkbox" id="highlight_slowly" /> Highlight slowly</label>
-<label><input type="checkbox" id="hide_text" /> Hide text</label>
+<span class="setting_group">
+<span class="setting_bold">Play option</span> : <label><input type="checkbox" id="selection_only" /> Selection only</label>
 <label><input type="checkbox" id="repeat" /> Repeat</label>
+</span>
+<span class="setting_group">
+<span class="setting_bold">Highlight option</span> : <label><input type="checkbox" id="highlight_slowly" /> Highlight slowly</label>
+<label><input type="checkbox" id="hide_text" /> Hide text</label>
+</span>
+<span class="setting_group">
+<span class="setting_bold">Effect</span> : <label><input type="checkbox" id="noise"> Noise</label>
+<label><input type="checkbox" id="fading"> Fading</label>
 </span>
 </p>
 <p>
@@ -356,30 +374,88 @@ TU E E
     </h3>
     
 </p>
+
 <script type="text/javascript">
-function MorseNode(ac, rate) {
-    // ac is an audio context.
-    this._oscillator = ac.createOscillator();
-    this._gain = ac.createGain();
+(function(AudioContext) {
+	AudioContext.prototype.createEffect = function() {
+		var bufferSize = 4096;
+		var node = this.createScriptProcessor(bufferSize, 1, 1);
+		node.onaudioprocess = function(e) {
+			const inputBuffer = e.inputBuffer;
+			const outputBuffer = e.outputBuffer;
 
-    this._gain.gain.value = 0;
-    this._oscillator.type = 'sine';
-    this._oscillator.frequency.value = 600;
+			// Loop through the output channels (in this case there is only one)
+			for (let channel = 0; channel < outputBuffer.numberOfChannels; channel++) {
+				const inputData = inputBuffer.getChannelData(channel);
+				const outputData = outputBuffer.getChannelData(channel);
 
-    this._oscillator.connect(this._gain);
-    this.key = 'computer';
+				// Loop through the 4096 samples
+				for (let sample = 0; sample < inputBuffer.length; sample++) {
+					// make output equal to the same as the input
+					outputData[sample] = inputData[sample];
 
-    if ("undefined" == typeof rate)
-        rate = 20;
-    this._dot = 1.2 / rate; // formula from Wikipedia.
+					// add noise to each output sample
+					if (useNoise) outputData[sample] += ((Math.random() * 2) - 1) * 0.9; //  white noise. 0.2 noise strength 
+				}
+			}
+		}
+		return node;
+	};
+	
+	AudioContext.prototype.createWhiteNoise = function(bufferSize) {
+		bufferSize = bufferSize || 4096;
+		var node = this.createScriptProcessor(bufferSize, 1, 1);
+		node.onaudioprocess = function(e) {
+			var output = e.outputBuffer.getChannelData(0);
+			for (var i = 0; i < bufferSize; i++) {
+				output[i] = Math.random() * 2 - 1;
+			}
+		}
+		return node;
+	};
 
-    this._oscillator.start(0);
-}
+	AudioContext.prototype.createPinkNoise = function(bufferSize) {
+		bufferSize = bufferSize || 4096;
+		var b0, b1, b2, b3, b4, b5, b6;
+		b0 = b1 = b2 = b3 = b4 = b5 = b6 = 0.0;
+		var node = this.createScriptProcessor(bufferSize, 1, 1);
+		node.onaudioprocess = function(e) {
+			var output = e.outputBuffer.getChannelData(0);
+			for (var i = 0; i < bufferSize; i++) {
+				var white = Math.random() * 2 - 1;
+				b0 = 0.99886 * b0 + white * 0.0555179;
+				b1 = 0.99332 * b1 + white * 0.0750759;
+				b2 = 0.96900 * b2 + white * 0.1538520;
+				b3 = 0.86650 * b3 + white * 0.3104856;
+				b4 = 0.55000 * b4 + white * 0.5329522;
+				b5 = -0.7616 * b5 - white * 0.0168980;
+				output[i] = b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362;
+				output[i] *= 0.11; // (roughly) compensate for gain
+				b6 = white * 0.115926;
+			}
+		}
+		return node;
+	};
 
-MorseNode.prototype.connect = function(target) {
-    return this._gain.connect(target);
-}
+	AudioContext.prototype.createBrownNoise = function(bufferSize) {
+		bufferSize = bufferSize || 4096;
+		var lastOut = 0.0;
+		var node = this.createScriptProcessor(bufferSize, 1, 1);
+		node.onaudioprocess = function(e) {
+			var output = e.outputBuffer.getChannelData(0);
+			for (var i = 0; i < bufferSize; i++) {
+				var white = Math.random() * 2 - 1;
+				output[i] = (lastOut + (0.02 * white)) / 1.02;
+				lastOut = output[i];
+				output[i] *= 3.5; // (roughly) compensate for gain
+			}
+		}
+		return node;
+	};
+})(window.AudioContext);
 
+</script>
+<script type="text/javascript">
 MorseNode.prototype.MORSE = {
     "A": ".-",
     "B": "-...",
@@ -485,6 +561,29 @@ MorseNode.prototype.PROSIGN = {
     "<HH>" : "※"
 };
 
+function MorseNode(ac, rate) {
+    // ac is an audio context.
+    this._oscillator = ac.createOscillator();
+    this._gain = ac.createGain();
+
+    this._gain.gain.value = 0;
+    this._oscillator.type = 'sine';
+    this._oscillator.frequency.value = 600;
+	
+	this._oscillator.connect(this._gain);
+	this.key = 'computer';
+
+    if ("undefined" == typeof rate)
+        rate = 20;
+    this._dot = 1.2 / rate; // formula from Wikipedia.
+
+    this._oscillator.start(0);
+}
+
+MorseNode.prototype.connect = function(target) {
+    return this._gain.connect(target);
+}
+
 MorseNode.prototype.dotfac = function(t) {
     switch (this.key) {
             // t is type of dotvalue.  l=letter int. i=inter el. s=spaces .=dit -=dah 
@@ -501,16 +600,16 @@ MorseNode.prototype.dotfac = function(t) {
 
 }
 
-MorseNode.prototype.playChar = function(t, c) {
+MorseNode.prototype.playChar = function(t, c, v) {
     for (var i = 0; i < c.length; i++) {
         switch(c[i]) {
         case '.':
-            this._gain.gain.setValueAtTime(1.0 * vol, t);
+            this._gain.gain.setValueAtTime(1.0 * v, t);
             t += this._dot * this.dotfac('.');
             this._gain.gain.setValueAtTime(0.0, t);
             break;
         case '-':
-            this._gain.gain.setValueAtTime(1.0 * vol, t);
+            this._gain.gain.setValueAtTime(1.0 * v, t);
             t += 3 * this._dot * this.dotfac('-');
             this._gain.gain.setValueAtTime(0.0, t);
             break;
@@ -522,13 +621,19 @@ MorseNode.prototype.playChar = function(t, c) {
 
 var timestamp = [];
 
-MorseNode.prototype.playString = function(t, w) {
-    this.key = document.querySelector('input[name="key"]:checked').value;
+MorseNode.prototype.playString = function(t, w, v, k, fade) {
+    this.key = k;
     
     w = this.convertHangulAndProsign(w.toUpperCase());
     timestamp = [];
     
-    for (var n = 0; n < w.length; n++) {
+    var start = t, fv = v;
+	for (var n = 0; n < w.length; n++) {
+		if (fade && (t - start) > 0) { // skip face effect during first 10s
+			var pointOneSec = parseInt((t - start) * 10) % 150;
+			if (pointOneSec < 75) fv = v * (100 - pointOneSec) * 0.01; // gradually goes down to the quarter volume for 7.5 sec
+			else fv = v * (pointOneSec - 50) * 0.01; // gradually goes up to the normal volume for 7.5 sec
+		}
         if (!highlightSlowly.checked) timestamp.push(t);
         var c = w[n];
         var hangul = (c.length > 1);
@@ -537,7 +642,7 @@ MorseNode.prototype.playString = function(t, w) {
                 t += 4 * this._dot * this.dotfac('s'); // 3 dots gap already added after ending letter before
             }
             else if ("undefined" != typeof this.MORSE[c[i]]) {
-                t = this.playChar(t, this.MORSE[c[i]]); // 1 gap after dit/dah
+                t = this.playChar(t, this.MORSE[c[i]], fv); // 1 gap after dit/dah
                 t += 2 * this._dot * this.dotfac('l'); // with this 2 more gap, whole gap between letter is 3
             }
         }
@@ -547,6 +652,7 @@ MorseNode.prototype.playString = function(t, w) {
         if (highlightSlowly.checked) timestamp.push(t);
     }
     timestamp.push(t);
+	
     return t;
 }
 
@@ -573,6 +679,8 @@ var stop = document.querySelector("#stop");
 var keyComputer = document.querySelector('input[name="key"][value="computer"]');
 var keyElmer = document.querySelector('input[name="key"][value="elmer"]');
 var keyFarnsworth = document.querySelector('input[name="key"][value="farnsworth"]');
+var noise = document.querySelector("#noise");
+var fading = document.querySelector("#fading");
 var selectionOnly = document.querySelector("#selection_only");
 var highlightSlowly = document.querySelector("#highlight_slowly");
 var hideText = document.querySelector("#hide_text");
@@ -597,34 +705,50 @@ function renewMorse() {
 }
 var stopped = true;
 var cm, doc, txtValue, cursorFrom = null, cursorTo, cursorTempFrom, cursorTempTo, cursorTempEnd, highlightStart, hightlightEnd, repeatId, marker = null;
-var DELAY_AMOUNT = 3; // 3s
+var DELAY_AMOUNT = 1; // seconds
 stop.onclick = function() {
     try { clearTimeout(repeatId); }
     catch (e) {}
     
     renewMorse();
-    morse.playString(ac.currentTime, " ");
+	if (noiseNode) noiseGain.disconnect();
+    morse.playString(ac.currentTime, " ", vol, document.querySelector('input[name="key"]:checked').value, fading.checked);
     doc.readOnly = false;
+	
     clearMarker();
+	cm.focus();
     if (cursorFrom != null) {
-        cm.focus();
-	doc.setSelection(cursorFrom, cursorTo);
+        doc.setSelection(cursorFrom, cursorTo);
         cm.refresh();
     }
     stopped = true;
 }
+var bufferSource = noiseNode = noiseGain = null;
 play.onclick = function() {
     try { clearTimeout(repeatId); }
     catch (e) {}
 
     renewMorse();
+	
+	if (noise.checked) {
+		if (bufferSource == null) {
+			bufferSource = ac.createBufferSource();
+			noiseNode = ac.createPinkNoise();
+			bufferSource.connect(noiseNode);
+			noiseGain = ac.createGain();
+			noiseNode.connect(noiseGain);
+			bufferSource.start(0);
+		}
+		noiseGain.gain.value = vol;
+		noiseGain.connect(ac.destination);
+	}
     
     clearMarker();
+    cm.focus();
     if (cursorFrom != null && !stopped) {
-        cm.focus();
-	doc.setSelection(cursorFrom, cursorTo);
+		doc.setSelection(cursorFrom, cursorTo);
         cm.refresh();
-	previousTime = 0;
+		previousTime = 0;
     } else clearDitdah();
     
     cursorFrom = doc.getCursor("from");
@@ -662,18 +786,27 @@ play.onclick = function() {
     }
     highlightStart = highlightEnd = 0;
 	
-	morse.playString(ac.currentTime + (selectionOnly.checked == false ? DELAY_AMOUNT : 0), txtValue);
+	morse.playString(ac.currentTime + DELAY_AMOUNT, 
+		txtValue, 
+		vol * (noise.checked ? 0.5 : 1), 
+		document.querySelector('input[name="key"]:checked').value,
+		fading.checked);
     
     doc.readOnly = true;
 
     window.localStorage.setItem('user_txt', userTxt.CodeMirror.doc.getValue());
     
     stopped = false;
+	
+    cm.focus();
     if (highlightSlowly.checked) doc.setSelection(cursorTempFrom, cursorTempFrom);
     if (hideText.checked) setMarker(cursorTempFrom, cursorTempEnd);
+	cm.focus();
+	
     if (selectionOnly.checked == false) repeatId = setTimeout(highlight, DELAY_AMOUNT * 1000);
     else highlight();
 }
+
 function delayedRepeat() {
     if (!stopped) play.click();
 }
@@ -712,8 +845,8 @@ function highlight() {
         }
 
         if (!stopped && cursorTempTo.ch != 0) {
-	    cm.focus();
-            doc.setSelection(cursorTempFrom, cursorTempTo);
+            cm.focus();
+			doc.setSelection(cursorTempFrom, cursorTempTo);
                 
             if (hideText.checked) {
                 setMarker(cursorTempTo, cursorTempEnd);
@@ -779,6 +912,12 @@ keyElmer.onchange = function() {
 keyFarnsworth.onchange = function() {
     window.localStorage.setItem('key', document.querySelector('input[name="key"]:checked').value);
 }
+noise.onchange = function() {
+    window.localStorage.setItem('noise', noise.checked);
+}
+fading.onchange = function() {
+    window.localStorage.setItem('fading', fading.checked);
+}
 selectionOnly.onchange = function() {
     window.localStorage.setItem('selection_only', selectionOnly.checked);
 }
@@ -797,7 +936,9 @@ window.addEventListener('DOMContentLoaded', function() {
         if (window.localStorage.getItem('wpm')) wpm.value = parseInt(window.localStorage.getItem('wpm'));
         if (window.localStorage.getItem('volume')) volume.value = parseInt(window.localStorage.getItem('volume'));
         vol = volume.value / 100.0;
-        if (window.localStorage.getItem('selection_only')) selectionOnly.checked = window.localStorage.getItem('selection_only') == 'true';
+        if (window.localStorage.getItem('noise')) noise.checked = window.localStorage.getItem('noise') == 'true';
+		if (window.localStorage.getItem('fading')) fading.checked = window.localStorage.getItem('fading') == 'true';
+		if (window.localStorage.getItem('selection_only')) selectionOnly.checked = window.localStorage.getItem('selection_only') == 'true';
         if (window.localStorage.getItem('highlight_slowly')) highlightSlowly.checked = window.localStorage.getItem('highlight_slowly') == 'true';       
         if (window.localStorage.getItem('hide_text')) hideText.checked = window.localStorage.getItem('hide_text') == 'true';
         if (window.localStorage.getItem('repeat')) repeat.checked = window.localStorage.getItem('repeat') == 'true';
@@ -886,9 +1027,11 @@ userQso.onclick = function() {
 
 </script>
 
+
 <p class="font_medium">
 <h3>Change Log</h3>
-2022.08.26. Rich Editor(Code Mirror) Adopted. "Hide text" added.<br />
+2022.08.28. Noise effect added. Fading effect added(15 seconds cycle).<br />
+2022.08.26. Rich editor(Code Mirror) adopted. "Hide text" added.<br />
 2022.08.24. "User Text" added.<br />
 2022.08.15. "Repeat" added.<br />
 2022.08.14. "Highlight slowly" added. More QSO samples added.<br />
