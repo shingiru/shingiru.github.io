@@ -89,19 +89,19 @@ textarea {
     font-size : medium;
 }
 .setting {
-	line-height: 2;
+    line-height: 2;
 }
 .setting_bold {
-	font-weight: 600;
+    font-weight: 600;
 }
 .setting_group {
-	padding: 4px 5px;
-	margin-right: 10px;
-	border: 1px dotted teal;
+    padding: 4px 10px;
+    margin-right: 10px;
+    border: 1px dotted teal;
     white-space: nowrap;
 }
 .setting_group_2 {
-	margin-right: 10px;
+    margin-right: 10px;
     white-space: nowrap;
 }
 ::selection {
@@ -377,81 +377,81 @@ TU E E
 
 <script type="text/javascript">
 (function(AudioContext) {
-	AudioContext.prototype.createEffect = function() {
-		var bufferSize = 4096;
-		var node = this.createScriptProcessor(bufferSize, 1, 1);
-		node.onaudioprocess = function(e) {
-			const inputBuffer = e.inputBuffer;
-			const outputBuffer = e.outputBuffer;
+    AudioContext.prototype.createEffect = function() {
+        var bufferSize = 4096;
+        var node = this.createScriptProcessor(bufferSize, 1, 1);
+        node.onaudioprocess = function(e) {
+            const inputBuffer = e.inputBuffer;
+            const outputBuffer = e.outputBuffer;
 
-			// Loop through the output channels (in this case there is only one)
-			for (let channel = 0; channel < outputBuffer.numberOfChannels; channel++) {
-				const inputData = inputBuffer.getChannelData(channel);
-				const outputData = outputBuffer.getChannelData(channel);
+            // Loop through the output channels (in this case there is only one)
+            for (let channel = 0; channel < outputBuffer.numberOfChannels; channel++) {
+                const inputData = inputBuffer.getChannelData(channel);
+                const outputData = outputBuffer.getChannelData(channel);
 
-				// Loop through the 4096 samples
-				for (let sample = 0; sample < inputBuffer.length; sample++) {
-					// make output equal to the same as the input
-					outputData[sample] = inputData[sample];
+                // Loop through the 4096 samples
+                for (let sample = 0; sample < inputBuffer.length; sample++) {
+                    // make output equal to the same as the input
+                    outputData[sample] = inputData[sample];
 
-					// add noise to each output sample
-					if (useNoise) outputData[sample] += ((Math.random() * 2) - 1) * 0.9; //  white noise. 0.2 noise strength 
-				}
-			}
-		}
-		return node;
-	};
-	
-	AudioContext.prototype.createWhiteNoise = function(bufferSize) {
-		bufferSize = bufferSize || 4096;
-		var node = this.createScriptProcessor(bufferSize, 1, 1);
-		node.onaudioprocess = function(e) {
-			var output = e.outputBuffer.getChannelData(0);
-			for (var i = 0; i < bufferSize; i++) {
-				output[i] = Math.random() * 2 - 1;
-			}
-		}
-		return node;
-	};
+                    // add noise to each output sample
+                    if (useNoise) outputData[sample] += ((Math.random() * 2) - 1) * 0.9; //  white noise. 0.2 noise strength 
+                }
+            }
+        }
+        return node;
+    };
+    
+    AudioContext.prototype.createWhiteNoise = function(bufferSize) {
+        bufferSize = bufferSize || 4096;
+        var node = this.createScriptProcessor(bufferSize, 1, 1);
+        node.onaudioprocess = function(e) {
+            var output = e.outputBuffer.getChannelData(0);
+            for (var i = 0; i < bufferSize; i++) {
+                output[i] = Math.random() * 2 - 1;
+            }
+        }
+        return node;
+    };
 
-	AudioContext.prototype.createPinkNoise = function(bufferSize) {
-		bufferSize = bufferSize || 4096;
-		var b0, b1, b2, b3, b4, b5, b6;
-		b0 = b1 = b2 = b3 = b4 = b5 = b6 = 0.0;
-		var node = this.createScriptProcessor(bufferSize, 1, 1);
-		node.onaudioprocess = function(e) {
-			var output = e.outputBuffer.getChannelData(0);
-			for (var i = 0; i < bufferSize; i++) {
-				var white = Math.random() * 2 - 1;
-				b0 = 0.99886 * b0 + white * 0.0555179;
-				b1 = 0.99332 * b1 + white * 0.0750759;
-				b2 = 0.96900 * b2 + white * 0.1538520;
-				b3 = 0.86650 * b3 + white * 0.3104856;
-				b4 = 0.55000 * b4 + white * 0.5329522;
-				b5 = -0.7616 * b5 - white * 0.0168980;
-				output[i] = b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362;
-				output[i] *= 0.11; // (roughly) compensate for gain
-				b6 = white * 0.115926;
-			}
-		}
-		return node;
-	};
+    AudioContext.prototype.createPinkNoise = function(bufferSize) {
+        bufferSize = bufferSize || 4096;
+        var b0, b1, b2, b3, b4, b5, b6;
+        b0 = b1 = b2 = b3 = b4 = b5 = b6 = 0.0;
+        var node = this.createScriptProcessor(bufferSize, 1, 1);
+        node.onaudioprocess = function(e) {
+            var output = e.outputBuffer.getChannelData(0);
+            for (var i = 0; i < bufferSize; i++) {
+                var white = Math.random() * 2 - 1;
+                b0 = 0.99886 * b0 + white * 0.0555179;
+                b1 = 0.99332 * b1 + white * 0.0750759;
+                b2 = 0.96900 * b2 + white * 0.1538520;
+                b3 = 0.86650 * b3 + white * 0.3104856;
+                b4 = 0.55000 * b4 + white * 0.5329522;
+                b5 = -0.7616 * b5 - white * 0.0168980;
+                output[i] = b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362;
+                output[i] *= 0.11; // (roughly) compensate for gain
+                b6 = white * 0.115926;
+            }
+        }
+        return node;
+    };
 
-	AudioContext.prototype.createBrownNoise = function(bufferSize) {
-		bufferSize = bufferSize || 4096;
-		var lastOut = 0.0;
-		var node = this.createScriptProcessor(bufferSize, 1, 1);
-		node.onaudioprocess = function(e) {
-			var output = e.outputBuffer.getChannelData(0);
-			for (var i = 0; i < bufferSize; i++) {
-				var white = Math.random() * 2 - 1;
-				output[i] = (lastOut + (0.02 * white)) / 1.02;
-				lastOut = output[i];
-				output[i] *= 3.5; // (roughly) compensate for gain
-			}
-		}
-		return node;
-	};
+    AudioContext.prototype.createBrownNoise = function(bufferSize) {
+        bufferSize = bufferSize || 4096;
+        var lastOut = 0.0;
+        var node = this.createScriptProcessor(bufferSize, 1, 1);
+        node.onaudioprocess = function(e) {
+            var output = e.outputBuffer.getChannelData(0);
+            for (var i = 0; i < bufferSize; i++) {
+                var white = Math.random() * 2 - 1;
+                output[i] = (lastOut + (0.02 * white)) / 1.02;
+                lastOut = output[i];
+                output[i] *= 3.5; // (roughly) compensate for gain
+            }
+        }
+        return node;
+    };
 })(window.AudioContext);
 
 </script>
@@ -569,9 +569,9 @@ function MorseNode(ac, rate) {
     this._gain.gain.value = 0;
     this._oscillator.type = 'sine';
     this._oscillator.frequency.value = 600;
-	
-	this._oscillator.connect(this._gain);
-	this.key = 'computer';
+    
+    this._oscillator.connect(this._gain);
+    this.key = 'computer';
 
     if ("undefined" == typeof rate)
         rate = 20;
@@ -628,12 +628,12 @@ MorseNode.prototype.playString = function(t, w, v, k, fade) {
     timestamp = [];
     
     var start = t, fv = v;
-	for (var n = 0; n < w.length; n++) {
-		if (fade && (t - start) > 0) { // skip face effect during first 10s
-			var pointOneSec = parseInt((t - start) * 10) % 150;
-			if (pointOneSec < 75) fv = v * (100 - pointOneSec) * 0.01; // gradually goes down to the quarter volume for 7.5 sec
-			else fv = v * (pointOneSec - 50) * 0.01; // gradually goes up to the normal volume for 7.5 sec
-		}
+    for (var n = 0; n < w.length; n++) {
+        if (fade && (t - start) > 0) { // skip face effect during first 10s
+            var pointOneSec = parseInt((t - start) * 10) % 150;
+            if (pointOneSec < 75) fv = v * (100 - pointOneSec) * 0.01; // gradually goes down to the quarter volume for 7.5 sec
+            else fv = v * (pointOneSec - 50) * 0.01; // gradually goes up to the normal volume for 7.5 sec
+        }
         if (!highlightSlowly.checked) timestamp.push(t);
         var c = w[n];
         var hangul = (c.length > 1);
@@ -652,7 +652,7 @@ MorseNode.prototype.playString = function(t, w, v, k, fade) {
         if (highlightSlowly.checked) timestamp.push(t);
     }
     timestamp.push(t);
-	
+    
     return t;
 }
 
@@ -711,12 +711,12 @@ stop.onclick = function() {
     catch (e) {}
     
     renewMorse();
-	if (noiseNode) noiseGain.disconnect();
+    if (noiseNode) noiseGain.disconnect();
     morse.playString(ac.currentTime, " ", vol, document.querySelector('input[name="key"]:checked').value, fading.checked);
     doc.readOnly = false;
-	
+    
     clearMarker();
-	cm.focus();
+    cm.focus();
     if (cursorFrom != null) {
         doc.setSelection(cursorFrom, cursorTo);
         cm.refresh();
@@ -729,26 +729,26 @@ play.onclick = function() {
     catch (e) {}
 
     renewMorse();
-	
-	if (noise.checked) {
-		if (bufferSource == null) {
-			bufferSource = ac.createBufferSource();
-			noiseNode = ac.createPinkNoise();
-			bufferSource.connect(noiseNode);
-			noiseGain = ac.createGain();
-			noiseNode.connect(noiseGain);
-			bufferSource.start(0);
-		}
-		noiseGain.gain.value = vol;
-		noiseGain.connect(ac.destination);
-	}
+    
+    if (noise.checked) {
+        if (bufferSource == null) {
+            bufferSource = ac.createBufferSource();
+            noiseNode = ac.createPinkNoise();
+            bufferSource.connect(noiseNode);
+            noiseGain = ac.createGain();
+            noiseNode.connect(noiseGain);
+            bufferSource.start(0);
+        }
+        noiseGain.gain.value = vol;
+        noiseGain.connect(ac.destination);
+    }
     
     clearMarker();
     cm.focus();
     if (cursorFrom != null && !stopped) {
-		doc.setSelection(cursorFrom, cursorTo);
+        doc.setSelection(cursorFrom, cursorTo);
         cm.refresh();
-		previousTime = 0;
+        previousTime = 0;
     } else clearDitdah();
     
     cursorFrom = doc.getCursor("from");
@@ -785,24 +785,24 @@ play.onclick = function() {
         cursorTempEnd = {line: lastLine, ch: lastLineLength};
     }
     highlightStart = highlightEnd = 0;
-	
-	morse.playString(ac.currentTime + DELAY_AMOUNT, 
-		txtValue, 
-		vol * (noise.checked ? 0.5 : 1), 
-		document.querySelector('input[name="key"]:checked').value,
-		fading.checked);
+    
+    morse.playString(ac.currentTime + DELAY_AMOUNT, 
+        txtValue, 
+        vol * (noise.checked ? 0.5 : 1), 
+        document.querySelector('input[name="key"]:checked').value,
+        fading.checked);
     
     doc.readOnly = true;
 
     window.localStorage.setItem('user_txt', userTxt.CodeMirror.doc.getValue());
     
     stopped = false;
-	
+    
     cm.focus();
     if (highlightSlowly.checked) doc.setSelection(cursorTempFrom, cursorTempFrom);
     if (hideText.checked) setMarker(cursorTempFrom, cursorTempEnd);
-	cm.focus();
-	
+    cm.focus();
+    
     if (selectionOnly.checked == false) repeatId = setTimeout(highlight, DELAY_AMOUNT * 1000);
     else highlight();
 }
@@ -846,7 +846,7 @@ function highlight() {
 
         if (!stopped && cursorTempTo.ch != 0) {
             cm.focus();
-			doc.setSelection(cursorTempFrom, cursorTempTo);
+            doc.setSelection(cursorTempFrom, cursorTempTo);
                 
             if (hideText.checked) {
                 setMarker(cursorTempTo, cursorTempEnd);
@@ -937,8 +937,8 @@ window.addEventListener('DOMContentLoaded', function() {
         if (window.localStorage.getItem('volume')) volume.value = parseInt(window.localStorage.getItem('volume'));
         vol = volume.value / 100.0;
         if (window.localStorage.getItem('noise')) noise.checked = window.localStorage.getItem('noise') == 'true';
-		if (window.localStorage.getItem('fading')) fading.checked = window.localStorage.getItem('fading') == 'true';
-		if (window.localStorage.getItem('selection_only')) selectionOnly.checked = window.localStorage.getItem('selection_only') == 'true';
+        if (window.localStorage.getItem('fading')) fading.checked = window.localStorage.getItem('fading') == 'true';
+        if (window.localStorage.getItem('selection_only')) selectionOnly.checked = window.localStorage.getItem('selection_only') == 'true';
         if (window.localStorage.getItem('highlight_slowly')) highlightSlowly.checked = window.localStorage.getItem('highlight_slowly') == 'true';       
         if (window.localStorage.getItem('hide_text')) hideText.checked = window.localStorage.getItem('hide_text') == 'true';
         if (window.localStorage.getItem('repeat')) repeat.checked = window.localStorage.getItem('repeat') == 'true';
