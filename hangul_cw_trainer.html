@@ -607,7 +607,8 @@ stop.onclick = function() {
     doc.readOnly = false;
     clearMarker();
     if (cursorFrom != null) {
-        doc.setSelection(cursorFrom, cursorTo);
+        cm.focus();
+	doc.setSelection(cursorFrom, cursorTo);
         cm.refresh();
     }
     stopped = true;
@@ -620,9 +621,10 @@ play.onclick = function() {
     
     clearMarker();
     if (cursorFrom != null && !stopped) {
-        doc.setSelection(cursorFrom, cursorTo);
+        cm.focus();
+	doc.setSelection(cursorFrom, cursorTo);
         cm.refresh();
-		previousTime = 0;
+	previousTime = 0;
     } else clearDitdah();
     
     cursorFrom = doc.getCursor("from");
@@ -710,6 +712,7 @@ function highlight() {
         }
 
         if (!stopped && cursorTempTo.ch != 0) {
+	    cm.focus();
             doc.setSelection(cursorTempFrom, cursorTempTo);
                 
             if (hideText.checked) {
