@@ -78,6 +78,22 @@ textarea {
 .font_medium {
     font-size : medium;
 }
+.setting {
+    line-height: 2;
+}
+.setting_bold {
+    font-weight: 600;
+}
+.setting_group {
+    padding: 4px 0px 4px 10px;
+    margin-right: 10px;
+    border: 1px dotted teal;
+    white-space: nowrap;
+}
+.setting_group_2 {
+    margin-right: 10px;
+    white-space: nowrap;
+}
 .log_container {
     width : 100%;
     height : 24em;
@@ -108,7 +124,7 @@ textarea {
     display: block;
     white-space: nowrap;
 }
-#log1 {
+#ditdah_log {
     height:10px;
     float: right;
 }
@@ -139,26 +155,28 @@ textarea {
 <p>
 <h2>한글 CW 해독기 by DS1TZE</h2>
 </p>
-<p>
-Signal Speed : <input type="number" id="speed" value="20" size="2" min="5" max="50" /> wpm
-&nbsp;
-<label><input type="checkbox" id="hangul" /> Decode Hangul</label>
-<label><input type="checkbox" id="debug" checked /> Show DitDah Bar</label>
-<span class="prevent_wrap">
+<p class="setting">
+<span class="setting_group_2">
+<span class="setting_bold">Signal Speed</span> : <input type="number" id="speed" value="20" size="2" min="5" max="50" /> wpm
+</span>
+<span class="setting_group">
+<label><input type="checkbox" id="hangul" /> Decode hangul</label>
+<label><input type="checkbox" id="extra_gap" disabled /> Allow extra gap</label>&nbsp;
+</span>
+<span class="setting_group_2">
 <button id="start">START</button>
 <button id="stop">STOP</button>
 <button id="clear">CLEAR</button>
 </span>
-&nbsp;
-<span class="prevent_wrap">
-<label><input type="checkbox" id="record" /> Screen Record</label>
-<a id="download_link"></a>
+<span class="setting_group">
+<label><input type="checkbox" id="record" /> Record screen</label>&nbsp;
+<a id="download_link"></a>&nbsp;
 </span>
 <br />
-Android : FireFox Good. Chrome support 7 wpm max. iOS/Mac/PC : Chrome, FireFox, Safari, all OK.
+Android : Only FireFox. iOS/Mac/PC : Chrome recommended. (FireFox, Safari also OK)
 </p>
-<p class="log_container_ditdah"><span id="log1"></span></p>
-<p class="log_container"><span id="log"></span></p>
+<p class="log_container_ditdah"><span id="ditdah_log"></span></p>
+<p class="log_container"><span id="decoded_log"></span></p>
 <p>
     <h3>Intro.</h3><br />
     안녕하세요. DS1TZE 입니다.<br /><br />
@@ -192,7 +210,8 @@ Android : FireFox Good. Chrome support 7 wpm max. iOS/Mac/PC : Chrome, FireFox, 
 </p>
 <p class="font_medium">
 <h3>Change Log</h3>
-2022.08.26. Screen Record support.<br />
+2022.08.29. "Allow extra gap" added. Korean callsigns prevented from decoding. Recording format changed.(.mkv H264)<br />
+2022.08.26. Screen recording added.<br />
 2022.08.22. Android Support.<br />
 2022.08.21. Tone frequency and Mic gain setting removed, set automatically.<br />
 2022.08.20. DitDah Bar and Setting Guide added.<br />
@@ -205,7 +224,7 @@ var audioInitialized = videoInitialized = false, ac, gain, analyser, lastDitdah 
 
 var wpm = document.querySelector("#speed");
 var hangul = document.querySelector("#hangul");
-var debug = document.querySelector("#debug");
+var extraGap = document.querySelector("#extra_gap");
 var start = document.querySelector("#start");
 var stop = document.querySelector("#stop");
 var clear = document.querySelector("#clear");
@@ -213,31 +232,31 @@ var record = document.querySelector("#record");
 
 start.addEventListener("click", async () => {
     stop.click();
-	
-	if (record.checked) {
-		if (!videoInitialized) {
-			var constraints = {
-				audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false },
-				video: { mediaSource: "screen" }
-			};
-			navigator.mediaDevices.getDisplayMedia(constraints).then(async (stream) => {
-				mediaRecorder = createRecorder(stream, "video/webm");
-				mediaRecorder.start(200);
-				videoInitialized = true;
-			});
-		} else {
-			mediaRecorder.start(200);
-		}
-	}
+    
+    if (record.checked) {
+        if (!videoInitialized) {
+            var constraints = {
+                audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false },
+                video: { mediaSource: "screen" }
+            };
+            navigator.mediaDevices.getDisplayMedia(constraints).then(async (stream) => {
+                mediaRecorder = createRecorder(stream);
+                mediaRecorder.start(200);
+                videoInitialized = true;
+            });
+        } else {
+            mediaRecorder.start(200);
+        }
+    }
 
     if (!audioInitialized) {
         ac = new AudioContext();
 
         var constraints = {
-			audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false },
-			video: false
-		};
-		navigator.mediaDevices.getUserMedia(constraints).then(async (stream) => {
+            audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false },
+            video: false
+        };
+        navigator.mediaDevices.getUserMedia(constraints).then(async (stream) => {
             var input = ac.createMediaStreamSource(stream);
             gain = ac.createGain();
             gain.gain.value = 1.0;
@@ -250,12 +269,12 @@ start.addEventListener("click", async () => {
             binCount = analyser.frequencyBinCount;
             gain.connect(analyser);
             //analyser.connect(ac.destination); // important! this should be commented out
-			
-			doAgc();
+            
+            doAgc();
             prevTime = 0;
             processMorse();
-			
-			audioInitialized = true;
+            
+            audioInitialized = true;
         });
     } else {
         if (ac.state != "running") ac.resume();
@@ -266,37 +285,37 @@ start.addEventListener("click", async () => {
 }, false);
 
 var mediaRecorder = null;
-function createRecorder(stream, mimeType) {
-	let chunks = [];
-	const mr = new MediaRecorder(stream);
-	
-	mr.ondataavailable = function(e) {
-		if (e.data.size > 0)
-			chunks.push(e.data);
-	};
-	mr.onstop = function() {
-		saveFile(chunks);
-		chunks = [];
-	}
-	mr.onstart = function() {
-		var anchor = document.querySelector("#download_link");
-		anchor.removeChild(anchor.firstChild);
-	}
-	return mr;
+function createRecorder(stream) {
+    let chunks = [];
+    const mr = new MediaRecorder(stream);
+    
+    mr.ondataavailable = function(e) {
+        if (e.data.size > 0)
+            chunks.push(e.data);
+    };
+    mr.onstop = function() {
+        saveFile(chunks);
+        chunks = [];
+    }
+    mr.onstart = function() {
+        var anchor = document.querySelector("#download_link");
+        anchor.removeChild(anchor.firstChild);
+    }
+    return mr;
 }
 function saveFile(chunks) {
-	const blob = new Blob(chunks, { type: "video/webm" });
-	let link = document.createElement("A");
-	link.href = URL.createObjectURL(blob);
-	link.appendChild(document.createTextNode("[DOWNLOAD]"));
-	const filename = (new Date()).toISOString().replace(/[\-\:T]/ig, '').substring(0, 14);
-	link.download = filename + ".webm";
-	
-	var anchor = document.querySelector("#download_link");
-	link.id = anchor.id;
-	anchor.parentNode.replaceChild(link, anchor);
-	// link.click();
-	// URL.revokeOjectURL(blob); // clear from memory
+    const blob = new Blob(chunks, { type: "video/x-matroska;codecs:h264" });
+    let link = document.createElement("A");
+    link.href = URL.createObjectURL(blob);
+    link.appendChild(document.createTextNode("[DOWNLOAD]"));
+    const filename = (new Date()).toISOString().replace(/[\-\:T]/ig, '').substring(0, 14);
+    link.download = filename + ".mkv";
+    
+    var anchor = document.querySelector("#download_link");
+    link.id = anchor.id;
+    anchor.parentNode.replaceChild(link, anchor);
+    // link.click();
+    // URL.revokeOjectURL(blob); // clear from memory
 }
 
 var gaps = [];
@@ -307,9 +326,14 @@ function agc(target, gap) {
         for (var value of gaps) sum += value;
         var avg = sum / gaps.length;
         var diff = 1 + (avg - target) / target;
-        diff = Math.min(1.1, Math.max(0.9, diff));
+        diff = Math.min(1.1, Math.max(0.9, diff));      
+        if (diff > 0.95 && diff < 1.05) {
+            gaps = [];
+            return;
+        }
+        
         var fix = gain.gain.value * diff;
-        if (debug.checked) console.log("[AGC] target gap : " + target + ", current gap : " + parseInt(avg) + ", current gain : " + gain.gain.value + ", fix gain : " + fix);
+        console.log("[AGC] target gap : " + target + ", current gap : " + parseInt(avg) + ", current gain : " + gain.gain.value + ", fix gain : " + fix);
         if (!needToAgc) gain.gain.value = Math.min(1, Math.max(0, fix));
         gaps = [];
     }
@@ -326,7 +350,7 @@ function doAgc() {
 function try_agc(fix) {
     if (!needToAgc) return;
     
-    if ((performance.now() - bottomCheckStartAt) > 3000) {
+    if ((performance.now() - bottomCheckStartAt) > 3000) { // skip gap agc during first 3 sec
         gain.gain.value = Math.min(1, gainBottom * (isAndroid ? 1 : 1.25));
         //console.error("[AGC SET] bottom : " + gainBottom + ", set : " + gain.gain.value);
         needToAgc = false;
@@ -355,7 +379,10 @@ function processMorse() {
     ditDuration = parseInt(1.2 / parseInt(wpm.value) * 1000); // from wikipedia
     minDitDuration = parseInt(ditDuration * 0.1);
     maxDitDuration = parseInt(ditDuration * 2.0);
-    letterGapDuration = ditDuration * 6;   
+    minDitdahGap = parseInt(ditDuration * 0.5);
+    maxDitdahGap = parseInt(ditDuration * 2.5);
+    letterGapDuration = ditDuration * 6;
+    if (hangul.checked && extraGap.checked) letterGapDuration *= 1.5;
     var bucketSize = 44100 / 2 / binCount;
     toneStart = Math.max(parseInt(400 / bucketSize), 1);
     toneEnd = Math.min(parseInt(800 / bucketSize), binCount - 1);
@@ -378,7 +405,7 @@ function processMorse() {
 
     var ditdah = (peak > DITDAH_THRESHOLD);
     //if (ditdah) console.log("ditdah : " + ditdah + ", peak index : " + peakIndex + ", peak - 1 : " + buffer[peakIndex - 1] + ", peak : " + buffer[peakIndex] + ", peak + 1 : " + buffer[peakIndex + 1] + ", frameDuration : " + frameDuration);
-    if (debug.checked && peak > 0) _log1(ditdah, frameDuration);
+    if (peak > 0) printDitdah(ditdah, frameDuration);
     
     var peakCount = 0;
     for (var value of buffer)
@@ -398,18 +425,18 @@ function processMorse() {
     if (ditdah) { // TODO : need to determine gap after a few ditdah, not with single gap. Or, after enough gap arrived.
         
         if (lastDitdah == false) {
-            if (gapAmount < minDitDuration) { // noise
-                if (debug.checked) console.log("GAP NOISE, " + gapAmount);
-            } else if (gapAmount < maxDitDuration) { // inter-dit-dah
-                if (debug.checked) console.log("INTER-DITDAH GAP, " + gapAmount);
+            if (gapAmount < minDitdahGap) { // noise
+                console.log("GAP NOISE, " + gapAmount);
+            } else if (gapAmount < maxDitdahGap) { // inter-dit-dah
+                console.log("INTER-DITDAH GAP, " + gapAmount);
                 agc(ditDuration, parseInt(gapAmount));
                 gapAmount = 0;
             } else {
-                if (debug.checked) console.log("WORD GAP, " + gapAmount);
+                console.log("WORD GAP, " + gapAmount);
                 makeCharacter(hangul.checked);
                 if (gapAmount > letterGapDuration) {
                     flushCharacter(hangul.checked);
-                    _log(" ");
+                    printDecodedChar(" ");
                 }
                 gapAmount = 0;
             }
@@ -420,14 +447,12 @@ function processMorse() {
     } else {
         if (lastDitdah == true) {
             if (ditdahAmount < minDitDuration) { // noise
-                if (debug.checked) console.log("DITDAH NOISE, " + ditdahAmount);
+                console.log("DITDAH NOISE, " + ditdahAmount);
             } else if (ditdahAmount < maxDitDuration) { // dit
-                if (debug.checked) console.log("DIT, " + ditdahAmount);
-                //if (debug.checked && hangul.checked == false) _log("·");
+                console.log("DIT, " + ditdahAmount);
                 addToLetter(true);
             } else { // dah
-                if (debug.checked) console.log("DAH, " + ditdahAmount);
-                //if (debug.checked && hangul.checked == false) _log("-");
+                console.log("DAH, " + ditdahAmount);
                 addToLetter(false);
             }
         }
@@ -440,10 +465,10 @@ function processMorse() {
             flushCharacter(hangul.checked);
         }
         if (gapAmount > letterGapDuration * 5 && !maxGapReached) { // 5 or 7
-            if (debug.checked) console.log("MAX GAP, " + gapAmount);
+            console.log("MAX GAP, " + gapAmount);
             //makeCharacter(hangul.checked);
             //flushCharacter(hangul.checked);
-            _logln(" ");
+            printDecodedLine(" ");
             gapAmount = 0;
             maxGapReached = true;
             //console.clear();
@@ -456,7 +481,7 @@ function processMorse() {
 
 var ditdahs = "";
 var hangulLetters = [];
-var previousLetter = "";
+var previousLetters = [];
 function addToLetter(ditdah) { // ditdat - dit:true, dah:false
     ditdahs += (ditdah ? "." : "-");
 }
@@ -474,35 +499,26 @@ function flushCharacter(makeHangul) {
     if (makeHangul && hangulLetters.length > 0) {
         var characters = Hangul.assemble(hangulLetters);
         if (characters.length == 1) {
-            if (Hangul.isComplete(characters)) _log2(characters);
-            else {
-                var s = "";
-                for (var value of hangulLetters) s += hangulToAlphabet(value);
-                _log2(s);
-            }
+            updateDecodedHangul(characters);
         } else { // characters.length == 2
-            _log2(characters.charAt(0));
-            if (Hangul.isComplete(characters.charAt(1))) _log(characters.charAt(1));
-            else {
-                var s = "";
-                for (var value of Hangul.disassemble(characters.charAt(1))) s += hangulToAlphabet(value);
-                _log(s);
-            }
+            updateDecodedHangul(characters.charAt(0));
+            printDecodedHangul(characters.charAt(1));
         }
         hangulLetters = [];
     }
-    previousLetter = "";
+    previousLetters = [];
 }
 function makeCharacter(makeHangul) {
     if ("undefined" != typeof MORSE[ditdahs]) {
         var letter = MORSE[ditdahs];
+        previousLetters.push(letter);
         if ("undefined" != typeof PROSIGN[letter]) {
             flushCharacter(makeHangul);
-            _log(PROSIGN[letter]);
+            printDecodedChar(PROSIGN[letter]);
         } else {
-            if (makeHangul) {
+            if (makeHangul && !isCallsign()) {
                 if (hangulLetters.length == 0) {
-                    _log(letter);
+                    printDecodedChar(letter);
                     if ("undefined" != typeof HANGUL[ditdahs]) {
                         hangulLetters.push(HANGUL[ditdahs]);
                     }
@@ -511,101 +527,149 @@ function makeCharacter(makeHangul) {
                         hangulLetters.push(HANGUL[ditdahs]);
                         var characters = Hangul.assemble(hangulLetters);
                         if (characters.length == 1) {
-                            _log2(characters);
+                            updateDecodedHangul(characters);
                         } else {
                             hangulLetters.shift();
-                            _log(letter);
+                            printDecodedChar(letter);
                         }
                     } else {
                         hangulLetters.shift();
-                        _log(letter);
+                        printDecodedChar(letter);
                     }
                 } else { // with current letter, 3 letters or more
                     if ("undefined" != typeof HANGUL[ditdahs]) {
                         hangulLetters.push(HANGUL[ditdahs]);
                         var characters = Hangul.assemble(hangulLetters);
                         if (characters.length == 1) {
-                            _log2(characters);
+                            updateDecodedHangul(characters);
                         } else { // characters.length == 2
-                            _log2(characters.charAt(0));
+                            updateDecodedHangul(characters.charAt(0));
                             var hangulCharacters = Hangul.disassemble(characters, true);
                             hangulLetters = hangulCharacters[1];
-                            _log(characters.charAt(1));
+                            printDecodedHangul(characters.charAt(1));
                         }
                     } else {
                         var characters = Hangul.assemble(hangulLetters);
                         if (characters.length == 1) {
-                            if (Hangul.isComplete(characters)) _log2(characters);
-                            else {
-                                var s = "";
-                                for (var value of hangulLetters) s += hangulToAlphabet(value);
-                                _log2(s);
-                            }
+                            updateDecodedHangul(characters);
                         } else { // characters.length == 2
-                            _log2(characters.charAt(0));
-                            if (Hangul.isComplete(characters.charAt(1))) _log(characters.charAt(1));
-                            else {
-                                var s = "";
-                                for (var value of Hangul.disassemble(characters.charAt(1))) s += hangulToAlphabet(value);
-                                _log(s);
-                            }
+                            updateDecodedHangul(characters.charAt(0));
+                            printDecodedHangul(characters.charAt(1));
                         }
                         hangulLetters = [];
-                        _log(letter);
+                        printDecodedChar(letter);
                     }
                 }
             } else {
-                _log(letter);
+                printDecodedChar(letter);
+                if (hangulLetters.length != 0) hangulLetters = [];
             }
         }
-        previousLetter = letter;
-        
     }
-    
     ditdahs = "";
+}
+function printDecodedHangul(character) {
+    if (Hangul.isComplete(character)) printDecodedChar(character);
+    else {
+        var s = "";
+        for (var value of Hangul.disassemble(character)) s += hangulToAlphabet(value);
+        printDecodedChar(s);
+    }
+}
+function updateDecodedHangul(character) {
+    if (Hangul.isComplete(character)) updateDecodedChar(character);
+    else {
+        var s = "";
+        for (var value of Hangul.disassemble(character)) s += hangulToAlphabet(value);
+        updateDecodedChar(s);
+    }
+}
+var KOREA_PREFIX = ["HL", "DS", "6K", "6L", "6M", "D7", "D9"];
+function isCallsign() {
+    if (previousLetters.length == 0) return false;
+    
+    var letters = previousLetters.slice(-(Math.min(6, previousLetters.length))).join(""); // last 5 + argument
+    if (letters.length < 3) return false;
+    
+    var index = 0;
+    for (var i = 0; i < letters.length; i++) {
+        code = letters.charCodeAt(i);
+        if (!(code > 47 && code < 58) && !(code > 64 && code < 91)) index = i; // callsign is only using alpha-numeric
+    }
+    letters = letters.substring(index);
+    if (letters.length < 3) return false;
+    console.log(letters);
+    
+    for (var value of KOREA_PREFIX)
+        for (var num of [0, 1, 2, 3, 4, 5])
+            if (letters.indexOf(value + num) >= 0) return true;
+    
+    return false;
 }
 
 stop.onclick = function() {
     try { clearTimeout(timerId); }
     catch (e) {}
-	
-	if (mediaRecorder != null) mediaRecorder.stop();
+    
+    if (mediaRecorder != null) mediaRecorder.stop();
 }
 clear.onclick = function() {
-    log.textContent = "";
-    _log("");
-    _log1_clear();
+    clearDecodedLog();
+    clearDitdah();
 }
 record.onchange = function() {
-	if (isAndroid || isIOS) {
-		alert("Mobile devices don't support screen capture.");
-		record.checked = false;
-	}
+    if (isAndroid || isIOS) {
+        alert("Mobile devices don't support screen capture.");
+        record.checked = false;
+    }
 }
+wpm.onchange = function() {
+    window.localStorage.setItem('wpm', wpm.value);
+}
+hangul.onchange = function() {
+    window.localStorage.setItem('hangul', hangul.checked);
+    extraGap.disabled = !(hangul.checked);
+}
+extraGap.onchange = function() {
+    window.localStorage.setItem('extraGap', extraGap.checked);
+}
+window.addEventListener('DOMContentLoaded', function() {
+    try {
+        if (window.localStorage.getItem('wpm')) wpm.value = parseInt(window.localStorage.getItem('wpm'));
+        if (window.localStorage.getItem('hangul')) hangul.checked = window.localStorage.getItem('hangul') == 'true';
+        if (hangul.checked) extraGap.disabled = false;
+        if (window.localStorage.getItem('extraGap')) extraGap.checked = window.localStorage.getItem('extraGap') == 'true';
+    } catch (e) {}
+}, true);
 
-var log = document.querySelector("#log");
+var decodedLog = document.querySelector("#decoded_log");
 var textNode = null;
-function _log(s) {
+function printDecodedChar(s) {
     textNode = document.createTextNode(s);
-    log.appendChild(textNode);
-    //log.scrollIntoView(false);
+    decodedLog.appendChild(textNode);
+    if (!isAndroid && !isIOS) decodedLog.scrollIntoView(false);
 }
-function _log2(s) {
+function updateDecodedChar(s) {
     if (textNode) textNode.textContent = s;
-    else _log(s);
-    //log.scrollIntoView(false);
+    else printDecodedChar(s);
+    if (!isAndroid && !isIOS) decodedLog.scrollIntoView(false);
 }
-function _logln(s) {
+function printDecodedLine(s) {
     var el = document.createElement("DIV");
-    log.appendChild(el);
+    decodedLog.appendChild(el);
     var tn = document.createTextNode(s);
     el.appendChild(tn);
 }
-var log1 = document.querySelector("#log1");
-var last = false, lastWidth = 0;
-function _log1(ditdah, len) {
-    if (ditdah == last && log1.childNodes.length > 0 && lastWidth < 256) {
-        var span = log1.lastChild;
+function clearDecodedLog() {
+    decodedLog.textContent = "";
+    printDecodedChar("");
+}
+
+var ditdahLog = document.querySelector("#ditdah_log");
+var lastDitdahLog = false, lastWidth = 0;
+function printDitdah(ditdah, len) {
+    if (ditdah == lastDitdahLog && ditdahLog.childNodes.length > 0 && lastWidth < 256) {
+        var span = ditdahLog.lastChild;
         lastWidth += len;
         span.style.width = (parseInt(lastWidth) >> 3) + "px";
         return;
@@ -613,35 +677,17 @@ function _log1(ditdah, len) {
     var span = document.createElement("SPAN");
     span.className = ditdah ? "ditdah_bar" : "ditdah_gap";  
     span.style.width = parseInt(len >> 3) + "px";
-    log1.appendChild(span);
-    if (log1.childNodes.length > 256) log1.removeChild(log1.firstChild);
-    last = ditdah;
+    ditdahLog.appendChild(span);
+    if (ditdahLog.childNodes.length > 256) ditdahLog.removeChild(ditdahLog.firstChild);
+    lastDitdahLog = ditdah;
     lastWidth = len;
 }
-function _log1_clear() {
-    var len = log1.childNodes.length;
-    for (var i = 0; i < len; i++) log1.removeChild(log1.firstChild);
+function clearDitdah() {
+    var len = ditdahLog.childNodes.length;
+    for (var i = 0; i < len; i++) ditdahLog.removeChild(ditdahLog.firstChild);
     
     prevTime = 0;
 }
-wpm.onchange = function() {
-    window.localStorage.setItem('wpm', wpm.value);
-}
-hangul.onchange = function() {
-    window.localStorage.setItem('hangul', hangul.checked);
-}
-debug.onchange = function() {
-    window.localStorage.setItem('debug', debug.checked);
-    document.querySelector(".log_container_ditdah").style.display = debug.checked ? "block" : "none";
-}
-window.addEventListener('DOMContentLoaded', function() {
-    try {
-        if (window.localStorage.getItem('wpm')) wpm.value = parseInt(window.localStorage.getItem('wpm'));
-        if (window.localStorage.getItem('hangul')) hangul.checked = window.localStorage.getItem('hangul') == 'true';
-        if (window.localStorage.getItem('debug')) debug.checked = window.localStorage.getItem('debug') == 'true';
-        document.querySelector(".log_container_ditdah").style.display = debug.checked ? "block" : "none";
-    } catch (e) {}
-}, true);
 
 MORSE = {
     ".-": "A",
