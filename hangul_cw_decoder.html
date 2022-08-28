@@ -296,18 +296,18 @@ function createRecorder(stream) {
         if (e.data.size > 0)
             chunks.push(e.data);
     };
-    mr.onstop = function() {
+    mr.onstop = async() => { //function() {
         saveFile(chunks);
         chunks = [];
-    }
+    };
     mr.onstart = function() {
         var anchor = document.querySelector("#download_link");
 		if (anchor.childNodes.length > 0) anchor.removeChild(anchor.firstChild);
-    }
+    };
     return mr;
 }
 function saveFile(chunks) {
-    const blob = new Blob(chunks);
+    //const blob = new Blob(chunks);
     let link = document.createElement("A");
     //link.href = URL.createObjectURL(blob);
     //link.appendChild(document.createTextNode("[DOWNLOAD]"));
@@ -336,7 +336,9 @@ function saveFile(chunks) {
 	  link.download = filename + ".mp4";
 	};
 	
-	transcode(new Uint8Array((new Blob(chunks)).arrayBuffer()));
+	async () => {
+		transcode(new Uint8Array(await (new Blob(chunks)).arrayBuffer() ));
+	}
 }
 
 var gaps = [];
