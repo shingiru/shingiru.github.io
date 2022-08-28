@@ -733,7 +733,7 @@ play.onclick = function() {
     if (noise.checked) {
         if (bufferSource == null) {
             bufferSource = ac.createBufferSource();
-            noiseNode = ac.createPinkNoise();
+            noiseNode = ac.createWhiteNoise();
             bufferSource.connect(noiseNode);
             noiseGain = ac.createGain();
             noiseNode.connect(noiseGain);
