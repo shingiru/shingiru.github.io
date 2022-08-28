@@ -6,6 +6,9 @@
 <meta name=viewport content='width=900' />
 <title>한글 CW 해독기</title>
 <script src="hangul_for_cw.js"></script>
+<script src="https://unpkg.com/@ffmpeg/ffmpeg@0.11.0/dist/ffmpeg.min.js"></script>
+<meta http-equiv="origin-trial" content="Ars5frMY49lH5mPlDHBcKE7GyFwMiStE6bjik2S06iVIhQ+apdQxfAxHnUvQs/ZDesu4qKLyF49CvrFBat3zLwgAAAB8eyJvcmlnaW4iOiJodHRwczovL3NoaW5naXJ1LmdpdGh1Yi5pbzo0NDMiLCJmZWF0dXJlIjoiVW5yZXN0cmljdGVkU2hhcmVkQXJyYXlCdWZmZXIiLCJleHBpcnkiOjE2NzUyOTU5OTksImlzU3ViZG9tYWluIjp0cnVlfQ==">
+<!-- above cors policy only valid until 2023.02.02. needed for ffmpeg-wasm's shared array buffer -->
 <style>
 body {
     background-color: white ;
@@ -287,7 +290,7 @@ start.addEventListener("click", async () => {
 var mediaRecorder = null;
 function createRecorder(stream) {
     let chunks = [];
-    const mr = new MediaRecorder(stream);
+    const mr = new MediaRecorder(stream, {mimeType: "video/webm;codecs=h264"});
     
     mr.ondataavailable = function(e) {
         if (e.data.size > 0)
@@ -299,23 +302,41 @@ function createRecorder(stream) {
     }
     mr.onstart = function() {
         var anchor = document.querySelector("#download_link");
-        anchor.removeChild(anchor.firstChild);
+		if (anchor.childNodes.length > 0) anchor.removeChild(anchor.firstChild);
     }
     return mr;
 }
 function saveFile(chunks) {
-    const blob = new Blob(chunks, { type: "video/x-matroska;codecs:h264" });
+    const blob = new Blob(chunks);
     let link = document.createElement("A");
-    link.href = URL.createObjectURL(blob);
-    link.appendChild(document.createTextNode("[DOWNLOAD]"));
+    //link.href = URL.createObjectURL(blob);
+    //link.appendChild(document.createTextNode("[DOWNLOAD]"));
     const filename = (new Date()).toISOString().replace(/[\-\:T]/ig, '').substring(0, 14);
-    link.download = filename + ".mkv";
+    //link.download = filename + ".webm";
     
     var anchor = document.querySelector("#download_link");
     link.id = anchor.id;
     anchor.parentNode.replaceChild(link, anchor);
     // link.click();
     // URL.revokeOjectURL(blob); // clear from memory
+		
+	const { createFFmpeg, fetchFile } = FFmpeg;
+	const ffmpeg = createFFmpeg({
+	  corePath: 'https://unpkg.com/@ffmpeg/core@0.11.0/dist/ffmpeg-core.js',
+	  log: true,
+	});
+	
+	const transcode = async (data) => {
+	  await ffmpeg.load();
+	  ffmpeg.FS('writeFile', filename + ".webm", await fetchFile(data));
+	  await ffmpeg.run('-i', filename + ".webm",  filename + ".mp4");
+	  const transcoded = ffmpeg.FS('readFile', filename + ".mp4");
+	  link.href = URL.createObjectURL(new Blob([transcoded.buffer], {type: 'video/mp4'}));
+	  link.appendChild(document.createTextNode("[DOWNLOAD]"));
+	  link.download = filename + ".mp4";
+	};
+	
+	transcode(new Uint8Array((new Blob(chunks)).arrayBuffer()));
 }
 
 var gaps = [];
