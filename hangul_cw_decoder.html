@@ -362,7 +362,7 @@ function agc(target, gap) {
     }
 }
 var needToAgc = true, gainBottom = 1.0, bottomCheckStartAt = lastPeakAt = lastDitAt = 0;
-var AGC_PEAK_GAIN_DECREASE_AMOUNT = 0.02, AGC_MIN_PEAK_GAIN_CHECK_DURATION = 5000, AGC_AGAIN_WHEN_NO_PEAK_DURATION = 5000, AGC_AGAIN_WHEN_NO_DIT_DURATION = 5000, AGC_AGAIN_WHEN_SMALL_GAP_REPEAT_DURATION = 5000;
+var AGC_PEAK_GAIN_DECREASE_AMOUNT = 0.01, AGC_MIN_PEAK_GAIN_CHECK_DURATION = 5000, AGC_AGAIN_WHEN_NO_PEAK_DURATION = 5000, AGC_AGAIN_WHEN_NO_DIT_DURATION = 5000, AGC_AGAIN_WHEN_SMALL_GAP_REPEAT_DURATION = 5000;
 function doAgc() {
     needToAgc = true;
     gainBottom = 1.0;
@@ -378,7 +378,7 @@ function try_agc(peak) {
     
     if (bottomCheckStartAt != 0 && (now - bottomCheckStartAt) > AGC_MIN_PEAK_GAIN_CHECK_DURATION) { // skip gap agc during first 3 sec
         gain.gain.value = Math.min(1, gainBottom * (isAndroid ? 1 : 1.25));
-        console.log("[AGC SET] bottom : " + gainBottom + ", set : " + gain.gain.value);
+        console.error("[AGC SET] bottom : " + gainBottom + ", set : " + gain.gain.value);
         needToAgc = false;
 		lastDitAt = now;
 		toggleAgcIndicator(false);
@@ -424,9 +424,9 @@ function processMorse() {
     minDitDuration = parseInt(ditDuration * 0.1);
     maxDitDuration = parseInt(ditDuration * 2.0);
     minDitdahGap = parseInt(ditDuration * 0.5);
-    maxDitdahGap = parseInt(ditDuration * 2.5);
+    maxDitdahGap = parseInt(ditDuration * 3.0);
     letterGapDuration = ditDuration * 6;
-    if (hangul.checked && extraGap.checked) letterGapDuration *= 1.5;
+    if (hangul.checked && extraGap.checked) letterGapDuration *= 3;//1.5;
     var bucketSize = 44100 / 2 / binCount;
     toneStart = Math.max(parseInt(400 / bucketSize), 1);
     toneEnd = Math.min(parseInt(800 / bucketSize), binCount - 1);
@@ -448,6 +448,13 @@ function processMorse() {
     //console.log(buffer.join(","));
 
     var ditdah = (peak > DITDAH_THRESHOLD);
+	
+	var n = buffer.length;
+	var mean = buffer.reduce((a, b) => a + b) / n;
+	var standardDeviation = Math.sqrt(buffer.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / n);
+	var snr = mean / standardDeviation;
+	//console.log("ditdah : " + ditdah + ", μ : " + mean + ", σ : " + standardDeviation + ", SNR : " + snr);
+	
     //if (ditdah) console.log("ditdah : " + ditdah + ", peak index : " + peakIndex + ", peak - 1 : " + buffer[peakIndex - 1] + ", peak : " + buffer[peakIndex] + ", peak + 1 : " + buffer[peakIndex + 1] + ", frameDuration : " + frameDuration);
     if (peak > 0) printDitdah(ditdah, frameDuration);
     
@@ -457,7 +464,7 @@ function processMorse() {
             peakCount++;
     
     agcElapsed += frameDuration;
-    if (agcElapsed >= 46) { // at least 10ms or 46ms (fft sample size 2048 / 44100)
+    if (agcElapsed >= 23) { // at least 10ms or 46ms (fft sample size 2048 / 44100)
         if (peak > DITDAH_THRESHOLD * 0.5 && peak < DITDAH_THRESHOLD) {
             try_agc(false);
 			checkAgcNeededAndDo();
