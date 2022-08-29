@@ -351,7 +351,7 @@ function try_agc(fix) {
     if (!needToAgc) return;
     
     if (bottomCheckStartAt != 0 && (performance.now() - bottomCheckStartAt) > 5000) { // skip gap agc during first 3 sec
-        gain.gain.value = Math.min(1, Math.min(1, gainBottom * (isAndroid ? 1 : 1.1));
+        gain.gain.value = Math.min(1, gainBottom * (isAndroid ? 1 : 1.1));
         console.error("[AGC SET] bottom : " + gainBottom + ", set : " + gain.gain.value);
         needToAgc = false;
         return;
