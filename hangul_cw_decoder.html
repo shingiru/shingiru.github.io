@@ -378,7 +378,7 @@ function try_agc(peak) {
     
     if (bottomCheckStartAt != 0 && (now - bottomCheckStartAt) > AGC_MIN_PEAK_GAIN_CHECK_DURATION) { // skip gap agc during first 3 sec
         gain.gain.value = Math.min(1, gainBottom * (isAndroid ? 1 : 1.25));
-        console.error("[AGC SET] bottom : " + gainBottom + ", set : " + gain.gain.value);
+        console.log("[AGC SET] bottom : " + gainBottom + ", set : " + gain.gain.value);
         needToAgc = false;
 		lastDitAt = now;
 		toggleAgcIndicator(false);
@@ -388,7 +388,7 @@ function try_agc(peak) {
     if (peak) { // when met fist peak, start to calculate minimum gain that can catch peak still, by decreasing small amount of gain
         gainBottom -= AGC_PEAK_GAIN_DECREASE_AMOUNT; // decrease small amount
         gainBottom = Math.max(0.1, gainBottom); // gain minimum
-        console.error("[AGC SET] change gain : " + gain.gain.value + " => " + gainBottom);
+        //console.log("[AGC SET] change gain : " + gain.gain.value + " => " + gainBottom);
         gain.gain.value = gainBottom;
         if (bottomCheckStartAt == 0) bottomCheckStartAt = now;
     }
@@ -407,7 +407,7 @@ function checkAgcNeededAndDo() { // agc again when enough signal not accepted
 }
 function toggleAgcIndicator(show) {
 	var agcIndicator = document.querySelector("#agc_indicator");
-	agcIndicator.style.display = (show ? "inline-block" : "none");
+	agcIndicator.style.display = (show ? "inline" : "none");
 }
 
 var toneBuffer = null, ditDuration, minDitDuration, maxDitDuration, letterGapDuration, toneStart, toneEnd, lastProcessedAt = 0, timerId;
