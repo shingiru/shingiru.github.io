@@ -265,7 +265,7 @@ start.addEventListener("click", async () => {
             analyser = ac.createAnalyser();
             analyser.minDecibels = -90;
             analyser.maxDecibels = -30;
-            if (isAndroid) analyser.smoothingTimeConstant = 0; // when THRESHOLD is high, this value is not important
+            //if (isAndroid) analyser.smoothingTimeConstant = 0; // when THRESHOLD is high, this value is not important
             binCount = analyser.frequencyBinCount;
             gain.connect(analyser);
             //analyser.connect(ac.destination); // important! this should be commented out
@@ -333,7 +333,7 @@ function agc(target, gap) {
         }
         
         var fix = gain.gain.value * diff;
-        console.log("[AGC] target gap : " + target + ", current gap : " + parseInt(avg) + ", current gain : " + gain.gain.value + ", fix gain : " + fix);
+        console.log("[AGC] target gap " + (needToAgc ? "need to be fixed" : "fixed") + " : " + target + ", current gap : " + parseInt(avg) + ", current gain : " + gain.gain.value + ", fix gain : " + fix);
         if (!needToAgc) gain.gain.value = Math.min(1, Math.max(0, fix));
         gaps = [];
     }
@@ -345,33 +345,33 @@ function doAgc() {
     gainBottom = 1.0;
     lastUpdown = undefined;
     gain.gain.value = 1.0;
-    bottomCheckStartAt = performance.now();
+    bottomCheckStartAt = 0;
 }
 function try_agc(fix) {
     if (!needToAgc) return;
     
-    if ((performance.now() - bottomCheckStartAt) > 3000) { // skip gap agc during first 3 sec
-        gain.gain.value = Math.min(1, gainBottom * (isAndroid ? 1 : 1.25));
-        //console.error("[AGC SET] bottom : " + gainBottom + ", set : " + gain.gain.value);
+    if (bottomCheckStartAt != 0 && (performance.now() - bottomCheckStartAt) > 5000) { // skip gap agc during first 3 sec
+        gain.gain.value = Math.min(1, Math.min(1, gainBottom * 1.1)); //Math.min(1, gainBottom * (isAndroid ? 1 : 1.25));
+        console.error("[AGC SET] bottom : " + gainBottom + ", set : " + gain.gain.value);
         needToAgc = false;
         return;
     }
     
-    if (fix) {
-        gainBottom -= AGC_FIX_AMOUNT;
-        gainBottom = Math.max(0.05, gainBottom);
-        //console.log("[AGC SET] change gain : " + gain.gain.value + " => " + gainBottom);
+    if (fix) { // when met fist peak, start to calculate minimum gain that can catch peak still, by decreasing small amount of gain
+        gainBottom -= AGC_FIX_AMOUNT; // decrease small amount
+        gainBottom = Math.max(0.1, gainBottom); // gain minimum
+        console.error("[AGC SET] change gain : " + gain.gain.value + " => " + gainBottom);
         gain.gain.value = gainBottom;
-        bottomCheckStartAt = performance.now();
+        if (bottomCheckStartAt == 0) bottomCheckStartAt = performance.now();
     }
 }
 
 var toneBuffer = null, ditDuration, minDitDuration, maxDitDuration, letterGapDuration, toneStart, toneEnd, prevTime = 0, timerId;
-var DITDAH_THRESHOLD = parseInt(256 * 0.98);
+var DITDAH_THRESHOLD = 227;//parseInt(256 * 0.98); // 227 is magic number
 var ua = navigator.userAgent.toLowerCase();
 var isIOS = (ua.indexOf("iphone") > -1 || ua.indexOf("ipad") > -1 || ua.indexOf("ipod") > -1);
 var isAndroid = ua.indexOf("android") > -1;
-if (isAndroid) DITDAH_THRESHOLD = parseInt(256 * 0.5);
+//if (isAndroid) DITDAH_THRESHOLD = parseInt(256 * 0.5);
 var firstDitDahStarted = false;
 var agcElapsed = 0;
 function processMorse() {
@@ -413,10 +413,10 @@ function processMorse() {
             peakCount++;
     
     agcElapsed += frameDuration;
-    if (agcElapsed >= 10) {
+    if (agcElapsed >= 46) { // 10ms or 46ms (fft sample size 2048 / 44100)
         if (peak > DITDAH_THRESHOLD * 0.5 && peak < DITDAH_THRESHOLD) {
             try_agc(false);
-        } else if (peakCount > (isAndroid ? 1 : 2)) {
+        } else if (peakCount > 1) { // } else if (peakCount > (isAndroid ? 1 : 2)) {
             try_agc(true);
         }
         agcElapsed = 0;
