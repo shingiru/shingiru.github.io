@@ -265,7 +265,7 @@ start.addEventListener("click", async () => {
             analyser = ac.createAnalyser();
             analyser.minDecibels = -90;
             analyser.maxDecibels = -30;
-            //if (isAndroid) analyser.smoothingTimeConstant = 0; // when THRESHOLD is high, this value is not important
+            if (isAndroid) analyser.smoothingTimeConstant = 0; // when THRESHOLD is high, this value is not important
             binCount = analyser.frequencyBinCount;
             gain.connect(analyser);
             //analyser.connect(ac.destination); // important! this should be commented out
@@ -351,7 +351,7 @@ function try_agc(fix) {
     if (!needToAgc) return;
     
     if (bottomCheckStartAt != 0 && (performance.now() - bottomCheckStartAt) > 5000) { // skip gap agc during first 3 sec
-        gain.gain.value = Math.min(1, Math.min(1, gainBottom * 1.1)); //Math.min(1, gainBottom * (isAndroid ? 1 : 1.25));
+        gain.gain.value = Math.min(1, Math.min(1, gainBottom * (isAndroid ? 1 : 1.1));
         console.error("[AGC SET] bottom : " + gainBottom + ", set : " + gain.gain.value);
         needToAgc = false;
         return;
@@ -371,7 +371,7 @@ var DITDAH_THRESHOLD = 227;//parseInt(256 * 0.98); // 227 is magic number
 var ua = navigator.userAgent.toLowerCase();
 var isIOS = (ua.indexOf("iphone") > -1 || ua.indexOf("ipad") > -1 || ua.indexOf("ipod") > -1);
 var isAndroid = ua.indexOf("android") > -1;
-//if (isAndroid) DITDAH_THRESHOLD = parseInt(256 * 0.5);
+if (isAndroid) DITDAH_THRESHOLD = parseInt(256 * 0.5);
 var firstDitDahStarted = false;
 var agcElapsed = 0;
 function processMorse() {
