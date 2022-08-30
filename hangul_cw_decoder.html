@@ -55,6 +55,10 @@ button {
 #speed {
     width: 3em;
 }
+#target_speed {
+    width: 2em;
+	color: gray;
+}
 #snr {
     width: 3em;
 }
@@ -166,7 +170,10 @@ button {
 </p>
 <p class="setting">
 <span class="setting_group_2">
-<span class="setting_bold">Signal Speed</span> : <input type="number" id="speed" value="20" size="2" min="5" max="50" /> wpm</span>
+<span class="setting_bold">Start Speed</span> <input type="number" id="speed" value="20" size="2" min="5" max="50" /> WPM
+&nbsp;
+<span class="setting_bold">Current Speed</span> <input type="number" id="target_speed" value="20" size="2" disabled /> WPM
+</span>
 <span class="setting_group">
 <label><input type="checkbox" id="hangul" /> Hangul</label>
 <label><input type="checkbox" id="extra_gap" disabled /> Extra gap</label>&nbsp;
@@ -241,7 +248,8 @@ var audioInitialized = videoInitialized = false, ac, gain, analyser, binCount;
 var ua = navigator.userAgent.toLowerCase();
 var isIOS = (ua.indexOf("iphone") > -1 || ua.indexOf("ipad") > -1 || ua.indexOf("ipod") > -1);
 var isAndroid = ua.indexOf("android") > -1;
-var wpm = document.querySelector("#speed");
+var speed = document.querySelector("#speed");
+var targetSpeed = document.querySelector("#target_speed");
 var hangul = document.querySelector("#hangul");
 var extraGap = document.querySelector("#extra_gap");
 var start = document.querySelector("#start");
@@ -345,7 +353,8 @@ function initProcessMorse() {
     previousPeak = 0;
     gapAmount = 0;
     maxGapReached = true;
-    targetWpm = parseInt(wpm.value);
+    targetWpm = parseInt(speed.value);
+	targetSpeed.value = targetWpm;
 
     makeCharacter(hangul.checked);
     flushCharacter(hangul.checked);
@@ -405,7 +414,7 @@ function processMorse() {
                 if (!isNaN(previousSnr) && previousSnr < snrThresholdMax) snrThreshold = previousSnr;
             } else if (gapAmount < maxDitdahGap) { // inter-dit-dah
                 console.log("INTER-DITDAH GAP, " + gapAmount);
-                doStat(0, 0, gapAmount);
+                doStat(0, 0, gapAmount + parseInt(frameDuration));
                 gapAmount = 0;
             } else {
                 console.log("WORD GAP, " + gapAmount);
@@ -427,11 +436,11 @@ function processMorse() {
             } else if (ditdahAmount < maxDitDuration) { // dit
                 console.log("DIT, " + ditdahAmount);
                 addToLetter(true);
-                doStat(ditdahAmount, 0, 0);
+                doStat(ditdahAmount + parseInt(frameDuration), 0, 0);
             } else { // dah
                 console.log("DAH, " + ditdahAmount);
                 addToLetter(false);
-                doStat(0, ditdahAmount, 0);
+                doStat(0, ditdahAmount + parseInt(frameDuration), 0);
             }
         }
         ditdahAmount = 0;
@@ -485,14 +494,14 @@ function doStat(dit, dah, gap) {
     var dahMean = parseInt(stat.dah.reduce((a, b) => a + b, 0) / dahLen) || 0;
     var gapMean = parseInt(stat.gap.reduce((a, b) => a + b, 0) / gapLen) || 0;
     var mean = (ditMean + dahMean/3 + gapMean) / ((ditMean > 0 ? 1 : 0) + (dahMean > 0 ? 1 : 0) + (gapMean > 0 ? 1 : 0));
-    var wpm = 1200 / mean;
+    var wpmTemp = 1200 / mean;
 
-    updateWpm(parseInt(wpm));
+    updateWpm(parseInt(wpmTemp));
     mean = 1200 / targetWpm;
 
     if (statistics.childNodes.length > 0) statistics.removeChild(statistics.firstChild);
     statistics.appendChild(document.createTextNode(
-        "wpm target : " + targetWpm + ", wpm temp : " + wpm.toFixed(1)
+        "wpm target : " + targetWpm + ", wpm temp : " + wpmTemp.toFixed(1)
         + ", dit : " + ditMean + " ms (" + parseInt(ditMean * 100 / mean) + " %)"
         + ", dah : " + dahMean + " ms (" + parseInt(dahMean * 100 / mean / 3) + " %)"
         + ", gap : " + gapMean + " ms (" + parseInt(gapMean * 100 / mean) + " %)"
@@ -505,10 +514,10 @@ function resetStat() {
     stat.gap = [];
     if (statistics.childNodes.length > 0) statistics.removeChild(statistics.firstChild);
 }
-function updateWpm(newWpm) {
-    if (targetWpm == newWpm) return;
-    var max = Math.max(targetWpm, newWpm), min = Math.min(targetWpm, newWpm);
-    if ((max - min) * 100 / min > 10) targetWpm = newWpm; // delta > 10%
+function updateWpm(wpmTemp) {
+    if (targetWpm == wpmTemp) return;
+	targetWpm = wpmTemp;
+	targetSpeed.value = targetWpm;
 }
 
 var ditdahs = "";
@@ -658,9 +667,8 @@ record.onchange = function() {
         record.checked = false;
     }
 }
-wpm.onchange = function() {
-    window.localStorage.setItem('wpm', wpm.value);
-    targetWpm = parseInt(wpm.value);
+speed.onchange = function() {
+    window.localStorage.setItem('speed', speed.value);
 }
 snr.onchange = function() {
     window.localStorage.setItem('snr', snr.value);
@@ -676,7 +684,8 @@ extraGap.onchange = function() {
 }
 window.addEventListener('DOMContentLoaded', function() {
     try {
-        if (window.localStorage.getItem('wpm')) wpm.value = parseInt(window.localStorage.getItem('wpm'));
+        if (window.localStorage.getItem('speed')) speed.value = parseInt(window.localStorage.getItem('speed'));
+		targetSpeed.value = speed.value;
         if (window.localStorage.getItem('snr')) snr.value = parseFloat(window.localStorage.getItem('snr'));
         if (window.localStorage.getItem('hangul')) hangul.checked = window.localStorage.getItem('hangul') == 'true';
         if (hangul.checked) extraGap.disabled = false;
