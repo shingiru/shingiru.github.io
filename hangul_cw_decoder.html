@@ -139,11 +139,14 @@ button {
 .strikethrough {
     text-decoration: line-through;
 }
-.stat_container {
+.debug_container {
     margin-top: 10px;
     padding : 4px;
     color : black;
     font-weight: bold;
+}
+#stat_container {
+	display: none;
 }
 #statistics {
     font-weight: normal;
@@ -153,7 +156,6 @@ button {
 	display: none;
 }
 #log {
-	display: none;
 	font-weight: normal;
 }
 </style>
@@ -182,13 +184,13 @@ button {
 <div class="log_container_ditdah"><span id="ditdah_log"></span></div>
 <div class="log_container"><span id="decoded_log"></span></div>
 <div>Recommended Web-brwoser : Android - Only FireFox. iOS/Mac/PC - Chrome, FireFox, Safari.</div>
-<div class="stat_container">DEBUG.
-&nbsp;
+<div class="debug_container">
+<label class="setting_bold"><input type="checkbox" id="show_debug" /> DEBUG.</label>
+<span id="stat_container">
 <span class="setting_bold">SNR</span> : <input type="number" id="snr" value="30" size="2" step="1" />
-&nbsp;
-<label><input type="checkbox" id="show_log" /> LOG</label>
 <span id="statistics"></span><br />
 <span id="log"></span>
+</span>
 </div>
 <p>
     <h3>Intro.</h3><br />
@@ -197,10 +199,11 @@ button {
     핸드폰이나 노트북 컴퓨터 등 마이크가 있는 장비의 웹브라우저를 통해 이용하면 됩니다.<br />
     리그 앞에 휴대폰이나 컴퓨터 마이크를 둔 후 Start 버튼을 누르기만 하면 대부분 됩니다. Speed는 여유 오차가 넉넉합니다.<br />
     신호 막대가 보이지 않는다면 마이크와 리그 스피커의 간격을 조금 좁히고 리그의 볼륨을 조절합니다.<br />
-    <a href="hangul_cw_trainer.html" target="_blank">[한글 CW 청취 연습기]</a> 혹은 PC용 SDR, 유투브 영상 등의 신호를 해독해보려면, 컴퓨터의 녹음(소리 입력) 장치를 Stereo Mix* 로 선택하고 장치 속성에서 볼륨을 올리면 됩니다.<br />
+    <a href="hangul_cw_trainer.html" target="_blank">[한글 CW 청취 연습기]</a> 혹은 PC용 SDR, 유투브 영상 등의 신호를 해독해보려면, 컴퓨터의 녹음(소리 입력) 장치를 Stereo Mix* 로 선택하고 장치 속성에서 볼륨**을 올리면 됩니다.<br />
     휴대폰에서는, 파이어폭스나 크롬 브라우저를 이용해, 탭 하나엔 해독기를 열어두고 다른 탭엔 청취 연습기를 열어서 소리는 내면서 해독을 시도해봐도 잘 됩니다.<br />
     많은 활용 바라며, 기능 제안은 온에어에서 말씀해주시기 바랍니다.<br />
     ※ 녹음 장치 선택 : Windows 설정 -> 시스템 -> 소리. 만약 입력장치 목록에 Stereo Mix 없으면, [사운드 제어판] -> [녹음]탭에서 Stereo Mix 활성화 후 입력 장치 선택.<br />
+	※※ 녹음 볼륨 조절 : 이 프로그램을 포함해, 녹음 기능을 사용하는 프로그램이 마이크 Gain을 자동 조절 옵션을 사용하는 경우가 있습니다. 그로 인해 볼륨이 스스로 낮아져있는 경우가 있으니 확인해서 높여줘야 합니다.<br />
     <br />
     <br />
 
@@ -252,7 +255,7 @@ start.addEventListener("click", async () => {
     if (record.checked) {
         if (!videoInitialized) {
             var constraints = {
-                audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false },
+                audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
                 video: { mediaSource: "screen" }
             };
             navigator.mediaDevices.getDisplayMedia(constraints).then(async (stream) => {
@@ -269,7 +272,7 @@ start.addEventListener("click", async () => {
         ac = new AudioContext();
 
         var constraints = {
-            audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false },
+            audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
             video: false
         };
         navigator.mediaDevices.getUserMedia(constraints).then(async (stream) => {
@@ -386,8 +389,8 @@ function processMorse() {
     if (previousPeak < peak && signalToNoiseRatio < snrThresholdMax && snrThreshold < signalToNoiseRatio) snrThreshold = signalToNoiseRatio;
 
     var ditdah = (mean != 0 && signalToNoiseRatio <= snrThreshold);
-    if (!ditdah && mean != 0) console.log("ditdah : " + ditdah + ", μ : " + mean + ", σ : " + standardDeviation.toFixed(2) + ", SNR : " + signalToNoiseRatio.toFixed(2));
-	if (!ditdah && mean != 0) _log("ditdah : " + ditdah + ", μ : " + mean + ", σ : " + standardDeviation.toFixed(2) + ", SNR : " + signalToNoiseRatio.toFixed(2));
+    //if (!ditdah && mean != 0) console.log("ditdah : " + ditdah + ", μ : " + mean + ", σ : " + standardDeviation.toFixed(2) + ", SNR : " + signalToNoiseRatio.toFixed(2));
+	//if (showDebug.checked && mean != 0) _log("ditdah : " + ditdah + ", μ : " + mean + ", σ : " + standardDeviation.toFixed(2) + ", SNR : " + signalToNoiseRatio.toFixed(2));
 
     //if (mean > 0) printDitdah(ditdah, frameDuration);
     printDitdah(ditdah, frameDuration);
@@ -411,7 +414,7 @@ function processMorse() {
                 gapAmount = 0;
             }
         }
-        ditdahAmount += frameDuration;
+        ditdahAmount += parseInt(frameDuration);
         maxGapReached = false;
         lastLongDahCheckStartAt = 0;
     } else {
@@ -429,7 +432,7 @@ function processMorse() {
             }
         }
         ditdahAmount = 0;
-        gapAmount += frameDuration;
+        gapAmount += parseInt(frameDuration);
 
         // when enough gapAmount
         if (gapAmount > letterGapDuration) {
@@ -674,12 +677,12 @@ var textNode = null;
 function printDecodedChar(s) {
     textNode = document.createTextNode(s);
     decodedLog.appendChild(textNode);
-    if (!isAndroid && !isIOS && !showLog.checked) decodedLog.scrollIntoView(false);
+    if (!isAndroid && !isIOS && !showDebug.checked) decodedLog.scrollIntoView(false);
 }
 function updateDecodedChar(s) {
     if (textNode) textNode.textContent = s;
     else printDecodedChar(s);
-    if (!isAndroid && !isIOS && !showLog.checked) decodedLog.scrollIntoView(false);
+    if (!isAndroid && !isIOS && !showDebug.checked) decodedLog.scrollIntoView(false);
 }
 function printDecodedLine(s) {
     var el = document.createElement("DIV");
@@ -716,15 +719,16 @@ function clearDitdah() {
     lastProcessedAt = 0;
 }
 
-var showLog = document.querySelector("#show_log");
+var showDebug = document.querySelector("#show_debug");
+var statContainer = document.querySelector("#stat_container");
 var log = document.querySelector("#log");
-showLog.onchange = function() {
-    log.style.display = (showLog.checked ? "inline" : "none");
+showDebug.onchange = function() {
+    statContainer.style.display = (showDebug.checked ? "inline" : "none");
 }
 function _log(s) {
     log.appendChild(document.createTextNode(s));
 	log.appendChild(document.createElement("BR"));
-	if (log.childNodes.length > 100) { log.removeChild(log.firstChild); log.removeChild(log.firstChild); }
+	if (log.childNodes.length > 40) { log.removeChild(log.firstChild); log.removeChild(log.firstChild); }
 }
 
 MORSE = {
