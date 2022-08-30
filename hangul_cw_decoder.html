@@ -266,7 +266,7 @@ start.addEventListener("click", async () => {
     }
 
     if (!audioInitialized) {
-        ac = (ac || new AudioContext());
+        ac = new AudioContext();
 
         var constraints = {
             audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false },
