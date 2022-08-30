@@ -380,7 +380,7 @@ function processMorse() {
     var n = buffer.length;
     var mean = buffer.reduce((a, b) => a + b, 0) / n;
     var standardDeviation = Math.sqrt(buffer.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b, 0) / n);
-    var signalToNoiseRatio = mean / standardDeviation;
+    var signalToNoiseRatio = (standardDeviation == 0 ? 1000 : mean / standardDeviation);
 
     if (previousPeak < peak && signalToNoiseRatio < snrThresholdMax && snrThreshold < signalToNoiseRatio) snrThreshold = signalToNoiseRatio;
 
