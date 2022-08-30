@@ -332,6 +332,7 @@ function saveFile(chunks) {
 var toneBuffer = null, ditDuration, minDitDuration, maxDitDuration, letterGapDuration, lastProcessedAt = 0, timerId;
 var lastDitdah = false, ditdahAmount = 0, gapAmount = 0, maxGapReached = false;
 var snrThreshold, previousSnr = NaN, previousPeak = 0, SNR_THRESHOLD_INIT = 1.0, snrThresholdMax = 50.0;
+var firstLog = true;
 function initProcessMorse() {
 if (firstLog) _log(1);
     resetStat();
@@ -352,6 +353,7 @@ if (firstLog) _log(4);
     processMorse();
 
 if (firstLog) _log(5);
+firstLog = false;
 }
 function processMorse() {
     if (toneBuffer == null) toneBuffer = new Uint8Array(binCount);
