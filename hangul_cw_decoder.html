@@ -515,7 +515,7 @@ function resetStat() {
     if (statistics.childNodes.length > 0) statistics.removeChild(statistics.firstChild);
 }
 function updateWpm(wpmTemp) {
-    if (targetWpm == wpmTemp) return;
+    if (targetWpm == wpmTemp || extraGap.checked) return;
 	targetWpm = wpmTemp;
 	targetSpeed.value = targetWpm;
 }
@@ -669,6 +669,10 @@ record.onchange = function() {
 }
 speed.onchange = function() {
     window.localStorage.setItem('speed', speed.value);
+	if (extraGap.checked) {
+		targetWpm = speed.value;
+		targetSpeed.value = targetWpm;
+	}
 }
 snr.onchange = function() {
     window.localStorage.setItem('snr', snr.value);
