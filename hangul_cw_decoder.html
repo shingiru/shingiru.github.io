@@ -469,7 +469,7 @@ function doStat(dit, dah, gap) {
     var ditMean = parseInt(stat.dit.reduce((a, b) => a + b, 0) / ditLen) || 0;
     var dahMean = parseInt(stat.dah.reduce((a, b) => a + b, 0) / dahLen) || 0;
     var gapMean = parseInt(stat.gap.reduce((a, b) => a + b, 0) / gapLen) || 0;
-    var mean = (ditMean + dahMean/3 + gapMean) / 3;
+    var mean = (ditMean + dahMean/3 + gapMean) / ((ditMean > 0 ? 1 : 0) + (dahMean > 0 ? 1 : 0) + (gapMean > 0 ? 1 : 0));
     var wpm = 1200 / mean;
 
     if (statistics.childNodes.length > 0) statistics.removeChild(statistics.firstChild);
