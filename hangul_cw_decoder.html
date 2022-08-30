@@ -252,7 +252,7 @@ start.addEventListener("click", async () => {
     if (record.checked) {
         if (!videoInitialized) {
             var constraints = {
-                audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
+                audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false },
                 video: { mediaSource: "screen" }
             };
             navigator.mediaDevices.getDisplayMedia(constraints).then(async (stream) => {
@@ -269,7 +269,7 @@ start.addEventListener("click", async () => {
         ac = new AudioContext();
 
         var constraints = {
-            audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
+            audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false },
             video: false
         };
         navigator.mediaDevices.getUserMedia(constraints).then(async (stream) => {
@@ -279,8 +279,8 @@ start.addEventListener("click", async () => {
             input.connect(gain);
 
             analyser = ac.createAnalyser();
-            analyser.minDecibels = -90; // default: -100
-            analyser.maxDecibels = -30; // default: -30
+            analyser.minDecibels = -47; // default: -100
+            analyser.maxDecibels = -1; // default: -30
             analyser.smoothingTimeConstant = 0;
             binCount = analyser.frequencyBinCount;
             gain.connect(analyser);
