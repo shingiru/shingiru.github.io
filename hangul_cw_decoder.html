@@ -183,7 +183,7 @@ textarea {
 <label><input type="checkbox" id="record" /> Record screen</label>&nbsp;
 <a id="download_link"></a>&nbsp;
 </span>
-<span id="agc_indicator">AGC</span>
+<span id="agc_indicator">AGC [reason]</span>
 <br />
 Android : Only FireFox. iOS/Mac/PC : Chrome recommended. (FireFox, Safari also OK)
 </p>
@@ -282,7 +282,7 @@ start.addEventListener("click", async () => {
             gain.connect(analyser);
             //analyser.connect(ac.destination); // important! this should be commented out
             
-            doAgc();
+            doAgc("in Start");
             lastProcessedAt = 0;
             processMorse();
             
@@ -290,7 +290,7 @@ start.addEventListener("click", async () => {
         });
     } else {
         if (ac.state != "running") ac.resume();
-        doAgc();
+        doAgc("in Start");
         lastProcessedAt = 0;
         processMorse();
     }
@@ -330,7 +330,7 @@ function saveFile(chunks) {
     // URL.revokeOjectURL(blob); // clear from memory
 }
 
-var gaps = [], smallGapRepeat = 0, AGC_AGAIN_WHEN_SMALL_GAP_REPEAT_CNT = 2, lastSmallGapCheckedAt = 0;
+var gaps = [], smallGapRepeat = 0, AGC_AGAIN_WHEN_SMALL_GAP_REPEAT_CNT = 2, lastSmallGapCheckStartAt = 0;
 function agc(target, gap) {
     gaps.push(gap);
     if (gaps.length == 5) {
@@ -356,19 +356,25 @@ function agc(target, gap) {
 				smallGapRepeat = 0;
 			}
 			checkAgcNeededAndDo();
-			if (avg <= target * 1.5) lastSmallGapCheckedAt = performance.now();
+			if (avg <= target * 1.5) lastSmallGapCheckStartAt = performance.now();
 		}
         gaps = [];
     }
 }
-var needToAgc = true, gainBottom = 1.0, bottomCheckStartAt = lastPeakAt = lastDitAt = 0;
-var AGC_PEAK_GAIN_DECREASE_AMOUNT = 0.01, AGC_MIN_PEAK_GAIN_CHECK_DURATION = 5000, AGC_AGAIN_WHEN_NO_PEAK_DURATION = 5000, AGC_AGAIN_WHEN_NO_DIT_DURATION = 5000, AGC_AGAIN_WHEN_SMALL_GAP_REPEAT_DURATION = 5000;
-function doAgc() {
+var needToAgc = true, gainBottom = 1.0, bottomCheckStartAt = lastPeakAt = lastLongDahCheckStartAt = 0;
+var AGC_PEAK_GAIN_DECREASE_AMOUNT = 0.01, AGC_MIN_PEAK_GAIN_CHECK_DURATION = 5000;
+var AGC_POLICY = {
+	NO_PEAK : { reason : "No Peak", thresholdDit : 100 },
+	LONG_DAH : { reason : "Long Dah", thresholdDit : 100 },
+	SMALL_GAP : { reason : "Small Gap", thresholdDit : 100 }
+}
+function doAgc(reason) {
+	printDecodedLine(" ");
     needToAgc = true;
     gainBottom = 1.0;
     gain.gain.value = 1.0;
-    bottomCheckStartAt = lastPeakAt = lastDitAt = maxGainRepeat = lastSmallGapCheckedAt = 0;
-	toggleAgcIndicator(true);
+    bottomCheckStartAt = lastPeakAt = lastLongDahCheckStartAt = maxGainRepeat = lastSmallGapCheckStartAt = 0;
+	toggleAgcIndicator(true, reason);
 }
 function try_agc(peak) {
 	var now = performance.now();
@@ -376,11 +382,10 @@ function try_agc(peak) {
 	
     if (!needToAgc) return;
     
-    if (bottomCheckStartAt != 0 && (now - bottomCheckStartAt) > AGC_MIN_PEAK_GAIN_CHECK_DURATION) { // skip gap agc during first 3 sec
+    if (bottomCheckStartAt != 0 && (now - bottomCheckStartAt) > AGC_MIN_PEAK_GAIN_CHECK_DURATION) { // skip gap agc during first 5 sec
         gain.gain.value = Math.min(1, gainBottom * (isAndroid ? 1 : 1.25));
         console.error("[AGC SET] bottom : " + gainBottom + ", set : " + gain.gain.value);
         needToAgc = false;
-		lastDitAt = now;
 		toggleAgcIndicator(false);
         return;
     }
@@ -397,16 +402,17 @@ function checkAgcNeededAndDo() { // agc again when enough signal not accepted
 	if (needToAgc) return; // already in agc process
 	
 	var now = performance.now();
-	if (lastPeakAt != 0 && (now - lastPeakAt > AGC_AGAIN_WHEN_NO_PEAK_DURATION)) {
-		doAgc();
-	} else if (lastDitAt != 0 && (now - lastDitAt > AGC_AGAIN_WHEN_NO_DIT_DURATION)) {
-		doAgc();
-	} else if (smallGapRepeat >= AGC_AGAIN_WHEN_SMALL_GAP_REPEAT_CNT && lastSmallGapCheckedAt != 0 && (now - lastSmallGapCheckedAt > AGC_AGAIN_WHEN_SMALL_GAP_REPEAT_DURATION)) {
-		doAgc();
+	if (lastPeakAt != 0 && (now - lastPeakAt > AGC_POLICY.NO_PEAK.thresholdDit * ditDuration)) {
+		doAgc(AGC_POLICY.NO_PEAK.reason);
+	} else if (lastLongDahCheckStartAt != 0 && (now - lastLongDahCheckStartAt > AGC_POLICY.LONG_DAH.thresholdDit * ditDuration)) {
+		doAgc(AGC_POLICY.LONG_DAH.reason);
+	} else if (smallGapRepeat >= AGC_AGAIN_WHEN_SMALL_GAP_REPEAT_CNT && lastSmallGapCheckStartAt != 0 && (now - lastSmallGapCheckStartAt > AGC_POLICY.SMALL_GAP.thresholdDit * ditDuration)) {
+		if (!(hangul.checked && extraGap.checked)) doAgc(AGC_POLICY.SMALL_GAP.reason);
 	}
 }
-function toggleAgcIndicator(show) {
+function toggleAgcIndicator(show, reason) {
 	var agcIndicator = document.querySelector("#agc_indicator");
+	agcIndicator.replaceChild(document.createTextNode("[AGC] " + reason), agcIndicator.firstChild);
 	agcIndicator.style.display = (show ? "inline" : "none");
 }
 
@@ -426,7 +432,10 @@ function processMorse() {
     minDitdahGap = parseInt(ditDuration * 0.5);
     maxDitdahGap = parseInt(ditDuration * 3.0);
     letterGapDuration = ditDuration * 6;
-    if (hangul.checked && extraGap.checked) letterGapDuration *= 3;//1.5;
+    if (hangul.checked && extraGap.checked) {
+		letterGapDuration *= 3;
+		maxDitDuration = parseInt(ditDuration * 2.5);
+	}
     var bucketSize = 44100 / 2 / binCount;
     toneStart = Math.max(parseInt(400 / bucketSize), 1);
     toneEnd = Math.min(parseInt(800 / bucketSize), binCount - 1);
@@ -502,7 +511,6 @@ function processMorse() {
             } else if (ditdahAmount < maxDitDuration) { // dit
                 console.log("DIT, " + ditdahAmount);
                 addToLetter(true);
-				lastDitAt = now;
             } else { // dah
                 console.log("DAH, " + ditdahAmount);
                 addToLetter(false);
@@ -511,6 +519,7 @@ function processMorse() {
         }
         ditdahAmount = 0;
         gapAmount += frameDuration;
+		lastLongDahCheckStartAt = now;
 
         // when enough gapAmount
         if (gapAmount > letterGapDuration) {
@@ -698,11 +707,13 @@ window.addEventListener('DOMContentLoaded', function() {
 var decodedLog = document.querySelector("#decoded_log");
 var textNode = null;
 function printDecodedChar(s) {
+	if (needToAgc) s = "";
     textNode = document.createTextNode(s);
     decodedLog.appendChild(textNode);
     if (!isAndroid && !isIOS) decodedLog.scrollIntoView(false);
 }
 function updateDecodedChar(s) {
+	if (needToAgc) s = "";
     if (textNode) textNode.textContent = s;
     else printDecodedChar(s);
     if (!isAndroid && !isIOS) decodedLog.scrollIntoView(false);
@@ -721,6 +732,7 @@ function clearDecodedLog() {
 var ditdahLog = document.querySelector("#ditdah_log");
 var lastDitdahLog = false, lastWidth = 0;
 function printDitdah(ditdah, len) {
+	if (needToAgc) ditdah = false;
     if (ditdah == lastDitdahLog && ditdahLog.childNodes.length > 0 && lastWidth < 256) {
         var span = ditdahLog.lastChild;
         lastWidth += len;
