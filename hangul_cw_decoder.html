@@ -374,9 +374,9 @@ function processMorse() {
     var buffer = toneBuffer.slice(0).slice(toneStart, toneEnd);
     var peak = Math.max(...buffer);
     var peakIndex = buffer.findLastIndex((a) => peak == a); //buffer.indexOf(peak);
+    buffer = buffer.slice(Math.max(0, peakIndex - 2), Math.min(buffer.length, peakIndex + 3));
     //console.log("peak : " + peak + ", peakIndex : " + peakIndex + ", buffer : " + buffer.join(", "));
 	_log("peak : " + peak + ", peakIndex : " + peakIndex + ", buffer : " + buffer.join(", "));
-    buffer = buffer.slice(Math.max(0, peakIndex - 2), Math.min(buffer.length, peakIndex + 3));
     var n = buffer.length;
     var mean = buffer.reduce((a, b) => a + b, 0) / n;
     var standardDeviation = Math.sqrt(buffer.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b, 0) / n);
