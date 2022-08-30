@@ -149,6 +149,9 @@ button {
     font-weight: normal;
     margin-left: 10px;
 }
+#record_setting {
+	display: none;
+}
 </style>
 </head>
 <body><div id="page">
@@ -655,7 +658,7 @@ window.addEventListener('DOMContentLoaded', function() {
         if (window.localStorage.getItem('hangul')) hangul.checked = window.localStorage.getItem('hangul') == 'true';
         if (hangul.checked) extraGap.disabled = false;
         if (window.localStorage.getItem('extraGap')) extraGap.checked = window.localStorage.getItem('extraGap') == 'true';
-		if (isAndroid || isIOS) document.querySelector("#record_setting").style.display = "none";
+		if (!isAndroid && !isIOS) document.querySelector("#record_setting").style.display = "inline";
     } catch (e) {}
 }, true);
 
