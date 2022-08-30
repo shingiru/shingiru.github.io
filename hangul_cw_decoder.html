@@ -504,7 +504,7 @@ function processMorse() {
         }
         ditdahAmount += frameDuration;
         maxGapReached = false;
-
+        lastLongDahCheckStartAt = 0;
     } else {
         if (lastDitdah == true) {
             if (ditdahAmount < minDitDuration) { // noise
@@ -520,7 +520,7 @@ function processMorse() {
         }
         ditdahAmount = 0;
         gapAmount += frameDuration;
-        lastLongDahCheckStartAt = now;
+        if (lastLongDahCheckStartAt == 0) lastLongDahCheckStartAt = now;
 
         // when enough gapAmount
         if (gapAmount > letterGapDuration) {
