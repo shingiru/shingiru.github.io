@@ -279,8 +279,8 @@ start.addEventListener("click", async () => {
             input.connect(gain);
 
             analyser = ac.createAnalyser();
-            analyser.minDecibels = -47; // default: -100
-            analyser.maxDecibels = -1; // default: -30
+            //analyser.minDecibels = -47; // default: -100, pc 1% vol -> -47
+            analyser.maxDecibels = -1; // default: -30, this value should be somehow high in mobile
             analyser.smoothingTimeConstant = 0;
             binCount = analyser.frequencyBinCount;
             gain.connect(analyser);
