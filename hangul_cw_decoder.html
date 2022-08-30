@@ -146,17 +146,17 @@ button {
     font-weight: bold;
 }
 #stat_container {
-	display: none;
+    display: none;
 }
 #statistics {
     font-weight: normal;
     margin-left: 10px;
 }
 #record_setting {
-	display: none;
+    display: none;
 }
 #log {
-	font-weight: normal;
+    font-weight: normal;
 }
 </style>
 </head>
@@ -203,7 +203,7 @@ button {
     휴대폰에서는, 파이어폭스나 크롬 브라우저를 이용해, 탭 하나엔 해독기를 열어두고 다른 탭엔 청취 연습기를 열어서 소리는 내면서 해독을 시도해봐도 잘 됩니다.<br />
     많은 활용 바라며, 기능 제안은 온에어에서 말씀해주시기 바랍니다.<br />
     ※ 녹음 장치 선택 : Windows 설정 -> 시스템 -> 소리. 만약 입력장치 목록에 Stereo Mix 없으면, [사운드 제어판] -> [녹음]탭에서 Stereo Mix 활성화 후 입력 장치 선택.<br />
-	※※ 녹음 볼륨 조절 : 이 프로그램을 포함해, 녹음 기능을 사용하는 프로그램이 마이크 Gain을 자동 조절 옵션을 사용하는 경우가 있습니다. 그로 인해 볼륨이 스스로 낮아져있는 경우가 있으니 확인해서 높여줘야 합니다.<br />
+    ※※ 녹음 볼륨 조절 : 이 프로그램을 포함해, 녹음 기능을 사용하는 프로그램이 마이크 Gain을 자동 조절 옵션을 사용하는 경우가 있습니다. 그로 인해 볼륨이 스스로 낮아져있는 경우가 있으니 확인해서 높여줘야 합니다.<br />
     <br />
     <br />
 
@@ -224,6 +224,7 @@ button {
 </p>
 <p class="font_medium">
 <h3>Change Log</h3>
+2022.08.31. WPM semi-auto detect.<br />
 2022.08.30. AGC Logic Changed.<br />
 2022.08.29. "Allow extra gap" added. Korean callsigns prevented from decoding.<br />
 2022.08.26. Screen recording added.<br />
@@ -335,6 +336,7 @@ function saveFile(chunks) {
 var toneBuffer = null, ditDuration, minDitDuration, maxDitDuration, letterGapDuration, lastProcessedAt = 0, timerId;
 var lastDitdah = false, ditdahAmount = 0, gapAmount = 0, maxGapReached = false;
 var snrThreshold, previousSnr = NaN, previousPeak = 0, SNR_THRESHOLD_INIT = 0.1, snrThresholdMax = 50.0;
+var targetWpm;
 function initProcessMorse() {
     resetStat();
 
@@ -343,6 +345,7 @@ function initProcessMorse() {
     previousPeak = 0;
     gapAmount = 0;
     maxGapReached = true;
+    targetWpm = parseInt(wpm.value);
 
     makeCharacter(hangul.checked);
     flushCharacter(hangul.checked);
@@ -353,7 +356,7 @@ function initProcessMorse() {
 }
 function processMorse() {
     if (toneBuffer == null) toneBuffer = new Uint8Array(binCount);
-    ditDuration = parseInt(1.2 / parseInt(wpm.value) * 1000); // from wikipedia
+    ditDuration = parseInt(1200 / targetWpm);
     minDitDuration = parseInt(ditDuration * 0.1);
     maxDitDuration = parseInt(ditDuration * 2.0);
     minDitdahGap = parseInt(ditDuration * 0.5);
@@ -377,10 +380,10 @@ function processMorse() {
     var buffer = toneBuffer.slice(0).slice(toneStart, toneEnd);
     var peak = Math.max(...buffer);
     //var peakIndex = buffer.findLastIndex(a => peak == a); //buffer.indexOf(peak); // not work in mobile
-	var peakIndex = buffer.reduce((a, b, i) => (peak == b ? i : a), 0);
+    var peakIndex = buffer.reduce((a, b, i) => (peak == b ? i : a), 0);
     buffer = buffer.slice(Math.max(0, peakIndex - 2), Math.min(buffer.length, peakIndex + 3));
     //console.log("peak : " + peak + ", peakIndex : " + peakIndex + ", buffer : " + buffer.join(", "));
-	//_log("peak : " + peak + ", peakIndex : " + peakIndex + ", buffer : " + buffer.join(", "));
+    //_log("peak : " + peak + ", peakIndex : " + peakIndex + ", buffer : " + buffer.join(", "));
     var n = buffer.length;
     var mean = buffer.reduce((a, b) => a + b, 0) / n;
     var standardDeviation = Math.sqrt(buffer.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b, 0) / n);
@@ -390,7 +393,7 @@ function processMorse() {
 
     var ditdah = (mean != 0 && signalToNoiseRatio <= snrThreshold);
     //if (!ditdah && mean != 0) console.log("ditdah : " + ditdah + ", μ : " + mean + ", σ : " + standardDeviation.toFixed(2) + ", SNR : " + signalToNoiseRatio.toFixed(2));
-	//if (showDebug.checked && mean != 0) _log("ditdah : " + ditdah + ", μ : " + mean + ", σ : " + standardDeviation.toFixed(2) + ", SNR : " + signalToNoiseRatio.toFixed(2));
+    //if (showDebug.checked && mean != 0) _log("ditdah : " + ditdah + ", μ : " + mean + ", σ : " + standardDeviation.toFixed(2) + ", SNR : " + signalToNoiseRatio.toFixed(2));
 
     //if (mean > 0) printDitdah(ditdah, frameDuration);
     printDitdah(ditdah, frameDuration);
@@ -484,12 +487,16 @@ function doStat(dit, dah, gap) {
     var mean = (ditMean + dahMean/3 + gapMean) / ((ditMean > 0 ? 1 : 0) + (dahMean > 0 ? 1 : 0) + (gapMean > 0 ? 1 : 0));
     var wpm = 1200 / mean;
 
+    updateWpm(parseInt(wpm));
+    mean = 1200 / targetWpm;
+
     if (statistics.childNodes.length > 0) statistics.removeChild(statistics.firstChild);
     statistics.appendChild(document.createTextNode(
-        wpm.toFixed(1) + " wpm, dit : " + ditMean + " ms (" + parseInt(ditMean * 100 / mean) + " %)"
+        "wpm target : " + targetWpm + ", wpm temp : " + wpm.toFixed(1)
+        + ", dit : " + ditMean + " ms (" + parseInt(ditMean * 100 / mean) + " %)"
         + ", dah : " + dahMean + " ms (" + parseInt(dahMean * 100 / mean / 3) + " %)"
-        + ", ditdah gap : " + gapMean + " ms (" + parseInt(gapMean * 100 / mean) + " %)"
-        + ", snr threshold : " + snrThreshold.toFixed(1)
+        + ", gap : " + gapMean + " ms (" + parseInt(gapMean * 100 / mean) + " %)"
+        + ", snr : " + snrThreshold.toFixed(1)
     ));
 }
 function resetStat() {
@@ -497,6 +504,11 @@ function resetStat() {
     stat.dah = [];
     stat.gap = [];
     if (statistics.childNodes.length > 0) statistics.removeChild(statistics.firstChild);
+}
+function updateWpm(newWpm) {
+    if (targetWpm == newWpm) return;
+    var max = Math.max(targetWpm, newWpm), min = Math.min(targetWpm, newWpm);
+    if ((max - min) * 100 / min > 10) targetWpm = newWpm; // delta > 10%
 }
 
 var ditdahs = "";
@@ -648,6 +660,7 @@ record.onchange = function() {
 }
 wpm.onchange = function() {
     window.localStorage.setItem('wpm', wpm.value);
+    targetWpm = parseInt(wpm.value);
 }
 snr.onchange = function() {
     window.localStorage.setItem('snr', snr.value);
@@ -668,7 +681,9 @@ window.addEventListener('DOMContentLoaded', function() {
         if (window.localStorage.getItem('hangul')) hangul.checked = window.localStorage.getItem('hangul') == 'true';
         if (hangul.checked) extraGap.disabled = false;
         if (window.localStorage.getItem('extraGap')) extraGap.checked = window.localStorage.getItem('extraGap') == 'true';
-		if (!isAndroid && !isIOS) document.querySelector("#record_setting").style.display = "inline";
+        if (window.localStorage.getItem('showDebug')) showDebug.checked = window.localStorage.getItem('showDebug') == 'true';
+        if (!isAndroid && !isIOS) document.querySelector("#record_setting").style.display = "inline";
+        statContainer.style.display = (showDebug.checked ? "inline" : "none");
     } catch (e) {}
 }, true);
 
@@ -723,12 +738,13 @@ var showDebug = document.querySelector("#show_debug");
 var statContainer = document.querySelector("#stat_container");
 var log = document.querySelector("#log");
 showDebug.onchange = function() {
+    window.localStorage.setItem('showDebug', showDebug.checked);
     statContainer.style.display = (showDebug.checked ? "inline" : "none");
 }
 function _log(s) {
     log.appendChild(document.createTextNode(s));
-	log.appendChild(document.createElement("BR"));
-	if (log.childNodes.length > 40) { log.removeChild(log.firstChild); log.removeChild(log.firstChild); }
+    log.appendChild(document.createElement("BR"));
+    if (log.childNodes.length > 40) { log.removeChild(log.firstChild); log.removeChild(log.firstChild); }
 }
 
 MORSE = {
