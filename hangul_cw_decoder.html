@@ -167,7 +167,7 @@ button {
 <button id="stop">STOP</button>
 <button id="clear">CLEAR</button>
 </span>
-<span class="setting_group">
+<span id="record_setting" class="setting_group">
 <label><input type="checkbox" id="record" /> Record screen</label>&nbsp;
 <a id="download_link"></a>&nbsp;
 </span>
@@ -656,6 +656,7 @@ window.addEventListener('DOMContentLoaded', function() {
         if (window.localStorage.getItem('hangul')) hangul.checked = window.localStorage.getItem('hangul') == 'true';
         if (hangul.checked) extraGap.disabled = false;
         if (window.localStorage.getItem('extraGap')) extraGap.checked = window.localStorage.getItem('extraGap') == 'true';
+		if (isAndroid || isIOS) document.querySelector("#record_setting").style.display = "none";
     } catch (e) {}
 }, true);
 
