@@ -152,6 +152,10 @@ button {
 #record_setting {
 	display: none;
 }
+#log {
+	display: none;
+	font-weight: normal;
+}
 </style>
 </head>
 <body><div id="page">
@@ -182,7 +186,9 @@ button {
 &nbsp;
 <span class="setting_bold">SNR</span> : <input type="number" id="snr" value="30" size="2" step="1" />
 &nbsp;
-LOG<span id="statistics"></span>
+<label><input type="checkbox" id="show_log" /> LOG</label>
+<span id="statistics"></span><br />
+<span id="log"></span>
 </div>
 <p>
     <h3>Intro.</h3><br />
@@ -369,6 +375,7 @@ function processMorse() {
     var peak = Math.max(...buffer);
     var peakIndex = buffer.findLastIndex((a) => peak == a); //buffer.indexOf(peak);
     //console.log("peak : " + peak + ", peakIndex : " + peakIndex + ", buffer : " + buffer.join(", "));
+	_log("peak : " + peak + ", peakIndex : " + peakIndex + ", buffer : " + buffer.join(", "));
     buffer = buffer.slice(Math.max(0, peakIndex - 2), Math.min(buffer.length, peakIndex + 3));
     var n = buffer.length;
     var mean = buffer.reduce((a, b) => a + b, 0) / n;
@@ -379,6 +386,7 @@ function processMorse() {
 
     var ditdah = (mean != 0 && signalToNoiseRatio <= snrThreshold);
     if (!ditdah && mean != 0) console.log("ditdah : " + ditdah + ", μ : " + mean + ", σ : " + standardDeviation.toFixed(2) + ", SNR : " + signalToNoiseRatio.toFixed(2));
+	_log("ditdah : " + ditdah + ", μ : " + mean + ", σ : " + standardDeviation.toFixed(2) + ", SNR : " + signalToNoiseRatio.toFixed(2));
 
 
     //if (mean > 0) printDitdah(ditdah, frameDuration);
@@ -666,12 +674,12 @@ var textNode = null;
 function printDecodedChar(s) {
     textNode = document.createTextNode(s);
     decodedLog.appendChild(textNode);
-    if (!isAndroid && !isIOS) decodedLog.scrollIntoView(false);
+    if (!isAndroid && !isIOS && !showLog.checked) decodedLog.scrollIntoView(false);
 }
 function updateDecodedChar(s) {
     if (textNode) textNode.textContent = s;
     else printDecodedChar(s);
-    if (!isAndroid && !isIOS) decodedLog.scrollIntoView(false);
+    if (!isAndroid && !isIOS && !showLog.checked) decodedLog.scrollIntoView(false);
 }
 function printDecodedLine(s) {
     var el = document.createElement("DIV");
@@ -706,6 +714,17 @@ function clearDitdah() {
     for (var i = 0; i < len; i++) ditdahLog.removeChild(ditdahLog.firstChild);
 
     lastProcessedAt = 0;
+}
+
+var showLog = document.querySelector("#show_log");
+var log = document.querySelector("#log");
+showLog.onchange = function() {
+    log.style.display = (showLog.checked ? "inline" : "none");
+}
+function _log(s) {
+    log.appendChild(document.createTextNode(s));
+	log.appendChild(document.createElement("BR"));
+	if (log.childNodes.length > 100) { log.removeChild(log.firstChild); log.removeChild(log.firstChild); }
 }
 
 MORSE = {
