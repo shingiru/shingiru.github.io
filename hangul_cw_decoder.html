@@ -333,20 +333,25 @@ var toneBuffer = null, ditDuration, minDitDuration, maxDitDuration, letterGapDur
 var lastDitdah = false, ditdahAmount = 0, gapAmount = 0, maxGapReached = false;
 var snrThreshold, previousSnr = NaN, previousPeak = 0, SNR_THRESHOLD_INIT = 1.0, snrThresholdMax = 50.0;
 function initProcessMorse() {
+if (firstLog) _log(1);
     resetStat();
-
+if (firstLog) _log(2);
     snrThreshold = SNR_THRESHOLD_INIT; //parseFloat(snr.value);
     previousSnr = NaN;
     previousPeak = 0;
     gapAmount = 0;
     maxGapReached = true;
 
+if (firstLog) _log(3);
     makeCharacter(hangul.checked);
     flushCharacter(hangul.checked);
     printDecodedLine(" ");
 
+if (firstLog) _log(4);
     lastProcessedAt = 0;
     processMorse();
+
+if (firstLog) _log(5);
 }
 function processMorse() {
     if (toneBuffer == null) toneBuffer = new Uint8Array(binCount);
@@ -371,7 +376,8 @@ function processMorse() {
     var frameDuration = now - lastProcessedAt; //parseInt(now - lastProcessedAt);
     lastProcessedAt = now;
 
-    var buffer = toneBuffer.slice(0).slice(toneStart, toneEnd);
+if (firstLog) _log(1);
+	var buffer = toneBuffer.slice(0).slice(toneStart, toneEnd);
     var peak = Math.max(...buffer);
     var peakIndex = buffer.findLastIndex((a) => peak == a); //buffer.indexOf(peak);
     buffer = buffer.slice(Math.max(0, peakIndex - 2), Math.min(buffer.length, peakIndex + 3));
@@ -381,17 +387,17 @@ function processMorse() {
     var mean = buffer.reduce((a, b) => a + b, 0) / n;
     var standardDeviation = Math.sqrt(buffer.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b, 0) / n);
     var signalToNoiseRatio = (standardDeviation == 0 ? 1000 : mean / standardDeviation);
-
+if (firstLog) _log(2);
     if (previousPeak < peak && signalToNoiseRatio < snrThresholdMax && snrThreshold < signalToNoiseRatio) snrThreshold = signalToNoiseRatio;
-
+if (firstLog) _log(3);
     var ditdah = (mean != 0 && signalToNoiseRatio <= snrThreshold);
     if (!ditdah && mean != 0) console.log("ditdah : " + ditdah + ", μ : " + mean + ", σ : " + standardDeviation.toFixed(2) + ", SNR : " + signalToNoiseRatio.toFixed(2));
 	_log("ditdah : " + ditdah + ", μ : " + mean + ", σ : " + standardDeviation.toFixed(2) + ", SNR : " + signalToNoiseRatio.toFixed(2));
-
+if (firstLog) _log(4);
 
     //if (mean > 0) printDitdah(ditdah, frameDuration);
     printDitdah(ditdah, frameDuration);
-
+if (firstLog) _log(5);
     if (ditdah) {
         if (lastDitdah == false) {
             if (gapAmount < minDitdahGap) { // noise
