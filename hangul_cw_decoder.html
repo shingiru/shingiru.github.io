@@ -55,19 +55,8 @@ button {
 #speed {
     width: 3em;
 }
-textarea {
-    width : 100%;
-    height : auto;
-    padding: 10px;
-    border: 1px solid lightsalmon;
-    transition: box-shadow 0.3s;
-    background: lightyellow;
-    border-radius: 5px;
-    color: black;
-    font-family: 'Helvetica', 'sans serif';
-    font-size: x-large;
-    font-weight: bold;
-    line-height: 1.5;
+#snr {
+    width: 3em;
 }
 .hidden_sample {
     display : none;
@@ -108,6 +97,7 @@ textarea {
     font-size: x-large;
     font-weight: bold;
     line-height: 1.5;
+	margin-top: 20px;
 }
 .log_container_ditdah {
     width : 100%;
@@ -149,16 +139,15 @@ textarea {
 .strikethrough {
     text-decoration: line-through;
 }
-#agc_indicator {
-    color: red;
+.stat_container {
+	margin-top: 10px;
+	padding : 4px;
+	color : black;
     font-weight: bold;
-    animation: blinker 1s linear infinite;
-    display: none;
 }
-@keyframes blinker {
-  50% {
-    opacity: 0;
-  }
+#statistics {
+	font-weight: normal;
+	margin-left: 10px;
 }
 </style>
 </head>
@@ -168,11 +157,10 @@ textarea {
 </p>
 <p class="setting">
 <span class="setting_group_2">
-<span class="setting_bold">Signal Speed</span> : <input type="number" id="speed" value="20" size="2" min="5" max="50" /> wpm
-</span>
+<span class="setting_bold">Signal Speed</span> : <input type="number" id="speed" value="20" size="2" min="5" max="50" /> wpm</span>
 <span class="setting_group">
-<label><input type="checkbox" id="hangul" /> Decode hangul</label>
-<label><input type="checkbox" id="extra_gap" disabled /> Allow extra gap</label>&nbsp;
+<label><input type="checkbox" id="hangul" /> Hangul</label>
+<label><input type="checkbox" id="extra_gap" disabled /> Extra gap</label>&nbsp;
 </span>
 <span class="setting_group_2">
 <button id="start">START</button>
@@ -183,25 +171,28 @@ textarea {
 <label><input type="checkbox" id="record" /> Record screen</label>&nbsp;
 <a id="download_link"></a>&nbsp;
 </span>
-<span id="agc_indicator">AGC [reason]</span>
-<br />
-Android : Only FireFox. iOS/Mac/PC : Chrome recommended. (FireFox, Safari also OK)
 </p>
-<p class="log_container_ditdah"><span id="ditdah_log"></span></p>
-<p class="log_container"><span id="decoded_log"></span></p>
+<div class="log_container_ditdah"><span id="ditdah_log"></span></div>
+<div class="log_container"><span id="decoded_log"></span></div>
+<div>Recommended Web-brwoser : Android - Only FireFox. iOS/Mac/PC - Chrome, FireFox, Safari.</div>
+<div class="stat_container">DEBUG.
+&nbsp;
+<span class="setting_bold">SNR</span> : <input type="number" id="snr" value="30" size="2" step="1" />
+&nbsp;
+LOG<span id="statistics"></span>
+</div>
 <p>
     <h3>Intro.</h3><br />
     안녕하세요. DS1TZE 입니다.<br /><br />
     위 프로그램은 한글 CW 해독기 겸 타건 연습기입니다.<br />
     핸드폰이나 노트북 컴퓨터 등 마이크가 있는 장비의 웹브라우저를 통해 이용하면 됩니다.<br />
     리그 앞에 휴대폰이나 컴퓨터 마이크를 둔 후 Start 버튼을 누르기만 하면 대부분 됩니다. Speed는 여유 오차가 넉넉합니다.<br />
-    AGC 로직을 갖추고 있어 Start 버튼을 누른 후 몇 초 동안과 신호가 들어오는 동안 주기적으로 로직이 동작하여 부호의 길이와 갭 파악이 점차 정확해집니다.<br />
-    만약 주파수를 변경해서 새롭게 선국했거나 신호를 보내오는 상대가 달라지면 Start 버튼을 한 번씩 눌러주는 것이 좋습니다.<br />
-    DitDah Bar 영역에선 파악한 신호를 막대로 보여줍니다. 막대가 보이지 않는다면 마이크와 리그 스피커의 간격을 조금 좁히고 리그의 볼륨을 조절해 막대가 나타나도록 한 후 Start 버튼을 다시 눌러주면 됩니다.<br />
-    <a href="hangul_cw_trainer.html" target="_blank">[한글 CW 청취 연습기]</a> 혹은 PC용 SDR, 유투브 영상 등의 신호를 해독해보려면, 컴퓨터의 녹음(소리 입력) 장치를 Stereo Mix* 로 선택하고 볼륨을 20~30% 수준으로 세팅하면 됩니다.<br />
+    신호 막대가 보이지 않는다면 마이크와 리그 스피커의 간격을 조금 좁히고 리그의 볼륨을 조절합니다.<br />
+    <a href="hangul_cw_trainer.html" target="_blank">[한글 CW 청취 연습기]</a> 혹은 PC용 SDR, 유투브 영상 등의 신호를 해독해보려면, 컴퓨터의 녹음(소리 입력) 장치를 Stereo Mix* 로 선택하고 장치 속성에서 볼륨을 최대**로 올리면 됩니다.<br />
     휴대폰에서는, 파이어폭스나 크롬 브라우저를 이용해, 탭 하나엔 해독기를 열어두고 다른 탭엔 청취 연습기를 열어서 소리는 내면서 해독을 시도해봐도 잘 됩니다.<br />
     많은 활용 바라며, 기능 제안은 온에어에서 말씀해주시기 바랍니다.<br />
-    ※ 소리 입력 장치 선택 : Windows 설정 -> 시스템 -> 소리. 만약 입력장치 목록에 Stereo Mix 없으면, [사운드 제어판] -> [녹음]탭에서 Stereo Mix 활성화 후 입력 장치 선택.
+    ※ 녹음 장치 선택 : Windows 설정 -> 시스템 -> 소리. 만약 입력장치 목록에 Stereo Mix 없으면, [사운드 제어판] -> [녹음]탭에서 Stereo Mix 활성화 후 입력 장치 선택.<br />
+	※※ 녹음 볼륨 조절 : 이 프로그램을 포함하여, 녹음 기능을 사용하는 프로그램은 마이크 Gain을 자동으로 조절하는 옵션을 사용합니다. 이에 따라 입력 볼륨이 스스로 낮아져있는 경우가 있으니 높여줘야 합니다.
     <br />
     <br />
 
@@ -222,6 +213,7 @@ Android : Only FireFox. iOS/Mac/PC : Chrome recommended. (FireFox, Safari also O
 </p>
 <p class="font_medium">
 <h3>Change Log</h3>
+2022.08.30. Device's AGC feature ON.<br />
 2022.08.29. "Allow extra gap" added. Korean callsigns prevented from decoding.<br />
 2022.08.26. Screen recording added.<br />
 2022.08.22. Android Support.<br />
@@ -232,8 +224,11 @@ Android : Only FireFox. iOS/Mac/PC : Chrome recommended. (FireFox, Safari also O
 </div>
 </body>
 <script type="text/javascript">
-var audioInitialized = videoInitialized = false, ac, gain, analyser, lastDitdah = false, ditdahAmount = 0, gapAmount = 0, maxGapReached = false, binCount = 256;
+var audioInitialized = videoInitialized = false, ac, gain, analyser, binCount;
 
+var ua = navigator.userAgent.toLowerCase();
+var isIOS = (ua.indexOf("iphone") > -1 || ua.indexOf("ipad") > -1 || ua.indexOf("ipod") > -1);
+var isAndroid = ua.indexOf("android") > -1;
 var wpm = document.querySelector("#speed");
 var hangul = document.querySelector("#hangul");
 var extraGap = document.querySelector("#extra_gap");
@@ -241,6 +236,7 @@ var start = document.querySelector("#start");
 var stop = document.querySelector("#stop");
 var clear = document.querySelector("#clear");
 var record = document.querySelector("#record");
+var snr = document.querySelector("#snr");
 
 start.addEventListener("click", async () => {
     stop.click();
@@ -248,7 +244,7 @@ start.addEventListener("click", async () => {
     if (record.checked) {
         if (!videoInitialized) {
             var constraints = {
-                audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false },
+                audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
                 video: { mediaSource: "screen" }
             };
             navigator.mediaDevices.getDisplayMedia(constraints).then(async (stream) => {
@@ -262,10 +258,10 @@ start.addEventListener("click", async () => {
     }
 
     if (!audioInitialized) {
-        ac = new AudioContext();
+        ac = (ac || new AudioContext());
 
         var constraints = {
-            audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false },
+            audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
             video: false
         };
         navigator.mediaDevices.getUserMedia(constraints).then(async (stream) => {
@@ -275,24 +271,20 @@ start.addEventListener("click", async () => {
             input.connect(gain);
 
             analyser = ac.createAnalyser();
-            analyser.minDecibels = -90;
-            analyser.maxDecibels = -30;
-            if (isAndroid) analyser.smoothingTimeConstant = 0; // when THRESHOLD is high, this value is not important
-            binCount = analyser.frequencyBinCount;
+            analyser.minDecibels = -50; // default: -100
+            //analyser.maxDecibels = -30; // default: -30
+            //if (isAndroid) analyser.smoothingTimeConstant = 0;
+            analyser.smoothingTimeConstant = 0;
+			binCount = analyser.frequencyBinCount;
             gain.connect(analyser);
             //analyser.connect(ac.destination); // important! this should be commented out
 
-            doAgc("in Start");
-            lastProcessedAt = 0;
-            processMorse();
-
+            initProcessMorse();
             audioInitialized = true;
         });
     } else {
         if (ac.state != "running") ac.resume();
-        doAgc("in Start");
-        lastProcessedAt = 0;
-        processMorse();
+		initProcessMorse();
     }
 }, false);
 
@@ -330,100 +322,25 @@ function saveFile(chunks) {
     // URL.revokeOjectURL(blob); // clear from memory
 }
 
-var gaps = [], smallGapRepeat = 0, AGC_AGAIN_WHEN_SMALL_GAP_REPEAT_CNT = 2, lastSmallGapCheckStartAt = 0;
-function agc(target, gap) {
-    gaps.push(gap);
-    if (gaps.length == 5) {
-        var sum = 0;
-        for (var value of gaps) sum += value;
-        var avg = sum / gaps.length;
-        var diff = 1 + (avg - target) / target;
-        diff = Math.min(1.1, Math.max(0.9, diff));
-        if (diff > 0.95 && diff < 1.05) {
-            gaps = [];
-            return;
-        }
-
-        var fix = gain.gain.value * diff;
-        console.log("[AGC] target gap " + (needToAgc ? "need to be fixed" : "fixed") + " : " + target + ", current gap : " + parseInt(avg) + ", current gain : " + gain.gain.value + ", fix gain : " + fix);
-        if (!needToAgc) {
-            gain.gain.value = Math.min(1, Math.max(0, fix));
-
-            if (avg > target * 1.5) {
-                smallGapRepeat++;
-                if (avg > target * 2) smallGapRepeat++;
-            } else {
-                smallGapRepeat = 0;
-            }
-            checkAgcNeededAndDo();
-            if (avg <= target * 1.5) lastSmallGapCheckStartAt = performance.now();
-        }
-        gaps = [];
-    }
+var toneBuffer = null, ditDuration, minDitDuration, maxDitDuration, letterGapDuration, lastProcessedAt = 0, timerId;
+var lastDitdah = false, ditdahAmount = 0, gapAmount = 0, maxGapReached = false;
+var snrThreshold, previousSnr = NaN, previousPeak = 0, SNR_THRESHOLD_INIT = 1.0, snrThresholdMax = 50.0;
+function initProcessMorse() {
+	resetStat();
+	
+	snrThreshold = SNR_THRESHOLD_INIT; //parseFloat(snr.value);
+	previousSnr = NaN;
+	previousPeak = 0;
+    gapAmount = 0;
+    maxGapReached = true;
+	
+	makeCharacter(hangul.checked);
+    flushCharacter(hangul.checked);
+	printDecodedLine(" ");
+	
+	lastProcessedAt = 0;
+	processMorse();
 }
-var needToAgc = true, gainBottom = 1.0, bottomCheckStartAt = lastPeakAt = lastLongDahCheckStartAt = 0;
-var AGC_PEAK_GAIN_DECREASE_AMOUNT = 0.01, AGC_MIN_PEAK_GAIN_CHECK_DURATION = 5000;
-var AGC_POLICY = {
-    NO_PEAK : { reason : "No Peak", thresholdDit : 100 },
-    LONG_DAH : { reason : "Long Dah", thresholdDit : 100 },
-    SMALL_GAP : { reason : "Small Gap", thresholdDit : 100 }
-}
-function doAgc(reason) {
-    printDecodedLine(" ");
-    needToAgc = true;
-    gainBottom = 1.0;
-    gain.gain.value = 1.0;
-    bottomCheckStartAt = lastPeakAt = lastLongDahCheckStartAt = maxGainRepeat = lastSmallGapCheckStartAt = 0;
-    toggleAgcIndicator(true, reason);
-}
-function try_agc(peak) {
-    var now = performance.now();
-    if (peak) lastPeakAt = now;
-
-    if (!needToAgc) return;
-
-    if (bottomCheckStartAt != 0 && (now - bottomCheckStartAt) > AGC_MIN_PEAK_GAIN_CHECK_DURATION) { // skip gap agc during first 5 sec
-        gain.gain.value = Math.min(1, gainBottom * (isAndroid ? 1 : 1.25));
-        console.error("[AGC SET] bottom : " + gainBottom + ", set : " + gain.gain.value);
-        needToAgc = false;
-        toggleAgcIndicator(false);
-        return;
-    }
-
-    if (peak) { // when met fist peak, start to calculate minimum gain that can catch peak still, by decreasing small amount of gain
-        gainBottom -= AGC_PEAK_GAIN_DECREASE_AMOUNT; // decrease small amount
-        gainBottom = Math.max(0.1, gainBottom); // gain minimum
-        //console.log("[AGC SET] change gain : " + gain.gain.value + " => " + gainBottom);
-        gain.gain.value = gainBottom;
-        if (bottomCheckStartAt == 0) bottomCheckStartAt = now;
-    }
-}
-function checkAgcNeededAndDo() { // agc again when enough signal not accepted
-    if (needToAgc) return; // already in agc process
-
-    var now = performance.now();
-    if (lastPeakAt != 0 && (now - lastPeakAt > AGC_POLICY.NO_PEAK.thresholdDit * ditDuration)) {
-        doAgc(AGC_POLICY.NO_PEAK.reason);
-    } else if (lastLongDahCheckStartAt != 0 && (now - lastLongDahCheckStartAt > AGC_POLICY.LONG_DAH.thresholdDit * ditDuration)) {
-        doAgc(AGC_POLICY.LONG_DAH.reason);
-    } else if (smallGapRepeat >= AGC_AGAIN_WHEN_SMALL_GAP_REPEAT_CNT && lastSmallGapCheckStartAt != 0 && (now - lastSmallGapCheckStartAt > AGC_POLICY.SMALL_GAP.thresholdDit * ditDuration)) {
-        if (!(hangul.checked && extraGap.checked)) doAgc(AGC_POLICY.SMALL_GAP.reason);
-    }
-}
-function toggleAgcIndicator(show, reason) {
-    var agcIndicator = document.querySelector("#agc_indicator");
-    agcIndicator.replaceChild(document.createTextNode("[AGC] " + reason), agcIndicator.firstChild);
-    agcIndicator.style.display = (show ? "inline" : "none");
-}
-
-var toneBuffer = null, ditDuration, minDitDuration, maxDitDuration, letterGapDuration, toneStart, toneEnd, lastProcessedAt = 0, timerId;
-var DITDAH_THRESHOLD = 227;//parseInt(256 * 0.98); // 227 is magic number
-var ua = navigator.userAgent.toLowerCase();
-var isIOS = (ua.indexOf("iphone") > -1 || ua.indexOf("ipad") > -1 || ua.indexOf("ipod") > -1);
-var isAndroid = ua.indexOf("android") > -1;
-if (isAndroid) DITDAH_THRESHOLD = parseInt(256 * 0.5);
-var firstDitDahStarted = false;
-var agcElapsed = 0;
 function processMorse() {
     if (toneBuffer == null) toneBuffer = new Uint8Array(binCount);
     ditDuration = parseInt(1.2 / parseInt(wpm.value) * 1000); // from wikipedia
@@ -438,8 +355,8 @@ function processMorse() {
         maxDitdahGap = parseInt(ditDuration * 3.0);
     }
     var bucketSize = 44100 / 2 / binCount;
-    toneStart = Math.max(parseInt(400 / bucketSize), 1);
-    toneEnd = Math.min(parseInt(800 / bucketSize), binCount - 1);
+    var toneStart = Math.max(parseInt(400 / bucketSize), 1);
+    var toneEnd = Math.min(parseInt(800 / bucketSize), binCount - 1);
 
     analyser.getByteFrequencyData(toneBuffer);
     var now = performance.now();
@@ -448,49 +365,32 @@ function processMorse() {
     lastProcessedAt = now;
 
     var buffer = toneBuffer.slice(0).slice(toneStart, toneEnd);
-    var peak = 0, peakIndex = 0;
-    for (var i = 0; i < buffer.length; i++) {
-        if (peak < buffer[i]) {
-            peak = buffer[i];
-            peakIndex = i;
-        }
-    }
-    //console.log(buffer.join(","));
+	var peak = Math.max(...buffer);
+	var peakIndex = buffer.findLastIndex((a) => peak == a); //buffer.indexOf(peak);
+	//console.log("peak : " + peak + ", peakIndex : " + peakIndex + ", buffer : " + buffer.join(", "));
+	buffer = buffer.slice(Math.max(0, peakIndex - 2), Math.min(buffer.length, peakIndex + 3));
+	var n = buffer.length;
+    var mean = buffer.reduce((a, b) => a + b, 0) / n;
+    var standardDeviation = Math.sqrt(buffer.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b, 0) / n);
+    var signalToNoiseRatio = mean / standardDeviation;
+	
+	if (previousPeak < peak && signalToNoiseRatio < snrThresholdMax && snrThreshold < signalToNoiseRatio) snrThreshold = signalToNoiseRatio;
+	
+	var ditdah = (mean != 0 && signalToNoiseRatio <= snrThreshold);
+    if (!ditdah && mean != 0) console.log("ditdah : " + ditdah + ", μ : " + mean + ", σ : " + standardDeviation.toFixed(2) + ", SNR : " + signalToNoiseRatio.toFixed(2));
+	
 
-    var ditdah = (peak > DITDAH_THRESHOLD);
+    //if (mean > 0) printDitdah(ditdah, frameDuration);
+	printDitdah(ditdah, frameDuration);
 
-    var n = buffer.length;
-    var mean = buffer.reduce((a, b) => a + b) / n;
-    var standardDeviation = Math.sqrt(buffer.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / n);
-    var snr = mean / standardDeviation;
-    //console.log("ditdah : " + ditdah + ", μ : " + mean + ", σ : " + standardDeviation + ", SNR : " + snr);
-
-    //if (ditdah) console.log("ditdah : " + ditdah + ", peak index : " + peakIndex + ", peak - 1 : " + buffer[peakIndex - 1] + ", peak : " + buffer[peakIndex] + ", peak + 1 : " + buffer[peakIndex + 1] + ", frameDuration : " + frameDuration);
-    if (peak > 0) printDitdah(ditdah, frameDuration);
-
-    var peakCount = 0;
-    for (var value of buffer)
-        if (value > DITDAH_THRESHOLD)
-            peakCount++;
-
-    agcElapsed += frameDuration;
-    if (agcElapsed >= 23) { // at least 10ms or 46ms (fft sample size 2048 / 44100)
-        if (peak > DITDAH_THRESHOLD * 0.5 && peak < DITDAH_THRESHOLD) {
-            try_agc(false);
-            checkAgcNeededAndDo();
-        } else if (peakCount > 1) { // } else if (peakCount > (isAndroid ? 1 : 2)) {
-            try_agc(true);
-        }
-        agcElapsed = 0;
-    }
-
-    if (ditdah) { // TODO : need to determine gap after a few ditdah, not with single gap. Or, after enough gap arrived.
+    if (ditdah) {
         if (lastDitdah == false) {
             if (gapAmount < minDitdahGap) { // noise
-                console.log("GAP NOISE, " + gapAmount);
+                console.error("GAP NOISE, " + gapAmount);
+				if (!isNaN(previousSnr) && previousSnr < snrThresholdMax) snrThreshold = previousSnr;
             } else if (gapAmount < maxDitdahGap) { // inter-dit-dah
                 console.log("INTER-DITDAH GAP, " + gapAmount);
-                agc(ditDuration, parseInt(gapAmount));
+				doStat(0, 0, gapAmount);
                 gapAmount = 0;
             } else {
                 console.log("WORD GAP, " + gapAmount);
@@ -512,15 +412,15 @@ function processMorse() {
             } else if (ditdahAmount < maxDitDuration) { // dit
                 console.log("DIT, " + ditdahAmount);
                 addToLetter(true);
+				doStat(ditdahAmount, 0, 0);
             } else { // dah
                 console.log("DAH, " + ditdahAmount);
                 addToLetter(false);
-                checkAgcNeededAndDo();
+				doStat(0, ditdahAmount, 0);
             }
         }
         ditdahAmount = 0;
         gapAmount += frameDuration;
-        if (lastLongDahCheckStartAt == 0) lastLongDahCheckStartAt = now;
 
         // when enough gapAmount
         if (gapAmount > letterGapDuration) {
@@ -538,8 +438,53 @@ function processMorse() {
         }
     }
     lastDitdah = ditdah;
+	previousSnr = signalToNoiseRatio;
 
     timerId = setTimeout(processMorse);
+}
+function increaseSnrThreshold() {
+	snrThreshold += 1.0;
+	snrThresholdMax = Math.max(snrThreshold, snrThresholdMax);
+}
+
+var stat = {
+	dit : [],
+	dah : [],
+	gap : []
+};
+var statistics = document.querySelector("#statistics");
+function doStat(dit, dah, gap) {
+	if (dit > 0) stat.dit.push(dit);
+	else if (dah > 0) stat.dah.push(dah);
+	else if (gap > 0) stat.gap.push(gap);
+	
+	var ditLen = stat.dit.length, dahLen = stat.dah.length, gapLen = stat.gap.length;
+	
+	if (ditLen > 10) stat.dit.shift();
+	if (dahLen > 10) stat.dah.shift();
+	if (gapLen > 10) stat.gap.shift();
+	
+	if (ditLen + dahLen < 10 || gapLen < 5) return;
+	
+	var ditMean = parseInt(stat.dit.reduce((a, b) => a + b, 0) / ditLen) || 0;
+	var dahMean = parseInt(stat.dah.reduce((a, b) => a + b, 0) / dahLen) || 0;
+	var gapMean = parseInt(stat.gap.reduce((a, b) => a + b, 0) / gapLen) || 0;
+	var mean = (ditMean + dahMean/3 + gapMean) / 3;
+	var wpm = 1200 / mean;
+	
+	if (statistics.childNodes.length > 0) statistics.removeChild(statistics.firstChild);
+	statistics.appendChild(document.createTextNode(
+		wpm.toFixed(1) + " wpm, dit : " + ditMean + " ms (" + parseInt(ditMean * 100 / mean) + " %)"
+		+ ", dah : " + dahMean + " ms (" + parseInt(dahMean * 100 / mean / 3) + " %)"
+		+ ", ditdah gap : " + gapMean + " ms (" + parseInt(gapMean * 100 / mean) + " %)"
+		+ ", snr threshold : " + snrThreshold.toFixed(1)
+	));
+}
+function resetStat() {
+	stat.dit = [];
+	stat.dah = [];
+	stat.gap = [];
+	if (statistics.childNodes.length > 0) statistics.removeChild(statistics.firstChild);
 }
 
 var ditdahs = "";
@@ -628,7 +573,10 @@ function makeCharacter(makeHangul) {
                 if (hangulLetters.length != 0) hangulLetters = [];
             }
         }
-    }
+    } else if (ditdahs.length > 7) {
+		console.error("Invalid DitDah : " + ditdahs);
+		increaseSnrThreshold();
+	}
     ditdahs = "";
 }
 function printDecodedHangul(character) {
@@ -689,6 +637,11 @@ record.onchange = function() {
 wpm.onchange = function() {
     window.localStorage.setItem('wpm', wpm.value);
 }
+snr.onchange = function() {
+    window.localStorage.setItem('snr', snr.value);
+	snrThreshold = parseFloat(snr.value);
+	snrThresholdMax = snrThreshold;
+}
 hangul.onchange = function() {
     window.localStorage.setItem('hangul', hangul.checked);
     extraGap.disabled = !(hangul.checked);
@@ -699,6 +652,7 @@ extraGap.onchange = function() {
 window.addEventListener('DOMContentLoaded', function() {
     try {
         if (window.localStorage.getItem('wpm')) wpm.value = parseInt(window.localStorage.getItem('wpm'));
+		if (window.localStorage.getItem('snr')) snr.value = parseFloat(window.localStorage.getItem('snr')).toFixed(1);
         if (window.localStorage.getItem('hangul')) hangul.checked = window.localStorage.getItem('hangul') == 'true';
         if (hangul.checked) extraGap.disabled = false;
         if (window.localStorage.getItem('extraGap')) extraGap.checked = window.localStorage.getItem('extraGap') == 'true';
@@ -708,13 +662,11 @@ window.addEventListener('DOMContentLoaded', function() {
 var decodedLog = document.querySelector("#decoded_log");
 var textNode = null;
 function printDecodedChar(s) {
-    if (needToAgc) s = "";
     textNode = document.createTextNode(s);
     decodedLog.appendChild(textNode);
     if (!isAndroid && !isIOS) decodedLog.scrollIntoView(false);
 }
 function updateDecodedChar(s) {
-    if (needToAgc) s = "";
     if (textNode) textNode.textContent = s;
     else printDecodedChar(s);
     if (!isAndroid && !isIOS) decodedLog.scrollIntoView(false);
@@ -733,7 +685,6 @@ function clearDecodedLog() {
 var ditdahLog = document.querySelector("#ditdah_log");
 var lastDitdahLog = false, lastWidth = 0;
 function printDitdah(ditdah, len) {
-    if (needToAgc) ditdah = false;
     if (ditdah == lastDitdahLog && ditdahLog.childNodes.length > 0 && lastWidth < 256) {
         var span = ditdahLog.lastChild;
         lastWidth += len;
