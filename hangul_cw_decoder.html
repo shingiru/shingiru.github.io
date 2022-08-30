@@ -97,7 +97,7 @@ button {
     font-size: x-large;
     font-weight: bold;
     line-height: 1.5;
-	margin-top: 20px;
+    margin-top: 20px;
 }
 .log_container_ditdah {
     width : 100%;
@@ -140,14 +140,14 @@ button {
     text-decoration: line-through;
 }
 .stat_container {
-	margin-top: 10px;
-	padding : 4px;
-	color : black;
+    margin-top: 10px;
+    padding : 4px;
+    color : black;
     font-weight: bold;
 }
 #statistics {
-	font-weight: normal;
-	margin-left: 10px;
+    font-weight: normal;
+    margin-left: 10px;
 }
 </style>
 </head>
@@ -192,7 +192,7 @@ LOG<span id="statistics"></span>
     휴대폰에서는, 파이어폭스나 크롬 브라우저를 이용해, 탭 하나엔 해독기를 열어두고 다른 탭엔 청취 연습기를 열어서 소리는 내면서 해독을 시도해봐도 잘 됩니다.<br />
     많은 활용 바라며, 기능 제안은 온에어에서 말씀해주시기 바랍니다.<br />
     ※ 녹음 장치 선택 : Windows 설정 -> 시스템 -> 소리. 만약 입력장치 목록에 Stereo Mix 없으면, [사운드 제어판] -> [녹음]탭에서 Stereo Mix 활성화 후 입력 장치 선택.<br />
-	※※ 녹음 볼륨 조절 : 이 프로그램을 포함하여, 녹음 기능을 사용하는 프로그램은 마이크 Gain을 자동으로 조절하는 옵션을 사용합니다. 이에 따라 입력 볼륨이 스스로 낮아져있는 경우가 있으니 높여줘야 합니다.
+    ※※ 녹음 볼륨 조절 : 이 프로그램을 포함하여, 녹음 기능을 사용하는 프로그램은 마이크 Gain을 자동으로 조절하는 옵션을 사용합니다. 이에 따라 입력 볼륨이 스스로 낮아져있는 경우가 있으니 높여줘야 합니다.
     <br />
     <br />
 
@@ -275,7 +275,7 @@ start.addEventListener("click", async () => {
             //analyser.maxDecibels = -30; // default: -30
             //if (isAndroid) analyser.smoothingTimeConstant = 0;
             analyser.smoothingTimeConstant = 0;
-			binCount = analyser.frequencyBinCount;
+            binCount = analyser.frequencyBinCount;
             gain.connect(analyser);
             //analyser.connect(ac.destination); // important! this should be commented out
 
@@ -284,7 +284,7 @@ start.addEventListener("click", async () => {
         });
     } else {
         if (ac.state != "running") ac.resume();
-		initProcessMorse();
+        initProcessMorse();
     }
 }, false);
 
@@ -326,20 +326,20 @@ var toneBuffer = null, ditDuration, minDitDuration, maxDitDuration, letterGapDur
 var lastDitdah = false, ditdahAmount = 0, gapAmount = 0, maxGapReached = false;
 var snrThreshold, previousSnr = NaN, previousPeak = 0, SNR_THRESHOLD_INIT = 1.0, snrThresholdMax = 50.0;
 function initProcessMorse() {
-	resetStat();
-	
-	snrThreshold = SNR_THRESHOLD_INIT; //parseFloat(snr.value);
-	previousSnr = NaN;
-	previousPeak = 0;
+    resetStat();
+
+    snrThreshold = SNR_THRESHOLD_INIT; //parseFloat(snr.value);
+    previousSnr = NaN;
+    previousPeak = 0;
     gapAmount = 0;
     maxGapReached = true;
-	
-	makeCharacter(hangul.checked);
+
+    makeCharacter(hangul.checked);
     flushCharacter(hangul.checked);
-	printDecodedLine(" ");
-	
-	lastProcessedAt = 0;
-	processMorse();
+    printDecodedLine(" ");
+
+    lastProcessedAt = 0;
+    processMorse();
 }
 function processMorse() {
     if (toneBuffer == null) toneBuffer = new Uint8Array(binCount);
@@ -365,32 +365,32 @@ function processMorse() {
     lastProcessedAt = now;
 
     var buffer = toneBuffer.slice(0).slice(toneStart, toneEnd);
-	var peak = Math.max(...buffer);
-	var peakIndex = buffer.findLastIndex((a) => peak == a); //buffer.indexOf(peak);
-	//console.log("peak : " + peak + ", peakIndex : " + peakIndex + ", buffer : " + buffer.join(", "));
-	buffer = buffer.slice(Math.max(0, peakIndex - 2), Math.min(buffer.length, peakIndex + 3));
-	var n = buffer.length;
+    var peak = Math.max(...buffer);
+    var peakIndex = buffer.findLastIndex((a) => peak == a); //buffer.indexOf(peak);
+    //console.log("peak : " + peak + ", peakIndex : " + peakIndex + ", buffer : " + buffer.join(", "));
+    buffer = buffer.slice(Math.max(0, peakIndex - 2), Math.min(buffer.length, peakIndex + 3));
+    var n = buffer.length;
     var mean = buffer.reduce((a, b) => a + b, 0) / n;
     var standardDeviation = Math.sqrt(buffer.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b, 0) / n);
     var signalToNoiseRatio = mean / standardDeviation;
-	
-	if (previousPeak < peak && signalToNoiseRatio < snrThresholdMax && snrThreshold < signalToNoiseRatio) snrThreshold = signalToNoiseRatio;
-	
-	var ditdah = (mean != 0 && signalToNoiseRatio <= snrThreshold);
+
+    if (previousPeak < peak && signalToNoiseRatio < snrThresholdMax && snrThreshold < signalToNoiseRatio) snrThreshold = signalToNoiseRatio;
+
+    var ditdah = (mean != 0 && signalToNoiseRatio <= snrThreshold);
     if (!ditdah && mean != 0) console.log("ditdah : " + ditdah + ", μ : " + mean + ", σ : " + standardDeviation.toFixed(2) + ", SNR : " + signalToNoiseRatio.toFixed(2));
-	
+
 
     //if (mean > 0) printDitdah(ditdah, frameDuration);
-	printDitdah(ditdah, frameDuration);
+    printDitdah(ditdah, frameDuration);
 
     if (ditdah) {
         if (lastDitdah == false) {
             if (gapAmount < minDitdahGap) { // noise
                 console.error("GAP NOISE, " + gapAmount);
-				if (!isNaN(previousSnr) && previousSnr < snrThresholdMax) snrThreshold = previousSnr;
+                if (!isNaN(previousSnr) && previousSnr < snrThresholdMax) snrThreshold = previousSnr;
             } else if (gapAmount < maxDitdahGap) { // inter-dit-dah
                 console.log("INTER-DITDAH GAP, " + gapAmount);
-				doStat(0, 0, gapAmount);
+                doStat(0, 0, gapAmount);
                 gapAmount = 0;
             } else {
                 console.log("WORD GAP, " + gapAmount);
@@ -412,11 +412,11 @@ function processMorse() {
             } else if (ditdahAmount < maxDitDuration) { // dit
                 console.log("DIT, " + ditdahAmount);
                 addToLetter(true);
-				doStat(ditdahAmount, 0, 0);
+                doStat(ditdahAmount, 0, 0);
             } else { // dah
                 console.log("DAH, " + ditdahAmount);
                 addToLetter(false);
-				doStat(0, ditdahAmount, 0);
+                doStat(0, ditdahAmount, 0);
             }
         }
         ditdahAmount = 0;
@@ -438,53 +438,53 @@ function processMorse() {
         }
     }
     lastDitdah = ditdah;
-	previousSnr = signalToNoiseRatio;
+    previousSnr = signalToNoiseRatio;
 
     timerId = setTimeout(processMorse);
 }
 function increaseSnrThreshold() {
-	snrThreshold += 1.0;
-	snrThresholdMax = Math.max(snrThreshold, snrThresholdMax);
+    snrThreshold += 1.0;
+    snrThresholdMax = Math.max(snrThreshold, snrThresholdMax);
 }
 
 var stat = {
-	dit : [],
-	dah : [],
-	gap : []
+    dit : [],
+    dah : [],
+    gap : []
 };
 var statistics = document.querySelector("#statistics");
 function doStat(dit, dah, gap) {
-	if (dit > 0) stat.dit.push(dit);
-	else if (dah > 0) stat.dah.push(dah);
-	else if (gap > 0) stat.gap.push(gap);
-	
-	var ditLen = stat.dit.length, dahLen = stat.dah.length, gapLen = stat.gap.length;
-	
-	if (ditLen > 10) stat.dit.shift();
-	if (dahLen > 10) stat.dah.shift();
-	if (gapLen > 10) stat.gap.shift();
-	
-	if (ditLen + dahLen < 10 || gapLen < 5) return;
-	
-	var ditMean = parseInt(stat.dit.reduce((a, b) => a + b, 0) / ditLen) || 0;
-	var dahMean = parseInt(stat.dah.reduce((a, b) => a + b, 0) / dahLen) || 0;
-	var gapMean = parseInt(stat.gap.reduce((a, b) => a + b, 0) / gapLen) || 0;
-	var mean = (ditMean + dahMean/3 + gapMean) / 3;
-	var wpm = 1200 / mean;
-	
-	if (statistics.childNodes.length > 0) statistics.removeChild(statistics.firstChild);
-	statistics.appendChild(document.createTextNode(
-		wpm.toFixed(1) + " wpm, dit : " + ditMean + " ms (" + parseInt(ditMean * 100 / mean) + " %)"
-		+ ", dah : " + dahMean + " ms (" + parseInt(dahMean * 100 / mean / 3) + " %)"
-		+ ", ditdah gap : " + gapMean + " ms (" + parseInt(gapMean * 100 / mean) + " %)"
-		+ ", snr threshold : " + snrThreshold.toFixed(1)
-	));
+    if (dit > 0) stat.dit.push(dit);
+    else if (dah > 0) stat.dah.push(dah);
+    else if (gap > 0) stat.gap.push(gap);
+
+    var ditLen = stat.dit.length, dahLen = stat.dah.length, gapLen = stat.gap.length;
+
+    if (ditLen > 10) stat.dit.shift();
+    if (dahLen > 10) stat.dah.shift();
+    if (gapLen > 10) stat.gap.shift();
+
+    if (ditLen + dahLen < 10 || gapLen < 5) return;
+
+    var ditMean = parseInt(stat.dit.reduce((a, b) => a + b, 0) / ditLen) || 0;
+    var dahMean = parseInt(stat.dah.reduce((a, b) => a + b, 0) / dahLen) || 0;
+    var gapMean = parseInt(stat.gap.reduce((a, b) => a + b, 0) / gapLen) || 0;
+    var mean = (ditMean + dahMean/3 + gapMean) / 3;
+    var wpm = 1200 / mean;
+
+    if (statistics.childNodes.length > 0) statistics.removeChild(statistics.firstChild);
+    statistics.appendChild(document.createTextNode(
+        wpm.toFixed(1) + " wpm, dit : " + ditMean + " ms (" + parseInt(ditMean * 100 / mean) + " %)"
+        + ", dah : " + dahMean + " ms (" + parseInt(dahMean * 100 / mean / 3) + " %)"
+        + ", ditdah gap : " + gapMean + " ms (" + parseInt(gapMean * 100 / mean) + " %)"
+        + ", snr threshold : " + snrThreshold.toFixed(1)
+    ));
 }
 function resetStat() {
-	stat.dit = [];
-	stat.dah = [];
-	stat.gap = [];
-	if (statistics.childNodes.length > 0) statistics.removeChild(statistics.firstChild);
+    stat.dit = [];
+    stat.dah = [];
+    stat.gap = [];
+    if (statistics.childNodes.length > 0) statistics.removeChild(statistics.firstChild);
 }
 
 var ditdahs = "";
@@ -574,9 +574,9 @@ function makeCharacter(makeHangul) {
             }
         }
     } else if (ditdahs.length > 7) {
-		console.error("Invalid DitDah : " + ditdahs);
-		increaseSnrThreshold();
-	}
+        console.error("Invalid DitDah : " + ditdahs);
+        increaseSnrThreshold();
+    }
     ditdahs = "";
 }
 function printDecodedHangul(character) {
@@ -639,8 +639,8 @@ wpm.onchange = function() {
 }
 snr.onchange = function() {
     window.localStorage.setItem('snr', snr.value);
-	snrThreshold = parseFloat(snr.value);
-	snrThresholdMax = snrThreshold;
+    snrThreshold = parseFloat(snr.value);
+    snrThresholdMax = snrThreshold;
 }
 hangul.onchange = function() {
     window.localStorage.setItem('hangul', hangul.checked);
@@ -652,7 +652,7 @@ extraGap.onchange = function() {
 window.addEventListener('DOMContentLoaded', function() {
     try {
         if (window.localStorage.getItem('wpm')) wpm.value = parseInt(window.localStorage.getItem('wpm'));
-		if (window.localStorage.getItem('snr')) snr.value = parseFloat(window.localStorage.getItem('snr')).toFixed(1);
+        if (window.localStorage.getItem('snr')) snr.value = parseFloat(window.localStorage.getItem('snr'));
         if (window.localStorage.getItem('hangul')) hangul.checked = window.localStorage.getItem('hangul') == 'true';
         if (hangul.checked) extraGap.disabled = false;
         if (window.localStorage.getItem('extraGap')) extraGap.checked = window.localStorage.getItem('extraGap') == 'true';
