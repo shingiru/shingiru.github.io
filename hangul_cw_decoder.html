@@ -252,7 +252,7 @@ start.addEventListener("click", async () => {
     if (record.checked) {
         if (!videoInitialized) {
             var constraints = {
-                audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false },
+                audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
                 video: { mediaSource: "screen" }
             };
             navigator.mediaDevices.getDisplayMedia(constraints).then(async (stream) => {
@@ -269,7 +269,7 @@ start.addEventListener("click", async () => {
         ac = new AudioContext();
 
         var constraints = {
-            audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false },
+            audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
             video: false
         };
         navigator.mediaDevices.getUserMedia(constraints).then(async (stream) => {
@@ -373,22 +373,21 @@ function processMorse() {
 
     var buffer = toneBuffer.slice(0).slice(toneStart, toneEnd);
     var peak = Math.max(...buffer);
-    //var peakIndex = buffer.findLastIndex(a => peak == a); //buffer.indexOf(peak);
+    //var peakIndex = buffer.findLastIndex(a => peak == a); //buffer.indexOf(peak); // not work in mobile
 	var peakIndex = buffer.reduce((a, b, i) => (peak == b ? i : a), 0);
     buffer = buffer.slice(Math.max(0, peakIndex - 2), Math.min(buffer.length, peakIndex + 3));
     //console.log("peak : " + peak + ", peakIndex : " + peakIndex + ", buffer : " + buffer.join(", "));
-	_log("peak : " + peak + ", peakIndex : " + peakIndex + ", buffer : " + buffer.join(", "));
+	//_log("peak : " + peak + ", peakIndex : " + peakIndex + ", buffer : " + buffer.join(", "));
     var n = buffer.length;
     var mean = buffer.reduce((a, b) => a + b, 0) / n;
     var standardDeviation = Math.sqrt(buffer.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b, 0) / n);
-    var signalToNoiseRatio = (standardDeviation == 0 ? 1000 : mean / standardDeviation);
+    var signalToNoiseRatio = mean / standardDeviation;
 
     if (previousPeak < peak && signalToNoiseRatio < snrThresholdMax && snrThreshold < signalToNoiseRatio) snrThreshold = signalToNoiseRatio;
 
     var ditdah = (mean != 0 && signalToNoiseRatio <= snrThreshold);
     if (!ditdah && mean != 0) console.log("ditdah : " + ditdah + ", μ : " + mean + ", σ : " + standardDeviation.toFixed(2) + ", SNR : " + signalToNoiseRatio.toFixed(2));
-	_log("ditdah : " + ditdah + ", μ : " + mean + ", σ : " + standardDeviation.toFixed(2) + ", SNR : " + signalToNoiseRatio.toFixed(2));
-
+	if (!ditdah && mean != 0) _log("ditdah : " + ditdah + ", μ : " + mean + ", σ : " + standardDeviation.toFixed(2) + ", SNR : " + signalToNoiseRatio.toFixed(2));
 
     //if (mean > 0) printDitdah(ditdah, frameDuration);
     printDitdah(ditdah, frameDuration);
