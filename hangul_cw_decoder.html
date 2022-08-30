@@ -380,14 +380,21 @@ function processMorse() {
 
 if (firstLog) _log(1);
 	var buffer = toneBuffer.slice(0).slice(toneStart, toneEnd);
+if (firstLog) _log(1.1);
     var peak = Math.max(...buffer);
+if (firstLog) _log(1.2);
     var peakIndex = buffer.findLastIndex((a) => peak == a); //buffer.indexOf(peak);
+if (firstLog) _log(1.3);
     buffer = buffer.slice(Math.max(0, peakIndex - 2), Math.min(buffer.length, peakIndex + 3));
+if (firstLog) _log(1.4);
     //console.log("peak : " + peak + ", peakIndex : " + peakIndex + ", buffer : " + buffer.join(", "));
 	_log("peak : " + peak + ", peakIndex : " + peakIndex + ", buffer : " + buffer.join(", "));
     var n = buffer.length;
+if (firstLog) _log(1.5);
     var mean = buffer.reduce((a, b) => a + b, 0) / n;
+if (firstLog) _log(1.6);
     var standardDeviation = Math.sqrt(buffer.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b, 0) / n);
+if (firstLog) _log(1.7);
     var signalToNoiseRatio = (standardDeviation == 0 ? 1000 : mean / standardDeviation);
 if (firstLog) _log(2);
     if (previousPeak < peak && signalToNoiseRatio < snrThresholdMax && snrThreshold < signalToNoiseRatio) snrThreshold = signalToNoiseRatio;
