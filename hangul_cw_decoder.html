@@ -271,9 +271,8 @@ start.addEventListener("click", async () => {
             input.connect(gain);
 
             analyser = ac.createAnalyser();
-            analyser.minDecibels = -50; // default: -100
-            //analyser.maxDecibels = -30; // default: -30
-            //if (isAndroid) analyser.smoothingTimeConstant = 0;
+            analyser.minDecibels = -90; // default: -100
+            analyser.maxDecibels = -30; // default: -30
             analyser.smoothingTimeConstant = 0;
             binCount = analyser.frequencyBinCount;
             gain.connect(analyser);
