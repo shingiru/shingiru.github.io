@@ -20,7 +20,8 @@ window.console = window.console || function(t) {};
 body {
     background-color: white ;
     font-family: 'Helvetica', 'sans serif';
-    font-size: large;
+    font-size: normal;
+	line-height: 1.5;
 }
 #page {
     width: 90%;
@@ -165,11 +166,11 @@ textarea {
 </p>
 <p class="setting">
 <span class="setting_group_2">
-<span class="setting_bold">Frequency</span> : <input type="number" id="freq" value="600" step="10" size="4" min="200" max="1200" /> Hz
+<span class="setting_bold">Frequency</span> <input type="number" id="freq" value="600" step="10" size="4" min="200" max="1200" /> Hz
 &nbsp;
-<span class="setting_bold">Speed</span> : <input type="number" id="speed" value="20" size="2" min="5" max="50" /> wpm
+<span class="setting_bold">Speed</span> <input type="number" id="speed" value="20" size="2" min="5" max="50" /> WPM
 &nbsp;
-<span class="setting_bold">Volume</span> : <input type="number" id="volume" value="100" size="3" min="10" max="100" step="10" /> %
+<span class="setting_bold">Volume</span> <input type="number" id="volume" value="100" size="3" min="1" max="100" step="1" /> %
 </span>
 <span class="setting_group">
 <span class="setting_bold">Extra Gap</span> : <label><input type="radio" name="key" value="computer" checked /> None</label>
@@ -347,34 +348,45 @@ TU E E
 </textarea>
 <div id="user_txt_caption" class="hidden_sample"></div>
 
-<p>
-    <h3>Intro.</h3><br />
-    안녕하세요. DS1TZE 입니다.<br /><br />
-    위 프로그램은 한글 CW 청취 연습기입니다.<br />영문과 숫자를 포함해 원하는 내용을 입력하고 PLAY 버튼을 누르면 모스 부호로 들려줍니다.<br />
-    CW 청취 연습에 유용한 웹사이트인 Seiuchy를 사용하던 중, 그 근간이 되는 모스 코드 생성 라이브러리를 알게 되어, 한글 자모 분해 라이브러리를 붙여 만들게 되었습니다.<br />
-    많은 활용 바라며, 기능 제안은 온에어에서 말씀해주시기 바랍니다.<br />
-    <br />
-    <br />
-    
-    <h3>Links</h3><br />
-    Hangul CW Decoder - <a href="hangul_cw_decoder.html" target="_blank">http://shingiru.github.io/hangul_cw_decoder.html</a><br />
-    Seiuchy - <a href="http://seiuchy.macache.com/" target="_blank">http://seiuchy.macache.com/</a><br />
-    Morse Code generator Javascript 라이브러리 - <a href="https://gist.github.com/eholk/0115691987090973cefe" target="_blank">https://gist.github.com/eholk/0115691987090973cefe</a><br />
-    위 라이브러리 제작 관련 글 - <a href="https://blog.theincredibleholk.org/blog/2014/06/23/generating-morse-code-with-javascript/" target="_blank">https://blog.theincredibleholk.org/blog/2014/06/23/generating-morse-code-with-javascript/</a><br />
-    위 라이브러리가 사용하는 기술인 Web Audio API - <a href="https://webaudio.github.io/web-audio-api/" target="_blank">https://webaudio.github.io/web-audio-api/<a/><br />
-    한글 자모 분해 Javascipt 라이브러리* - <a href="https://github.com/e-/Hangul.js/" target="_blank">https://github.com/e-/Hangul.js/</a><br />
-    ※ 한글 CW는 26개 부호만 사용하기 때문에, 라이브러리를 살짝 수정해 "ㅖ"와 "ㅒ"는 각각 "ㅕ" + "ㅣ" 및 "ㅑ" + "ㅣ" 로 분해하도록 하고, 같은 홑낱자로 이루어진 겹낱자도 분해하도록 했습니다.<br />
-    <br />
-    <br />
+<br />
+<h3>Intro.</h3><br />
+안녕하세요. DS1TZE 입니다.<br /><br />
+위 프로그램은 한글 CW 청취 연습기입니다.<br />영문과 숫자를 포함해 원하는 내용을 입력하고 PLAY 버튼을 누르면 모스 부호로 들려줍니다.<br />
+CW 청취 연습에 유용한 웹사이트인 Seiuchy를 사용하던 중, 그 근간이 되는 모스 코드 생성 라이브러리를 알게 되어, 한글 자모 분해 라이브러리를 붙여 만들게 되었습니다.<br />
+많은 활용 바라며, 기능 제안은 온에어에서 말씀해주시기 바랍니다.<br />
+<br />
+<br />
 
-    <h3>DE DS1TZE - <a href="https://www.qrz.com/db/DS1TZE" target="_blank" class="font_medium">https://www.qrz.com/db/DS1TZE</a>
-    <span id="counter">
-        <a href="https://hits.seeyoufarm.com"><img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fshingiru.github.io%2Fhangul_cw_trainer.html&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false"/></a>
-    </span>
-    </h3>
-    
-</p>
+<h3>Links</h3><br />
+Hangul CW Decoder - <a href="hangul_cw_decoder.html" target="_blank">http://shingiru.github.io/hangul_cw_decoder.html</a><br />
+Seiuchy - <a href="http://seiuchy.macache.com/" target="_blank">http://seiuchy.macache.com/</a><br />
+Morse Code generator Javascript 라이브러리 - <a href="https://gist.github.com/eholk/0115691987090973cefe" target="_blank">https://gist.github.com/eholk/0115691987090973cefe</a><br />
+위 라이브러리 제작 관련 글 - <a href="https://blog.theincredibleholk.org/blog/2014/06/23/generating-morse-code-with-javascript/" target="_blank">https://blog.theincredibleholk.org/blog/2014/06/23/generating-morse-code-with-javascript/</a><br />
+위 라이브러리가 사용하는 기술인 Web Audio API - <a href="https://webaudio.github.io/web-audio-api/" target="_blank">https://webaudio.github.io/web-audio-api/<a/><br />
+한글 자모 분해 Javascipt 라이브러리* - <a href="https://github.com/e-/Hangul.js/" target="_blank">https://github.com/e-/Hangul.js/</a><br />
+※ 한글 CW는 26개 부호만 사용하기 때문에, 라이브러리를 살짝 수정해 "ㅖ"와 "ㅒ"는 각각 "ㅕ" + "ㅣ" 및 "ㅑ" + "ㅣ" 로 분해하도록 하고, 같은 홑낱자로 이루어진 겹낱자도 분해하도록 했습니다.<br />
+<br />
+<br />
 
+<h3>DE DS1TZE - <a href="https://www.qrz.com/db/DS1TZE" target="_blank" class="font_medium">https://www.qrz.com/db/DS1TZE</a>
+<span id="counter">
+	<a href="https://hits.seeyoufarm.com"><img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fshingiru.github.io%2Fhangul_cw_trainer.html&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false"/></a>
+</span>
+</h3>
+	
+<br />
+<h3>Change Log</h3>
+<span class="font_medium">
+2022.08.28. Noise effect added. Fading effect added(15 seconds cycle).<br />
+2022.08.26. Rich editor(Code Mirror) adopted. "Hide text" added.<br />
+2022.08.24. "User Text" added.<br />
+2022.08.15. "Repeat" added.<br />
+2022.08.14. "Highlight slowly" added. More QSO samples added.<br />
+2022.08.13. "Selection only" added. Hangul character gap fixed : 5 dots. Prosign(inc. "KA") support added. Remember settings using localStorage. Highlight effect added.<br />
+2022.08.12. First version of Hangul CW Trainer.<br />
+</span>
+</div>
+</body>
 <script type="text/javascript">
 (function(AudioContext) {
     AudioContext.prototype.createEffect = function() {
@@ -1026,18 +1038,4 @@ userQso.onclick = function() {
 }
 
 </script>
-
-
-<p class="font_medium">
-<h3>Change Log</h3>
-2022.08.28. Noise effect added. Fading effect added(15 seconds cycle).<br />
-2022.08.26. Rich editor(Code Mirror) adopted. "Hide text" added.<br />
-2022.08.24. "User Text" added.<br />
-2022.08.15. "Repeat" added.<br />
-2022.08.14. "Highlight slowly" added. More QSO samples added.<br />
-2022.08.13. "Selection only" added. Hangul character gap fixed : 5 dots. Prosign(inc. "KA") support added. Remember settings using localStorage. Highlight effect added.<br />
-2022.08.12. First version of Hangul CW Trainer.<br />
-</p>
-</div>
-</body>
 </html>
