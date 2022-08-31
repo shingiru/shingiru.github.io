@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name=viewport content='width=900' />
+<meta name="viewport" content="width=device-width" />
 <title>한글 CW 연습기</title>
 <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.8/codemirror.css'>
 <script>
@@ -20,8 +20,10 @@ window.console = window.console || function(t) {};
 body {
     background-color: white ;
     font-family: 'Helvetica', 'sans serif';
-    font-size: normal;
+    font-size: medium;
 	line-height: 1.5;
+    min-width: 760px;
+    margin: 0 auto;
 }
 #page {
     width: 90%;
@@ -105,6 +107,9 @@ textarea {
     margin-right: 10px;
     white-space: nowrap;
 }
+.sample_group > button {
+	margin-bottom: 4px;
+}
 ::selection {
     background-color: rgba(255, 0, 0, 0.5);
 }
@@ -125,6 +130,7 @@ textarea {
     font-size: x-large;
     font-weight: bold;
     line-height: 1.5;
+    margin-top: 20px;
 }
 .CodeMirror-selected { background-color: rgba(255, 0, 0, 0.5); }
 .CodeMirror-focused .CodeMirror-selected { background-color: rgba(255, 0, 0, 0.5); }
@@ -144,6 +150,7 @@ textarea {
     font-family: 'monospace';
     font-size: small;
     white-space: nowrap;
+    margin-top: 20px;
 }
 #ditdah {
     height:10px;
@@ -163,7 +170,7 @@ textarea {
 <body>
 <div id="page">
 <h2>한글 CW 연습기 by DS1TZE</h2>
-<p class="setting">
+<div class="setting">
 <span class="setting_group_2">
 <span class="setting_bold">Frequency</span> <input type="number" id="freq" value="600" step="10" size="4" min="200" max="1200" /> Hz
 &nbsp;
@@ -192,8 +199,9 @@ textarea {
 <span class="setting_bold">Effect</span> : <label><input type="checkbox" id="noise"> Noise</label>
 <label><input type="checkbox" id="fading"> Fading</label>&nbsp;
 </span>
-</p>
-<p>
+</div>
+<div>
+<span class="sample_group">
 <button id="hangul_qso_1">Hangul Sample 1</button>
 <button id="hangul_qso_2">Hangul Sample 2</button>
 <button id="hangul_qso_3">Hangul Sample 3</button>
@@ -201,8 +209,9 @@ textarea {
 <button id="english_qso_1">English Sample 1</button>
 <button id="english_qso_2">English Sample 2</button>
 <button id="user_qso">User Text</button>
-</p>
-<p class="log_container_ditdah"><span id="ditdah"></span></p>
+</span>
+</div>
+<div class="log_container_ditdah"><span id="ditdah"></span></div>
 
 <textarea id="hangul_txt_1" rows="16">
 CQ CQ CQ DE HL5KY HL5KY <AR> K   
@@ -348,7 +357,7 @@ TU E E
 <div id="user_txt_caption" class="hidden_sample"></div>
 
 <br />
-<h3>Intro.</h3><br />
+<h3>Intro.</h3>
 안녕하세요. DS1TZE 입니다.<br /><br />
 위 프로그램은 한글 CW 청취 연습기입니다.<br />영문과 숫자를 포함해 원하는 내용을 입력하고 PLAY 버튼을 누르면 모스 부호로 들려줍니다.<br />
 CW 청취 연습에 유용한 웹사이트인 Seiuchy를 사용하던 중, 그 근간이 되는 모스 코드 생성 라이브러리를 알게 되어, 한글 자모 분해 라이브러리를 붙여 만들게 되었습니다.<br />
@@ -356,7 +365,7 @@ CW 청취 연습에 유용한 웹사이트인 Seiuchy를 사용하던 중, 그 �
 <br />
 <br />
 
-<h3>Links</h3><br />
+<h3>Links</h3>
 Hangul CW Decoder - <a href="hangul_cw_decoder.html" target="_blank">http://shingiru.github.io/hangul_cw_decoder.html</a><br />
 Seiuchy - <a href="http://seiuchy.macache.com/" target="_blank">http://seiuchy.macache.com/</a><br />
 Morse Code generator Javascript 라이브러리 - <a href="https://gist.github.com/eholk/0115691987090973cefe" target="_blank">https://gist.github.com/eholk/0115691987090973cefe</a><br />
