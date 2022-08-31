@@ -10,7 +10,8 @@
 body {
     background-color: white ;
     font-family: 'Helvetica', 'sans serif';
-    font-size: large;
+    font-size: normal;
+	line-height: 1.5;
 }
 #page {
     width: 90%;
@@ -37,6 +38,9 @@ input:focus {
     border: 1px solid teal;
     box-shadow: 0 0 5px 1px powderblue;
 }
+input:disabled {
+	color: #808080;
+}
 button {
     color: black;
     font-family: 'Helvetica', 'sans serif';
@@ -57,7 +61,7 @@ button {
 }
 #target_speed {
     width: 2em;
-	color: #404040;
+	color: #808080;
 }
 #snr {
     width: 3em;
@@ -79,13 +83,29 @@ button {
 }
 .setting_group {
     padding: 4px 0px 4px 10px;
-    margin-right: 10px;
+	margin: 4px 10px 4px 0px;
     border: 1px dotted teal;
     white-space: nowrap;
 }
 .setting_group_2 {
-    margin-right: 10px;
+	margin: 4px 10px 4px 0px;
     white-space: nowrap;
+}
+.setting_group_3 {
+    padding: 4px 0px 4px 10px;
+	margin: 4px 10px 4px 0px;
+    border: 1px dotted teal;
+    white-space: nowrap;
+}
+.setting_group_4 {
+    padding: 4px 0px 4px 10px;
+	margin: 4px 10px 4px 0px;
+    white-space: nowrap;
+	display: inline-block;
+}
+.professional_setting {
+	padding: 4px 0px 4px 10px;
+    border: 1px dotted teal;
 }
 .log_container {
     width : 100%;
@@ -117,6 +137,7 @@ button {
     font-size: small;
     display: block;
     white-space: nowrap;
+    margin-top: 20px;
 }
 #ditdah_log {
     height:10px;
@@ -130,9 +151,24 @@ button {
 .ditdah_gap {
     height: 10px;
     display: inline-block;
+	//margin-top: 60px;
+}
+.ditdah_bar_err {
+    background: #A4D478;
+    height: 10px;
+    display: inline-block;
+	//margin-top: 60px;
+}
+.ditdah_gap_err {
+    background: #CDA4DE;
+	height: 10px;
+    display: inline-block;
 }
 .font_x-large {
     font-size : x-large;
+}
+.font_small {
+	font-size : small;
 }
 .prevent_wrap {
     white-space: nowrap;
@@ -162,21 +198,138 @@ button {
 #log {
     font-weight: normal;
 }
+.ditdahgap {
+	width: 3em;
+}
+details {
+	width : 100%;
+    border: 1px dotted teal;
+	padding: 4px 0px 4px 10px;
+	margin-top: 10px;
+}
+details > summary {
+	width : 100%;
+    padding: 4px 0px 4px 10px;
+	cursor:pointer;
+}
+</style>
+<style>
+[data-tooltip] {
+    display: inline-block;
+    position: relative;
+    cursor: help;
+    padding: 4px;
+}
+/* Tooltip styling */
+[data-tooltip]:before {
+    content: attr(data-tooltip);
+    display: none;
+    position: absolute;
+    background: #000;
+    color: #fff;
+    padding: 4px 8px;
+    font-size: 14px;
+    line-height: 1.4;
+    min-width: 100px;
+    text-align: center;
+    border-radius: 4px;
+}
+/* Dynamic horizontal centering */
+[data-tooltip-position="top"]:before,
+[data-tooltip-position="bottom"]:before {
+    left: 50%;
+    -ms-transform: translateX(-50%);
+    -moz-transform: translateX(-50%);
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+}
+/* Dynamic vertical centering */
+[data-tooltip-position="right"]:before,
+[data-tooltip-position="left"]:before {
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    -moz-transform: translateY(-50%);
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+[data-tooltip-position="top"]:before {
+    bottom: 100%;
+    margin-bottom: 6px;
+}
+[data-tooltip-position="right"]:before {
+    left: 100%;
+    margin-left: 6px;
+}
+[data-tooltip-position="bottom"]:before {
+    top: 100%;
+    margin-top: 6px;
+}
+[data-tooltip-position="left"]:before {
+    right: 100%;
+    margin-right: 6px;
+}
+
+/* Tooltip arrow styling/placement */
+[data-tooltip]:after {
+    content: '';
+    display: none;
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-color: transparent;
+    border-style: solid;
+}
+/* Dynamic horizontal centering for the tooltip */
+[data-tooltip-position="top"]:after,
+[data-tooltip-position="bottom"]:after {
+    left: 50%;
+    margin-left: -6px;
+}
+/* Dynamic vertical centering for the tooltip */
+[data-tooltip-position="right"]:after,
+[data-tooltip-position="left"]:after {
+    top: 50%;
+    margin-top: -6px;
+}
+[data-tooltip-position="top"]:after {
+    bottom: 100%;
+    border-width: 6px 6px 0;
+    border-top-color: #000;
+}
+[data-tooltip-position="right"]:after {
+    left: 100%;
+    border-width: 6px 6px 6px 0;
+    border-right-color: #000;
+}
+[data-tooltip-position="bottom"]:after {
+    top: 100%;
+    border-width: 0 6px 6px;
+    border-bottom-color: #000;
+}
+[data-tooltip-position="left"]:after {
+    right: 100%;
+    border-width: 6px 0 6px 6px;
+    border-left-color: #000;
+}
+/* Show the tooltip when hovering */
+[data-tooltip]:hover:before,
+[data-tooltip]:hover:after {
+    display: block;
+    z-index: 50;
+}
 </style>
 </head>
-<body><div id="page">
-<p>
+<body>
+<div id="page">
 <h2>한글 CW 해독기 by DS1TZE</h2>
-</p>
-<p class="setting">
+<div class="setting">
 <span class="setting_group_2">
 <span class="setting_bold">Start Speed</span> <input type="number" id="speed" value="20" size="2" min="5" max="50" /> WPM
 &nbsp;
 <span class="setting_bold">Current Speed</span> <input type="number" id="target_speed" value="20" size="2" disabled /> WPM
 </span>
-<span class="setting_group">
-<label><input type="checkbox" id="hangul" /> Hangul</label>
-<label><input type="checkbox" id="extra_gap" disabled /> Extra gap</label>&nbsp;
+<span class="setting_group_3">
+<label><input type="checkbox" id="hangul" /> Hangul</label>&nbsp;&nbsp;
 </span>
 <span class="setting_group_2">
 <button id="start">START</button>
@@ -187,7 +340,46 @@ button {
 <label><input type="checkbox" id="record" /> Record screen</label>&nbsp;
 <a id="download_link"></a>&nbsp;
 </span>
-</p>
+</div>
+<details>
+<summary>Professional Setting</summary>
+<span class="setting_group_3">
+<label class="setting_bold"><input type="checkbox" id="professional" /> DitDahGap</label>
+<label><input type="radio" name="speed_profile" value="custom" checked /> Custom</label>
+<label><input type="radio" name="speed_profile" value="novice" /> Novice</label>
+<label><input type="radio" name="speed_profile" value="normal" checked /> Normal</label>
+<label><input type="radio" name="speed_profile" value="guru" /> Guru</label>&nbsp;
+</span>
+<span class="setting_group_2">
+<span class="setting_bold">Dit</span>&nbsp;
+<input type="number" id="min_dit" class="ditdahgap" value="0.1" size="3" min="0.1" max="1.0" step="0.1" /> ~ 
+<input type="number" id="max_dit" class="ditdahgap" value="2.0" size="3" min="1.1" max="3.0" step="0.1" />
+<span class="font_small">unit</span>
+</span>
+<span class="setting_group_2">
+<span class="setting_bold">Dah</span>&nbsp;
+<input type="number" id="min_dah" class="ditdahgap" value="2.0" size="3" min="1.1" max="3.0" step="0.1" /> ~ 
+<input type="number" id="max_dah" class="ditdahgap" value="4.0" size="3" min="3.1" max="5.0" step="0.1" />
+<span class="font_small">unit</span>
+</span>
+<span class="setting_group_2">
+<span class="setting_bold">Gap</span>&nbsp;
+<input type="number" id="min_gap" class="ditdahgap" value="0.5" size="3" min="0.1" max="3.0" step="0.1" /> ~ 
+<input type="number" id="max_gap" class="ditdahgap" value="2.0" size="3" min="3.1" max="9.9" step="0.1" />
+<span class="font_small">unit</span>
+</span>
+<span class="setting_group_2">
+<span class="setting_bold">Letter Gap</span>
+<input type="number" id="letter_gap" class="ditdahgap" value="5.0" size="3" min="3.1" max="9.9" step="0.1" />
+<span class="font_small">unit</span>
+</span>
+<br />
+<span class="setting_group_4">
+<label class="setting_bold"><input type="checkbox" id="fixed_wpm" /> Fixed Speed</label>
+<input type="number" id="fixed_speed" value="20" size="2" min="5" max="50" /> WPM
+<span class="font_small">(1 unit = 1 dit = <span id="unit">60,0</span> ms)</span>
+</span>
+</details>
 <div class="log_container_ditdah"><span id="ditdah_log"></span></div>
 <div class="log_container"><span id="decoded_log"></span></div>
 <div>Recommended Web-brwoser : Android - Only FireFox. iOS/Mac/PC - Chrome, FireFox, Safari.</div>
@@ -199,38 +391,40 @@ button {
 <span id="log"></span>
 </span>
 </div>
-<p>
-    <h3>Intro.</h3><br />
-    안녕하세요. DS1TZE 입니다.<br /><br />
-    위 프로그램은 한글 CW 해독기 겸 타건 연습기입니다.<br />
-    핸드폰이나 노트북 컴퓨터 등 마이크가 있는 장비의 웹브라우저를 통해 이용하면 됩니다.<br />
-    리그 앞에 휴대폰이나 컴퓨터 마이크를 둔 후 Start 버튼을 누르기만 하면 대부분 됩니다. Speed는 여유 오차가 넉넉합니다.<br />
-    신호 막대가 보이지 않는다면 마이크와 리그 스피커의 간격을 조금 좁히고 리그의 볼륨을 조절합니다.<br />
-    <a href="hangul_cw_trainer.html" target="_blank">[한글 CW 청취 연습기]</a> 혹은 PC용 SDR, 유투브 영상 등의 신호를 해독해보려면, 컴퓨터의 녹음(소리 입력) 장치를 Stereo Mix* 로 선택하고 장치 속성에서 볼륨**을 올리면 됩니다.<br />
-    휴대폰에서는, 파이어폭스나 크롬 브라우저를 이용해, 탭 하나엔 해독기를 열어두고 다른 탭엔 청취 연습기를 열어서 소리는 내면서 해독을 시도해봐도 잘 됩니다.<br />
-    많은 활용 바라며, 기능 제안은 온에어에서 말씀해주시기 바랍니다.<br />
-    ※ 녹음 장치 선택 : Windows 설정 -> 시스템 -> 소리. 만약 입력장치 목록에 Stereo Mix 없으면, [사운드 제어판] -> [녹음]탭에서 Stereo Mix 활성화 후 입력 장치 선택.<br />
-    ※※ 녹음 볼륨 조절 : 이 프로그램을 포함해, 녹음 기능을 사용하는 프로그램이 마이크 Gain을 자동 조절 옵션을 사용하는 경우가 있습니다. 그로 인해 볼륨이 스스로 낮아져있는 경우가 있으니 확인해서 높여줘야 합니다.<br />
-    <br />
-    <br />
 
-    <h3>Links</h3>
-    Hangul CW Trainer - <a href="hangul_cw_trainer.html" target="_blank">http://shingiru.github.io/hangul_cw_trainer.html</a><br />
-    위 라이브러리가 사용하는 기술인 Web Audio API - <a href="https://webaudio.github.io/web-audio-api/" target="_blank">https://webaudio.github.io/web-audio-api/<a/><br />
-    한글 자모 합성 Javascipt 라이브러리* - <a href="https://github.com/e-/Hangul.js/" target="_blank">https://github.com/e-/Hangul.js/</a><br />
-    ※ 한글 CW는 26개 부호만 사용하기 때문에, 라이브러리를 많이 수정해 "ㅖ"와 "ㅒ"는 각각 "ㅕ" + "ㅣ" 및 "ㅑ" + "ㅣ" 를 합성하도록 하고, 같은 홑낱자로 연속 출현도 경우에 따라 겹낱자도 합성하도록 했습니다.<br />
-    <br />
-    <br />
+<br />
+<h3>Intro.</h3><br />
+안녕하세요. DS1TZE 입니다.<br /><br />
+위 프로그램은 한글 CW 해독기 겸 타건 연습기입니다.<br />
+핸드폰이나 노트북 컴퓨터 등 마이크가 있는 장비의 웹브라우저를 통해 이용하면 됩니다.<br />
+리그 앞에 휴대폰이나 컴퓨터 마이크를 둔 후 Start 버튼을 누르기만 하면 대부분 됩니다. Speed는 여유 오차가 넉넉하며 어느 정도까지는 자동으로 파악합니다.<br />
+신호 막대가 보이지 않는다면 마이크와 스피커의 간격을 조금 좁히고 리그의 볼륨을 조절합니다.<br />
+<a href="hangul_cw_trainer.html" target="_blank">[한글 CW 청취 연습기]</a> 혹은 PC용 SDR, 유투브 영상 등의 신호를 해독해보려면, 컴퓨터의 녹음(소리 입력) 장치를 Stereo Mix* 로 선택하고 장치 속성에서 볼륨**을 올리면 됩니다.<br />
+휴대폰에서는, 파이어폭스나 크롬 브라우저를 이용해, 탭 하나엔 해독기를 열어두고 다른 탭엔 청취 연습기를 열어서 소리는 내면서 해독을 시도해봐도 잘 됩니다.<br />
+많은 활용 바라며, 기능 제안은 온에어에서 말씀해주시기 바랍니다.<br />
+※ 녹음 장치 선택 : Windows 설정 -> 시스템 -> 소리. 만약 입력장치 목록에 Stereo Mix 없으면, [사운드 제어판] -> [녹음]탭에서 Stereo Mix 활성화 후 입력 장치 선택.<br />
+※※ 녹음 볼륨 조절 : 이 프로그램을 포함해, 녹음 기능을 사용하는 프로그램이 마이크 Gain을 자동 조절 옵션을 사용하는 경우가 있습니다. 그로 인해 볼륨이 스스로 낮아져있는 경우가 있으니 확인해서 높여줘야 합니다.<br />
+<br />
+<br />
 
-    <h3>DE DS1TZE - <a href="https://www.qrz.com/db/DS1TZE" target="_blank" class="font_medium">https://www.qrz.com/db/DS1TZE</a>
-    <span id="counter">
-        <a href="https://hits.seeyoufarm.com"><img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fshingiru.github.io%2Fhangul_cw_decoder.html&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false"/></a>
-    </span>
-    </h3>
+<h3>Links</h3>
+Hangul CW Trainer - <a href="hangul_cw_trainer.html" target="_blank">http://shingiru.github.io/hangul_cw_trainer.html</a><br />
+위 라이브러리가 사용하는 기술인 Web Audio API - <a href="https://webaudio.github.io/web-audio-api/" target="_blank">https://webaudio.github.io/web-audio-api/<a/><br />
+한글 자모 합성 Javascipt 라이브러리* - <a href="https://github.com/e-/Hangul.js/" target="_blank">https://github.com/e-/Hangul.js/</a><br />
+※ 한글 CW는 26개 부호만 사용하기 때문에, 라이브러리를 많이 수정해 "ㅖ"와 "ㅒ"는 각각 "ㅕ" + "ㅣ" 및 "ㅑ" + "ㅣ" 를 합성하도록 하고, 같은 홑낱자로 연속 출현도 경우에 따라 겹낱자도 합성하도록 했습니다.<br />
+<br />
+<br />
 
-</p>
-<p class="font_medium">
+<h3>DE DS1TZE - <a href="https://www.qrz.com/db/DS1TZE" target="_blank" class="font_medium">https://www.qrz.com/db/DS1TZE</a>
+<span id="counter">
+	<a href="https://hits.seeyoufarm.com"><img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fshingiru.github.io%2Fhangul_cw_decoder.html&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false"/></a>
+</span>
+</h3>
+
+<br />
 <h3>Change Log</h3>
+<span class="font_medium">
+2022.09.01. Professional Setting added.<br />
 2022.08.31. WPM semi-auto detect.<br />
 2022.08.30. AGC Logic Changed.<br />
 2022.08.29. "Allow extra gap" added. Korean callsigns prevented from decoding.<br />
@@ -239,7 +433,7 @@ button {
 2022.08.21. Tone frequency and Mic gain setting removed, set automatically.<br />
 2022.08.20. DitDah Bar and Setting Guide added.<br />
 2022.08.19. First version of Hangul CW Decoder.<br />
-</p>
+</span>
 </div>
 </body>
 <script type="text/javascript">
@@ -251,12 +445,27 @@ var isAndroid = ua.indexOf("android") > -1;
 var speed = document.querySelector("#speed");
 var targetSpeed = document.querySelector("#target_speed");
 var hangul = document.querySelector("#hangul");
-var extraGap = document.querySelector("#extra_gap");
 var start = document.querySelector("#start");
 var stop = document.querySelector("#stop");
 var clear = document.querySelector("#clear");
 var record = document.querySelector("#record");
 var snr = document.querySelector("#snr");
+
+var professional = document.querySelector("#professional");
+var fixedWpm = document.querySelector("#fixed_wpm");
+var fixedSpeed = document.querySelector("#fixed_speed");
+var unit = document.querySelector("#unit");
+var customProfile = document.querySelector('input[name="speed_profile"][value="custom"]');
+var noviceProfile = document.querySelector('input[name="speed_profile"][value="novice"]');
+var normalProfile = document.querySelector('input[name="speed_profile"][value="normal"]');
+var guruProfile = document.querySelector('input[name="speed_profile"][value="guru"]');
+var minDit = document.querySelector("#min_dit");
+var maxDit = document.querySelector("#max_dit");
+var minDah = document.querySelector("#min_dah");
+var maxDah = document.querySelector("#max_dah");
+var minGap = document.querySelector("#min_gap");
+var maxGap = document.querySelector("#max_gap");
+var letterGap = document.querySelector("#letter_gap");
 
 start.addEventListener("click", async () => {
     stop.click();
@@ -344,7 +553,12 @@ function saveFile(chunks) {
 var toneBuffer = null, ditDuration, minDitDuration, maxDitDuration, letterGapDuration, lastProcessedAt = 0, timerId;
 var lastDitdah = false, ditdahAmount = 0, gapAmount = 0, maxGapReached = false;
 var snrThreshold, previousSnr = NaN, previousPeak = 0, SNR_THRESHOLD_INIT = 0.1, snrThresholdMax = 50.0;
-var targetWpm;
+var targetWpm = previousWpm = 20;
+function setTargetWpm(value) {
+	previousWpm = targetWpm;
+	targetWpm = value;
+	targetSpeed.value = targetWpm;
+}
 function initProcessMorse() {
     resetStat();
 
@@ -353,8 +567,7 @@ function initProcessMorse() {
     previousPeak = 0;
     gapAmount = 0;
     maxGapReached = true;
-    targetWpm = parseInt(speed.value);
-	targetSpeed.value = targetWpm;
+    setTargetWpm(speedFixed ? fixedSpeedValue : parseInt(speed.value));
 
     makeCharacter(hangul.checked);
     flushCharacter(hangul.checked);
@@ -363,19 +576,47 @@ function initProcessMorse() {
     lastProcessedAt = 0;
     processMorse();
 }
+function getSettings() {
+	var wpm = targetWpm;
+	var unit = (1200 / wpm).toFixed(1);
+	var use = useProfessionalSettings;
+	return {
+		unit : unit,
+		dit : {
+			min : (use ? minDitValue : 0.1) * unit,
+			max : (use ? maxDitValue : 2.0) * unit,
+			strictMin : 0.7 * unit,
+			strictMax : 1.3 * unit
+		},
+		dah : {
+			min : (use ? minDahValue : 2.0) * unit,
+			max : (use ? maxDahValue : 4.0) * unit/*,
+			strictMin : 2.7 * unit,
+			strictMax : 3.3 * unit*/
+		},
+		gap : {
+			min : (use ? minGapValue : 0.5) * unit,
+			max : (use ? maxGapValue : 2.0) * unit,
+			letter : (use ? letterGapValue : 6.0) * unit,
+			line : (use ? letterGapValue * 5 : 30.0) * unit,
+			strictMin : 0.7 * unit,
+			strictMax : 1.3 * unit
+		}
+	};
+}
 function processMorse() {
     if (toneBuffer == null) toneBuffer = new Uint8Array(binCount);
+	conf = getSettings();
+	
+	
+	
     ditDuration = parseInt(1200 / targetWpm);
     minDitDuration = parseInt(ditDuration * 0.1);
     maxDitDuration = parseInt(ditDuration * 2.0);
     minDitdahGap = parseInt(ditDuration * 0.5);
     maxDitdahGap = parseInt(ditDuration * 2.0);
     letterGapDuration = ditDuration * 6;
-    if (hangul.checked && extraGap.checked) {
-        letterGapDuration *= 3;
-        maxDitDuration = parseInt(ditDuration * 2.5);
-        maxDitdahGap = parseInt(ditDuration * 3.0);
-    }
+
     var bucketSize = 44100 / 2 / binCount;
     var toneStart = Math.max(parseInt(400 / bucketSize), 1);
     var toneEnd = Math.min(parseInt(800 / bucketSize), binCount - 1);
@@ -388,7 +629,6 @@ function processMorse() {
 
     var buffer = toneBuffer.slice(0).slice(toneStart, toneEnd);
     var peak = Math.max(...buffer);
-    //var peakIndex = buffer.findLastIndex(a => peak == a); //buffer.indexOf(peak); // not work in mobile
     var peakIndex = buffer.reduce((a, b, i) => (peak == b ? i : a), 0);
     buffer = buffer.slice(Math.max(0, peakIndex - 2), Math.min(buffer.length, peakIndex + 3));
     //console.log("peak : " + peak + ", peakIndex : " + peakIndex + ", buffer : " + buffer.join(", "));
@@ -409,17 +649,21 @@ function processMorse() {
 
     if (ditdah) {
         if (lastDitdah == false) {
-            if (gapAmount < minDitdahGap) { // noise
+            if (gapAmount < conf.gap.min) { // noise
                 console.error("GAP NOISE, " + gapAmount);
+				markDitdahError("gap noise " + (gapAmount / conf.unit).toFixed(2) + " unit");
                 if (!isNaN(previousSnr) && previousSnr < snrThresholdMax) snrThreshold = previousSnr;
-            } else if (gapAmount < maxDitdahGap) { // inter-dit-dah
+            } else if (gapAmount < conf.gap.max) { // inter-dit-dah
                 console.log("INTER-DITDAH GAP, " + gapAmount);
-                doStat(0, 0, gapAmount + parseInt(frameDuration));
-                gapAmount = 0;
+                doStat(0, 0, gapAmount + parseInt(frameDuration)); // TODO : need to precise stat gap
+				
+				if (gapAmount < conf.gap.strictMin || gapAmount > conf.gap.strictMax)
+					markDitdahError("gap " + (gapAmount / conf.unit).toFixed(2) + " unit");
+				gapAmount = 0;
             } else {
                 console.log("WORD GAP, " + gapAmount);
                 makeCharacter(hangul.checked);
-                if (gapAmount > letterGapDuration) {
+                if (gapAmount > conf.gap.letter) {
                     flushCharacter(hangul.checked);
                     printDecodedChar(" ");
                 }
@@ -431,30 +675,33 @@ function processMorse() {
         lastLongDahCheckStartAt = 0;
     } else {
         if (lastDitdah == true) {
-            if (ditdahAmount < minDitDuration) { // noise
+            if (ditdahAmount < conf.dit.min) { // noise
                 console.log("DITDAH NOISE, " + ditdahAmount);
-            } else if (ditdahAmount < maxDitDuration) { // dit
+				markDitdahError("dit noise " + (ditdahAmount / conf.unit).toFixed(2) + " unit");
+            } else if (ditdahAmount < conf.dit.max) { // dit
                 console.log("DIT, " + ditdahAmount);
                 addToLetter(true);
-                doStat(ditdahAmount + parseInt(frameDuration), 0, 0);
+                doStat(ditdahAmount + parseInt(frameDuration), 0, 0); // TODO : need to precise stat gap
+				if (ditdahAmount < conf.dit.strictMin || ditdahAmount > conf.dit.strictMax)
+					markDitdahError("dit " + (ditdahAmount / conf.unit).toFixed(2) + " unit");
             } else { // dah
                 console.log("DAH, " + ditdahAmount);
                 addToLetter(false);
-                doStat(0, ditdahAmount + parseInt(frameDuration), 0);
+                doStat(0, ditdahAmount + parseInt(frameDuration), 0); // TODO : need to precise stat gap
+				if (ditdahAmount < conf.dah.min || ditdahAmount > conf.dah.max)
+					markDitdahError("dah " + (ditdahAmount / conf.unit).toFixed(2) + " unit");
             }
         }
         ditdahAmount = 0;
         gapAmount += parseInt(frameDuration);
 
         // when enough gapAmount
-        if (gapAmount > letterGapDuration) {
+        if (gapAmount > conf.gap.letter) {
             makeCharacter(hangul.checked);
             flushCharacter(hangul.checked);
         }
-        if (gapAmount > letterGapDuration * 5 && !maxGapReached) { // 5 or 7
+        if (gapAmount > conf.gap.line && !maxGapReached) {
             console.log("MAX GAP, " + gapAmount);
-            //makeCharacter(hangul.checked);
-            //flushCharacter(hangul.checked);
             printDecodedLine(" ");
             gapAmount = 0;
             maxGapReached = true;
@@ -515,9 +762,8 @@ function resetStat() {
     if (statistics.childNodes.length > 0) statistics.removeChild(statistics.firstChild);
 }
 function updateWpm(wpmTemp) {
-    if (targetWpm == wpmTemp || extraGap.checked) return;
-	targetWpm = wpmTemp;
-	targetSpeed.value = targetWpm;
+    if (targetWpm == wpmTemp) return;
+	if (!speedFixed) setTargetWpm(wpmTemp);
 }
 
 var ditdahs = "";
@@ -667,12 +913,10 @@ record.onchange = function() {
         record.checked = false;
     }
 }
+var speedFixed, fixedSpeedValue;
 speed.onchange = function() {
     window.localStorage.setItem('speed', speed.value);
-	if (extraGap.checked) {
-		targetWpm = speed.value;
-		targetSpeed.value = targetWpm;
-	}
+	if (!speedFixed) setTargetWpm(parseInt(speed.value));
 }
 snr.onchange = function() {
     window.localStorage.setItem('snr', snr.value);
@@ -681,22 +925,163 @@ snr.onchange = function() {
 }
 hangul.onchange = function() {
     window.localStorage.setItem('hangul', hangul.checked);
-    extraGap.disabled = !(hangul.checked);
 }
-extraGap.onchange = function() {
-    window.localStorage.setItem('extraGap', extraGap.checked);
+professional.onchange = function() {
+    window.localStorage.setItem('professional', professional.checked);
+	enableProfessionalSettings(professional.checked);
+	setProfessionalSettings(professional.checked);
+}
+function enableProfessionalSettings(enable) {
+	fixedSpeed.disabled = !(fixedWpm.checked);
+	customProfile.disabled = !enable;
+	noviceProfile.disabled = !enable;
+	normalProfile.disabled = !enable;
+	guruProfile.disabled = !enable;
+	minDit.disabled = !enable;
+	maxDit.disabled = !enable;
+	minDah.disabled = !enable;
+	maxDah.disabled = !enable;
+	minGap.disabled = !enable;
+	maxGap.disabled = !enable;
+	letterGap.disabled = !enable;
+}
+var useProfessionalSettings;
+function setProfessionalSettings(apply) {
+	useProfessionalSettings = apply;
+	speedFixed = fixedWpm.checked;
+	setFixedSpeedValue();
+	if (apply && speedFixed) setTargetWpm(fixedSpeedValue);
+	if (apply) setDitDahGap(minDit.value, maxDit.value, minDah.value, maxDah.value, minGap.value, maxGap.value, letterGap.value);
+}
+function setFixedSpeedValue() {
+	fixedSpeedValue = parseInt(fixedSpeed.value);
+	if (fixedWpm.checked) setTargetWpm(fixedSpeedValue);
+	unit.replaceChild(document.createTextNode((1200/fixedSpeedValue).toFixed(1)), unit.firstChild);
+}
+function setDitDahGap(dit1, dit2, dah1, dah2, gap1, gap2, gap3)
+{
+	minDit.value = minDitValue = dit1;
+	maxDit.value = maxDitValue = dit2;
+	minDah.value = minDahValue = dah1;
+	maxDah.value = maxDahValue = dah2;
+	minGap.value = minGapValue = gap1;
+	maxGap.value = maxGapValue = gap2;
+	letterGap.value = letterGapValue = gap3;
+	saveDitDahGap();
+}
+function saveDitDahGap() {	
+	window.localStorage.setItem('minDit', minDit.value);
+	window.localStorage.setItem('maxDit', maxDit.value);
+	window.localStorage.setItem('minDah', minDah.value);
+	window.localStorage.setItem('maxDah', maxDah.value);
+	window.localStorage.setItem('minGap', minGap.value);
+	window.localStorage.setItem('maxGap', maxGap.value);
+	window.localStorage.setItem('letterGap', letterGap.value);
+	window.localStorage.setItem('speedProfile', document.querySelector('input[name="speed_profile"]:checked').value);
+}
+fixedWpm.onchange = function() {
+    window.localStorage.setItem('fixedWpm', fixedWpm.checked);
+	speedFixed = fixedWpm.checked;
+	fixedSpeed.disabled = !speedFixed;
+	setFixedSpeedValue();
+}
+fixedSpeed.onchange = function() {
+    window.localStorage.setItem('fixedSpeed', fixedSpeed.value);
+	setFixedSpeedValue();
+}
+customProfile.onchange = function() {
+	saveDitDahGap();
+}
+noviceProfile.onchange = function(e) {
+	if (e.target.checked) setDitDahGap(0.1, 2.0, 2.0, 4.0, 0.1, 2.5, 7.0);
+	saveDitDahGap();
+}
+normalProfile.onchange = function(e) {
+	if (e.target.checked) setDitDahGap(0.5, 1.5, 2.5, 3.5, 0.5, 1.5, 6.0);
+	saveDitDahGap();
+}
+guruProfile.onchange = function(e) {
+	if (e.target.checked) setDitDahGap(0.7, 1.3, 2.7, 3.3, 0.7, 1.3, 4.7);
+	saveDitDahGap();
+}
+var minDitValue, maxDitValue, minDahValue, maxDahValue, minGapValue, maxGapValue, letterGapValue;
+minDit.onchange = function() {
+	minDitValue = parseFloat(minDit.value);
+	if (minDitValue == maxDitValue) minDitValue = maxDitValue - 0.1;
+	minDit.value = minDitValue;
+	customProfile.checked = true;
+	saveDitDahGap();
+}
+maxDit.onchange = function() {
+	maxDitValue = parseFloat(maxDit.value);
+	if (minDitValue == maxDitValue) maxDitValue = minDitValue + 0.1;
+	if (minDahValue < maxDitValue) maxDitValue = minDahValue;
+	maxDit.value = maxDitValue;
+	customProfile.checked = true;
+	saveDitDahGap();
+}
+minDah.onchange = function() {
+	minDahValue = parseFloat(minDah.value);
+	if (minDahValue == maxDahValue) minDahValue = maxDahValue - 0.1;
+	if (minDahValue < maxDitValue) maxDitValue = minDahValue;
+	minDah.value = minDahValue;
+	customProfile.checked = true;
+	saveDitDahGap();
+}
+maxDah.onchange = function() {
+	maxDahValue = parseFloat(maxDah.value);
+	if (minDahValue == maxDahValue) maxDahValue = minDahValue + 0.1;
+	maxDah.value = maxDahValue;
+	customProfile.checked = true;
+	saveDitDahGap();
+}
+minGap.onchange = function() {
+	minGapValue = parseFloat(minGap.value);
+	if (minGapValue == maxGapValue) minGapValue = maxGapValue - 0.1;
+	minGap.value = minGapValue;
+	customProfile.checked = true;
+	saveDitDahGap();
+}
+maxGap.onchange = function() {
+	maxGapValue = parseFloat(maxGap.value);
+	if (minGapValue == maxGapValue) maxGapValue = minGapValue + 0.1;
+	maxGap.value = maxGapValue;
+	customProfile.checked = true;
+	saveDitDahGap();
+}
+letterGap.onchange = function() {
+	letterGapValue = parseFloat(letterGap.value);
+	if (letterGapValue < maxGapValue) letterGapValue = maxGapValue;
+	letterGap.value = letterGapValue;
+	customProfile.checked = true;
+	saveDitDahGap();
+}
+function initSettings() {
+	setTargetWpm(parseInt(speed.value));
+	statContainer.style.display = (showDebug.checked ? "inline" : "none");
+	enableProfessionalSettings(professional.checked);
+	setProfessionalSettings(professional.checked);
+	if (!isAndroid && !isIOS) document.querySelector("#record_setting").style.display = "inline";
 }
 window.addEventListener('DOMContentLoaded', function() {
     try {
         if (window.localStorage.getItem('speed')) speed.value = parseInt(window.localStorage.getItem('speed'));
-		targetSpeed.value = speed.value;
         if (window.localStorage.getItem('snr')) snr.value = parseFloat(window.localStorage.getItem('snr'));
         if (window.localStorage.getItem('hangul')) hangul.checked = window.localStorage.getItem('hangul') == 'true';
-        if (hangul.checked) extraGap.disabled = false;
-        if (window.localStorage.getItem('extraGap')) extraGap.checked = window.localStorage.getItem('extraGap') == 'true';
         if (window.localStorage.getItem('showDebug')) showDebug.checked = window.localStorage.getItem('showDebug') == 'true';
-        if (!isAndroid && !isIOS) document.querySelector("#record_setting").style.display = "inline";
-        statContainer.style.display = (showDebug.checked ? "inline" : "none");
+		if (window.localStorage.getItem('professional')) professional.checked = window.localStorage.getItem('professional') == 'true';
+		if (window.localStorage.getItem('fixedWpm')) fixedWpm.checked = window.localStorage.getItem('fixedWpm') == 'true';
+		if (window.localStorage.getItem('fixedSpeed')) fixedSpeed.value = parseInt(window.localStorage.getItem('fixedSpeed'));
+		if (window.localStorage.getItem('speedProfile')) document.querySelector('input[name="speed_profile"][value="'+window.localStorage.getItem('speedProfile')+'"]').checked = true;
+		if (window.localStorage.getItem('minDit')) minDit.value = parseFloat(window.localStorage.getItem('minDit'));
+		if (window.localStorage.getItem('maxDit')) maxDit.value = parseFloat(window.localStorage.getItem('maxDit'));
+		if (window.localStorage.getItem('minDah')) minDah.value = parseFloat(window.localStorage.getItem('minDah'));
+		if (window.localStorage.getItem('maxDah')) maxDah.value = parseFloat(window.localStorage.getItem('maxDah'));
+		if (window.localStorage.getItem('minGap')) minGap.value = parseFloat(window.localStorage.getItem('minGap'));
+		if (window.localStorage.getItem('maxGap')) maxGap.value = parseFloat(window.localStorage.getItem('maxGap'));
+		if (window.localStorage.getItem('letterGap')) letterGap.value = parseFloat(window.localStorage.getItem('letterGap'));
+		initSettings();
+        
     } catch (e) {}
 }, true);
 
@@ -726,7 +1111,7 @@ function clearDecodedLog() {
 var ditdahLog = document.querySelector("#ditdah_log");
 var lastDitdahLog = false, lastWidth = 0;
 function printDitdah(ditdah, len) {
-    if (ditdah == lastDitdahLog && ditdahLog.childNodes.length > 0 && lastWidth < 256) {
+    if (ditdah == lastDitdahLog && ditdahLog.childNodes.length > 0 && lastWidth < 8192) {
         var span = ditdahLog.lastChild;
         lastWidth += len;
         span.style.width = (parseInt(lastWidth) >> 3) + "px";
@@ -739,6 +1124,15 @@ function printDitdah(ditdah, len) {
     if (ditdahLog.childNodes.length > 256) ditdahLog.removeChild(ditdahLog.firstChild);
     lastDitdahLog = ditdah;
     lastWidth = len;
+}
+function markDitdahError(msg) {
+	if (professional.checked == false || ditdahLog.childNodes < 2) return;
+	var span = ditdahLog.childNodes[ditdahLog.childNodes.length - 2];
+	//span.setAttribute("data-tooltip", msg);
+	//span.setAttribute("data-tooltip-position", "left");
+	span.setAttribute("title", msg);
+	span.className += "_err";
+	//_log(span.getAttribute("title"));
 }
 function clearDitdah() {
     var len = ditdahLog.childNodes.length;
@@ -757,7 +1151,7 @@ showDebug.onchange = function() {
 function _log(s) {
     log.appendChild(document.createTextNode(s));
     log.appendChild(document.createElement("BR"));
-    if (log.childNodes.length > 40) { log.removeChild(log.firstChild); log.removeChild(log.firstChild); }
+    if (log.childNodes.length > 20) { log.removeChild(log.firstChild); log.removeChild(log.firstChild); }
 }
 
 MORSE = {
