@@ -3,19 +3,21 @@
 <head>
 <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name=viewport content='width=device-width,initial-scale=1.0' />
+<meta name="viewport" content="width=device-width" />
 <title>한글 CW 해독기</title>
 <script src="hangul_for_cw.js"></script>
 <style>
 body {
     background-color: white ;
     font-family: 'Helvetica', 'sans serif';
-    font-size: normal;
+    font-size: medium;
 	line-height: 1.5;
+    min-width: 760px;
+    margin: 0 auto;
 }
-#page {
+.page {
     width: 90%;
-    margin-left: auto;
+	margin-left: auto;
     margin-right: auto;
     padding: 1em;
 }
@@ -151,13 +153,11 @@ button {
 .ditdah_gap {
     height: 10px;
     display: inline-block;
-	//margin-top: 60px;
 }
 .ditdah_bar_err {
     background: #A4D478;
     height: 10px;
     display: inline-block;
-	//margin-top: 60px;
 }
 .ditdah_gap_err {
     background: #CDA4DE;
@@ -211,6 +211,10 @@ details > summary {
 	width : 100%;
     padding: 4px 0px 4px 10px;
 	cursor:pointer;
+}
+.spacer {
+	display: inline-block;
+	width: 900px;
 }
 </style>
 <style>
@@ -320,13 +324,13 @@ details > summary {
 </style>
 </head>
 <body>
-<div id="page">
+<div class="page">
 <h2>한글 CW 해독기 by DS1TZE</h2>
 <div class="setting">
 <span class="setting_group_2">
-<span class="setting_bold">Start Speed</span> <input type="number" id="speed" value="20" size="2" min="5" max="50" /> WPM
+<span class="setting_bold">Start </span> <input type="number" id="speed" value="20" size="2" min="5" max="50" /> WPM
 &nbsp;
-<span class="setting_bold">Current Speed</span> <input type="number" id="target_speed" value="20" size="2" disabled /> WPM
+<span class="setting_bold">Current </span> <input type="number" id="target_speed" value="20" size="2" disabled /> WPM
 </span>
 <span class="setting_group_3">
 <label><input type="checkbox" id="hangul" /> Hangul</label>&nbsp;&nbsp;
@@ -393,7 +397,7 @@ details > summary {
 </div>
 
 <br />
-<h3>Intro.</h3><br />
+<h3>Intro.</h3>
 안녕하세요. DS1TZE 입니다.<br /><br />
 위 프로그램은 한글 CW 해독기 겸 타건 연습기입니다.<br />
 핸드폰이나 노트북 컴퓨터 등 마이크가 있는 장비의 웹브라우저를 통해 이용하면 됩니다.<br />
