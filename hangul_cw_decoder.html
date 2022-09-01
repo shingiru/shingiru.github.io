@@ -41,7 +41,7 @@ input:focus {
     box-shadow: 0 0 5px 1px powderblue;
 }
 input:disabled {
-	color: #808080;
+	color: #444;
 }
 button {
     color: black;
@@ -63,7 +63,7 @@ button {
 }
 #target_speed {
     width: 2em;
-	color: #444;
+	color: #808080;
 }
 #snr {
     width: 3em;
@@ -446,6 +446,7 @@ var audioInitialized = videoInitialized = false, ac, gain, analyser, binCount;
 var ua = navigator.userAgent.toLowerCase();
 var isIOS = (ua.indexOf("iphone") > -1 || ua.indexOf("ipad") > -1 || ua.indexOf("ipod") > -1);
 var isAndroid = ua.indexOf("android") > -1;
+var isMobile = (isIOS || isAndroid);
 var speed = document.querySelector("#speed");
 var targetSpeed = document.querySelector("#target_speed");
 var hangul = document.querySelector("#hangul");
@@ -494,7 +495,7 @@ start.addEventListener("click", async () => {
         ac = new AudioContext();
 
         var constraints = {
-            audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
+            audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: (isMobile ? false : true) },
             video: false
         };
         navigator.mediaDevices.getUserMedia(constraints).then(async (stream) => {
