@@ -495,7 +495,7 @@ start.addEventListener("click", async () => {
         ac = new AudioContext();
 
         var constraints = {
-            audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: (isMobile ? false : true) },
+            audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: (isMobile ? true : true) },
             video: false
         };
         navigator.mediaDevices.getUserMedia(constraints).then(async (stream) => {
