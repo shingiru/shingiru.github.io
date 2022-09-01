@@ -477,7 +477,7 @@ start.addEventListener("click", async () => {
     if (record.checked) {
         if (!videoInitialized) {
             var constraints = {
-                audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
+                audio: { echoCancellation: false, noiseSuppression: true, autoGainControl: true },
                 video: { mediaSource: "screen" }
             };
             navigator.mediaDevices.getDisplayMedia(constraints).then(async (stream) => {
@@ -494,7 +494,7 @@ start.addEventListener("click", async () => {
         ac = new AudioContext();
 
         var constraints = {
-            audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
+            audio: { echoCancellation: false, noiseSuppression: true, autoGainControl: true },
             video: false
         };
         navigator.mediaDevices.getUserMedia(constraints).then(async (stream) => {
