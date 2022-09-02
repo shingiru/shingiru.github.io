@@ -615,8 +615,6 @@ function processMorse() {
     if (toneBuffer == null) toneBuffer = new Uint8Array(binCount);
 	conf = getSettings();
 	
-	
-	
     ditDuration = parseInt(1200 / targetWpm);
     minDitDuration = parseInt(ditDuration * 0.1);
     maxDitDuration = parseInt(ditDuration * 2.0);

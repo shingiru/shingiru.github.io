@@ -165,6 +165,16 @@ textarea {
     height: 10px;
     display: inline-block;
 }
+#keyer_setting {
+    display: none;
+    line-height: 2;
+}
+#connect {
+    color: blue;
+}
+#disconnect {
+    color: red;
+}
 </style>
 </head>
 <body>
@@ -198,6 +208,14 @@ textarea {
 <span class="setting_group">
 <span class="setting_bold">Effect</span> : <label><input type="checkbox" id="noise"> Noise</label>
 <label><input type="checkbox" id="fading"> Fading</label>&nbsp;
+</span>
+</div>
+<div id="keyer_setting">
+<span class="setting_bold">CW Keyer</span> : 
+<button id="connect">CONNECT</button>
+<button id="disconnect">UNCONNECTED</button>
+&nbsp;
+(IC-7300,7610 : <span class="setting_bold">USB Keying(CW) - DTR*</span>)
 </span>
 </div>
 <div>
@@ -365,6 +383,16 @@ CW 청취 연습에 유용한 웹사이트인 Seiuchy를 사용하던 중, 그 �
 <br />
 <br />
 
+<h3>※ Keyer.</h3>
+최신 웹브라우저에선 COM 포트를 이용한 통신이 가능하며, 이를 이용해 컴퓨터와 연결된 무전기를 제어할 수 있습니다. (모바일에선 안됨)<br />
+IC-7300 이나 IC-7610 은 USB 케이블을 이용해 컴퓨터와 바로 연결하고, 다른 무전기들은 $2 미만의 USB to UART 모듈을 이용해 인터페이스 장치를 만들어 연결합니다.<br />
+<span class="setting_bold">CW Keying via Serial Port</span> 정도로 웹 검색을 하면, 간단하게 장치를 만드는 방법이 나옵니다.<br />
+이 프로그램에선 COM 포트의 DTR 핀을 ON(High)/OFF(Low) 시켜, 무전기에게 CW 신호를 보낼지 말지를 알리고 있습니다.<br />
+ICOM 무전기의 경우라면, USB to UART 모듈의 DTR & GND 핀의 신호를 활용해, 무전기 측 ACC 소켓 내 SEND & GND 핀이 서로 연결되게만 하면 신호가 발생합니다.<br />
+ICOM 뿐만 아니라 대부분의 무전기는 유사한 방법을 제공하니, 이런 원리를 이용해 간단하게 인터페이스 장치를 만들어 사용하면 됩니다.<br />
+<br />
+<br />
+
 <h3>Links</h3>
 Hangul CW Decoder - <a href="hangul_cw_decoder.html" target="_blank">http://shingiru.github.io/hangul_cw_decoder.html</a><br />
 Seiuchy - <a href="http://seiuchy.macache.com/" target="_blank">http://seiuchy.macache.com/</a><br />
@@ -385,6 +413,7 @@ Morse Code generator Javascript 라이브러리 - <a href="https://gist.github.c
 <br />
 <h3>Change Log</h3>
 <span class="font_medium">
+2022.09.03. Keyer function added.<br />
 2022.08.28. Noise effect added. Fading effect added(15 seconds cycle).<br />
 2022.08.26. Rich editor(Code Mirror) adopted. "Hide text" added.<br />
 2022.08.24. "User Text" added.<br />
@@ -689,7 +718,12 @@ MorseNode.prototype.getSpaceDelayInMills = function() {
 }
 
 
-var ac, filter, morse, vol = 1.0;
+var ac, filter, morse, vol = 1.0, cwPort = null, cwPortInitialized = false, cwPortOpen = false;
+
+var ua = navigator.userAgent.toLowerCase();
+var isIOS = (ua.indexOf("iphone") > -1 || ua.indexOf("ipad") > -1 || ua.indexOf("ipod") > -1);
+var isAndroid = ua.indexOf("android") > -1;
+var isMobile = (isIOS || isAndroid);
 
 var freq = document.querySelector("#freq")
 var wpm = document.querySelector("#speed");
@@ -705,6 +739,45 @@ var selectionOnly = document.querySelector("#selection_only");
 var highlightSlowly = document.querySelector("#highlight_slowly");
 var hideText = document.querySelector("#hide_text");
 var repeat = document.querySelector("#repeat");
+var connect = document.querySelector("#connect");
+var disconnect = document.querySelector("#disconnect");
+
+connect.addEventListener("click", async () => {
+	if (isAndroid || isIOS) {
+        alert("Mobile devices don't support serial communication.");
+        return;
+    }
+	
+	var options = { baudRate: 115200, flowControl: 'hardware' };
+	if (!cwPortInitialized) {
+		navigator.serial.requestPort().then(async (port) => {
+			cwPort = port;
+			await cwPort.open(options); // DTR should be set on the radio
+			await cwPort.setSignals({dataTerminalReady:false});
+			toggleConnectButtons(true);
+			cwPortInitialized = true;
+			cwPortOpen = true;
+		}).catch((e) => {
+		});
+	} else if (!cwPortOpen) {
+		await cwPort.open(options);
+		await cwPort.setSignals({dataTerminalReady:false});
+		toggleConnectButtons(true);
+		cwPortOpen = true;
+	}
+}, false);
+disconnect.addEventListener("click", async () => {
+	if (cwPort != null && cwPortOpen) {
+		await cwPort.setSignals({dataTerminalReady:false});
+		await cwPort.close();
+		toggleConnectButtons(false);
+		cwPortOpen = false;
+	}
+}, false);
+function toggleConnectButtons(connected) {
+	connect.replaceChild(document.createTextNode(connected ? "CONNECTED!" : "CONNECT"), connect.firstChild);
+	disconnect.replaceChild(document.createTextNode(connected ? "DISCONNECT" : "DISCONNECTED!"), disconnect.firstChild);
+}
 
 function renewMorse() {
     ac = (ac || new AudioContext());
@@ -735,7 +808,9 @@ stop.onclick = function() {
     morse.playString(ac.currentTime, " ", vol, document.querySelector('input[name="key"]:checked').value, fading.checked);
     doc.readOnly = false;
     
-    clearMarker();
+    addDitdah(false, 1); // this also manage cw port
+	
+	clearMarker();
     cm.focus();
     if (cursorFrom != null) {
         doc.setSelection(cursorFrom, cursorTo);
@@ -892,7 +967,7 @@ function clearMarker() {
 var ditdah = document.querySelector("#ditdah");
 var last = false, lastWidth = 0;
 function addDitdah(bar, len) {
-    if (bar == last && ditdah.childNodes.length > 0 && lastWidth < 256) {
+    if (bar == last && ditdah.childNodes.length > 0 && lastWidth < 8192) {
         var span = ditdah.lastChild;
         lastWidth += len;
         span.style.width = (parseInt(lastWidth) >> 3) + "px";
@@ -905,6 +980,8 @@ function addDitdah(bar, len) {
     if (ditdah.childNodes.length > 256) ditdah.removeChild(ditdah.firstChild);
     last = bar;
     lastWidth = len;
+	
+	if (cwPortOpen) cwPort.setSignals({dataTerminalReady:bar});
 }
 function clearDitdah() {
     var len = ditdah.childNodes.length;
@@ -966,6 +1043,7 @@ window.addEventListener('DOMContentLoaded', function() {
         if (window.localStorage.getItem('user_txt')) userTxt.CodeMirror.doc.setValue(window.localStorage.getItem('user_txt'));
         if (window.localStorage.getItem('qso_sample')) changeQsoSample(window.localStorage.getItem('qso_sample'));
         else changeQsoSample("hangul_txt_1");
+		if (!isAndroid && !isIOS) document.querySelector("#keyer_setting").style.display = "inline";
     } catch (e) {
     }
 }, true);
