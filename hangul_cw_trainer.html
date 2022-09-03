@@ -388,8 +388,8 @@ CW 청취 연습에 유용한 웹사이트인 Seiuchy를 사용하던 중, 그 �
 IC-7300 이나 IC-7610 은 USB 케이블을 이용해 컴퓨터와 바로 연결하고, 다른 무전기들은 $2 미만의 USB to UART 모듈을 이용해 인터페이스 장치를 만들어 연결합니다.<br />
 <span class="setting_bold">CW Keying via Serial Port</span> 정도로 웹 검색을 하면, 간단하게 장치를 만드는 방법이 나옵니다.<br />
 이 프로그램에선 COM 포트의 DTR 핀을 ON(High)/OFF(Low) 시켜, 무전기에게 CW 신호를 보낼지 말지를 알리고 있습니다.<br />
-ICOM 무전기의 경우라면, USB to UART 모듈의 DTR & GND 핀의 신호를 활용해, 무전기 측 ACC 소켓 내 SEND & GND 핀이 서로 연결되게만 하면 신호가 발생합니다.<br />
-ICOM 뿐만 아니라 대부분의 무전기는 유사한 방법을 제공하니, 이런 원리를 이용해 간단하게 인터페이스 장치를 만들어 사용하면 됩니다.<br />
+무전기가 Serial Port를 이용한 CW Keying 메커니즘을 제공하지 않는다면, USB to UART 모듈의 DTR & GND 핀의 신호를 활용해, CW Key 단자가 서로 맞붙도록 회로를 만드는 것입니다.<br />
+이런 방식은 대부분의 무전기에서 확실히 동작할 것입니다.<br />
 <br />
 <br />
 
