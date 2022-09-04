@@ -189,9 +189,13 @@ textarea {
 <span class="setting_bold">Volume</span> <input type="number" id="volume" value="100" size="3" min="1" max="100" step="1" /> %
 </span>
 <span class="setting_group">
-<span class="setting_bold">Extra Gap</span> : <label><input type="radio" name="key" value="computer" checked /> None</label>
+<span class="setting_bold">Extra Gap</span> : 
+<label><input type="radio" name="key" value="computer" checked /> None</label>
 <label><input type="radio" name="key" value="elmer" /> Small</label>
-<label><input type="radio" name="key" value="farnsworth" /> Large</label>&nbsp;
+<label><input type="radio" name="key" value="farnsworth" /> Large</label>
+<label><input type="radio" name="key" value="straightmed" /> Random - Medium</label>
+<label><input type="radio" name="key" value="straightbad" /> Random - Bad</label>
+<label><input type="radio" name="key" value="straightvbad" /> Random - Very Bad</label>&nbsp;
 </span>
 <span class="setting_group_2">
 <button id="play">PLAY</button>
@@ -413,6 +417,7 @@ Morse Code generator Javascript 라이브러리 - <a href="https://gist.github.c
 <br />
 <h3>Change Log</h3>
 <span class="font_medium">
+2022.09.05. Extra Gap - random type added.<br />
 2022.09.03. Keyer function added.<br />
 2022.08.28. Noise effect added. Fading effect added(15 seconds cycle).<br />
 2022.08.26. Rich editor(Code Mirror) adopted. "Hide text" added.<br />
@@ -635,9 +640,21 @@ MorseNode.prototype.connect = function(target) {
 
 MorseNode.prototype.dotfac = function(t) {
     switch (this.key) {
-            // t is type of dotvalue.  l=letter int. i=inter el. s=spaces .=dit -=dah 
+            // t is type of dotvalue. l=letter int. i=inter el. s=spaces .=dit -=dah 
         case 'computer':
             return 1;
+		case 'straightmed': //i and . are rather too long than too short, s the inverse rest is random
+            if (t=='.' || t=='i') return Math.random()*0.33+0.95;
+            if (t=='s') return Math.random()*0.2+0.85;
+            return Math.random()*0.3+0.85;
+        case 'straightbad':
+            if (t=='.' || t=='i') return Math.random()*0.6+0.8;
+            if (t=='s') return Math.random()*0.4+0.7;
+            return Math.random()*0.5+0.75;
+        case 'straightvbad':
+            if (t=='.' || t=='i') return Math.random()*1.6+0.8;
+            if (t=='s') return Math.random()*0.85+0.4;
+            return Math.random()*0.8+0.6;
         case 'farnsworth': //uses farnsworth
             if (t=='s') return 6;
             if (t=='l') return 4;
@@ -733,6 +750,9 @@ var stop = document.querySelector("#stop");
 var keyComputer = document.querySelector('input[name="key"][value="computer"]');
 var keyElmer = document.querySelector('input[name="key"][value="elmer"]');
 var keyFarnsworth = document.querySelector('input[name="key"][value="farnsworth"]');
+var keyStraightMed = document.querySelector('input[name="key"][value="straightmed"]');
+var keyStraightBad = document.querySelector('input[name="key"][value="straightbad"]');
+var keyStraightVBad = document.querySelector('input[name="key"][value="straightvbad"]');
 var noise = document.querySelector("#noise");
 var fading = document.querySelector("#fading");
 var selectionOnly = document.querySelector("#selection_only");
@@ -1007,6 +1027,15 @@ keyElmer.onchange = function() {
     window.localStorage.setItem('key', document.querySelector('input[name="key"]:checked').value);
 }
 keyFarnsworth.onchange = function() {
+    window.localStorage.setItem('key', document.querySelector('input[name="key"]:checked').value);
+}
+keyStraightMed.onchange = function() {
+    window.localStorage.setItem('key', document.querySelector('input[name="key"]:checked').value);
+}
+keyStraightBad.onchange = function() {
+    window.localStorage.setItem('key', document.querySelector('input[name="key"]:checked').value);
+}
+keyStraightVBad.onchange = function() {
     window.localStorage.setItem('key', document.querySelector('input[name="key"]:checked').value);
 }
 noise.onchange = function() {
