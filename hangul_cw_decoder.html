@@ -107,6 +107,12 @@ button {
     white-space: nowrap;
 	display: inline-block;
 }
+.setting_group_5 {
+    padding: 0px 0px 4px 10px;
+	margin: 4px 10px 4px 0px;
+    white-space: nowrap;
+	display: inline-block;
+}
 .professional_setting {
 	padding: 4px 0px 4px 10px;
     border: 1px dotted teal;
@@ -143,7 +149,7 @@ button {
     white-space: nowrap;
     margin-top: 20px;
 }
-#ditdah_log {
+#ditdah {
     height:10px;
     float: right;
 }
@@ -214,9 +220,14 @@ details > summary {
     padding: 4px 0px 4px 10px;
 	cursor:pointer;
 }
-.spacer {
-	display: inline-block;
-	width: 900px;
+#key_setting {
+    display: none;
+}
+#connect {
+    color: blue;
+}
+#disconnect {
+    color: red;
 }
 </style>
 <style>
@@ -385,8 +396,15 @@ details > summary {
 <input type="number" id="fixed_speed" value="20" size="2" min="5" max="50" /> WPM
 <span class="font_small">(1 unit = 1 dit = <span id="unit">60.0</span> ms)</span>
 </span>
+<br />
+<span id="key_setting" class="setting_group_5">
+<label class="setting_bold"><input type="checkbox" id="cw_key" /> CW Key*</label>&nbsp;&nbsp;
+<button id="connect">CONNECT</button>
+<button id="disconnect">UNCONNECTED</button>&nbsp;&nbsp;
+<span class="setting_bold">Volume</span> <input type="number" id="volume" value="100" size="3" min="1" max="100" step="1" /> %
+</span>
 </details>
-<div class="log_container_ditdah"><span id="ditdah_log"></span></div>
+<div class="log_container_ditdah"><span id="ditdah"></span></div>
 <div class="log_container"><span id="decoded_log"></span></div>
 <div>Recommended Web-brwoser : Android - Only FireFox. iOS/Mac/PC - Chrome, FireFox, Safari.</div>
 <div class="debug_container">
@@ -413,6 +431,14 @@ details > summary {
 <br />
 <br />
 
+<h3>※ CW Key-In Support.</h3>
+최신 웹브라우저에선 COM 포트를 이용한 통신이 가능하며, 이를 이용해 컴퓨터와 연결된 CW Key 신호를 받을 수 있습니다. (모바일에선 안됨)<br />
+$2 미만의 USB to UART 모듈을 이용해 인터페이스 장치를 만들어, 스트레이트키를 컴퓨터와 연결합니다.<br />
+<span class="setting_bold">Connect CW Key to PC</span> 정도로 웹 검색을 하면, 간단하게 장치를 만드는 방법이 나옵니다.<br />
+이 프로그램에선 COM 포트의 CTS 핀이 ON(Low)인지 OFF(High)인지 확인하며, 인터페이스 장치는 DTR <-> 저항(4.7k) <-> CTS <-> CW Key <-> GND 의 단순한 회로로 만듭니다.<br />
+<br />
+<br />
+
 <h3>Links</h3>
 Hangul CW Trainer - <a href="hangul_cw_trainer.html" target="_blank">http://shingiru.github.io/hangul_cw_trainer.html</a><br />
 위 라이브러리가 사용하는 기술인 Web Audio API - <a href="https://webaudio.github.io/web-audio-api/" target="_blank">https://webaudio.github.io/web-audio-api/<a/><br />
@@ -430,6 +456,7 @@ Hangul CW Trainer - <a href="hangul_cw_trainer.html" target="_blank">http://shin
 <br />
 <h3>Change Log</h3>
 <span class="font_medium">
+2022.09.01. CW Key-In Mode added.<br />
 2022.09.01. Professional Setting added.<br />
 2022.08.31. WPM semi-auto detect.<br />
 2022.08.30. AGC Logic Changed.<br />
@@ -443,7 +470,7 @@ Hangul CW Trainer - <a href="hangul_cw_trainer.html" target="_blank">http://shin
 </div>
 </body>
 <script type="text/javascript">
-var audioInitialized = videoInitialized = false, ac, gain, analyser, binCount;
+var audioInitialized = videoInitialized = false, ac, analyser, binCount;
 
 var ua = navigator.userAgent.toLowerCase();
 var isIOS = (ua.indexOf("iphone") > -1 || ua.indexOf("ipad") > -1 || ua.indexOf("ipod") > -1);
@@ -474,27 +501,24 @@ var minGap = document.querySelector("#min_gap");
 var maxGap = document.querySelector("#max_gap");
 var letterGap = document.querySelector("#letter_gap");
 
+var cwPort = null, cwPortInitialized = false, cwPortOpen = false;
+var cwKey = document.querySelector("#cw_key");
+var connect = document.querySelector("#connect");
+var disconnect = document.querySelector("#disconnect");
+var volume = document.querySelector("#volume");
+
 start.addEventListener("click", async () => {
+	if (cwKey.checked) {
+		alert("CW key-in mode, disable it first.");
+		return;
+	}
+
     stop.click();
 
-    if (record.checked) {
-        if (!videoInitialized) {
-            var constraints = {
-                audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
-                video: { mediaSource: "screen" }
-            };
-            navigator.mediaDevices.getDisplayMedia(constraints).then(async (stream) => {
-                mediaRecorder = createRecorder(stream);
-                mediaRecorder.start(200);
-                videoInitialized = true;
-            });
-        } else {
-            mediaRecorder.start(200);
-        }
-    }
+    recorderStart();
 
     if (!audioInitialized) {
-        ac = new AudioContext();
+        ac = (ac || new AudioContext());
 
         var constraints = {
             audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: (isMobile ? true : true) },
@@ -502,7 +526,7 @@ start.addEventListener("click", async () => {
         };
         navigator.mediaDevices.getUserMedia(constraints).then(async (stream) => {
             var input = ac.createMediaStreamSource(stream);
-            gain = ac.createGain();
+            var gain = ac.createGain();
             gain.gain.value = 1.0;
             input.connect(gain);
 
@@ -556,8 +580,26 @@ function saveFile(chunks) {
     // link.click();
     // URL.revokeOjectURL(blob); // clear from memory
 }
+function recorderStart() {
+	if (record.checked) {
+        if (!videoInitialized) {
+            var constraints = {
+                audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: false },
+                video: { mediaSource: "screen" }
+            };
+            navigator.mediaDevices.getDisplayMedia(constraints).then(async (stream) => {
+                mediaRecorder = createRecorder(stream);
+                mediaRecorder.start(200);
+                videoInitialized = true;
+            });
+        } else {
+            mediaRecorder.start(200);
+        }
+    }
+}
 
-var toneBuffer = null, ditDuration, minDitDuration, maxDitDuration, letterGapDuration, lastProcessedAt = 0, timerId;
+
+var toneBuffer = null, lastProcessedAt = 0, timerId = 0;
 var lastDitdah = false, ditdahAmount = 0, gapAmount = 0, maxGapReached = false;
 var snrThreshold, previousSnr = NaN, previousPeak = 0, SNR_THRESHOLD_INIT = 0.1, snrThresholdMax = 50.0;
 var targetWpm = previousWpm = 20;
@@ -612,52 +654,62 @@ function getSettings() {
 	};
 }
 function processMorse() {
-    if (toneBuffer == null) toneBuffer = new Uint8Array(binCount);
-	conf = getSettings();
-	
-    ditDuration = parseInt(1200 / targetWpm);
-    minDitDuration = parseInt(ditDuration * 0.1);
-    maxDitDuration = parseInt(ditDuration * 2.0);
-    minDitdahGap = parseInt(ditDuration * 0.5);
-    maxDitdahGap = parseInt(ditDuration * 2.0);
-    letterGapDuration = ditDuration * 6;
-
-    var bucketSize = 44100 / 2 / binCount;
-    var toneStart = Math.max(parseInt(400 / bucketSize), 1);
-    var toneEnd = Math.min(parseInt(800 / bucketSize), binCount - 1);
-
-    analyser.getByteFrequencyData(toneBuffer);
     var now = performance.now();
     if (lastProcessedAt == 0) lastProcessedAt = now;
     var frameDuration = now - lastProcessedAt; //parseInt(now - lastProcessedAt);
     lastProcessedAt = now;
+	
+	if (cwPortOpen) {
+		cwPort.getSignals().then( (result) => {
+			var ditdah = result.clearToSend;
+			processDitDah(ditdah, frameDuration);
+			if (cwPortOpen) setTimeout(processMorse, 1);
+		}).catch((e) => {
+		});
+	} else {
+		if (toneBuffer == null) toneBuffer = new Uint8Array(binCount);
+		analyser.getByteFrequencyData(toneBuffer);
+		
+		var bucketSize = 44100 / 2 / binCount;
+		var toneStart = Math.max(parseInt(400 / bucketSize), 1);
+		var toneEnd = Math.min(parseInt(800 / bucketSize), binCount - 1);
+		var buffer = toneBuffer.slice(0).slice(toneStart, toneEnd);
+		var peak = Math.max(...buffer);
+		var peakIndex = buffer.reduce((a, b, i) => (peak == b ? i : a), 0);
+		buffer = buffer.slice(Math.max(0, peakIndex - 2), Math.min(buffer.length, peakIndex + 3));
+		//console.log("peak : " + peak + ", peakIndex : " + peakIndex + ", buffer : " + buffer.join(", "));
+		//_log("peak : " + peak + ", peakIndex : " + peakIndex + ", buffer : " + buffer.join(", "));
+		var n = buffer.length;
+		var mean = buffer.reduce((a, b) => a + b, 0) / n;
+		var standardDeviation = Math.sqrt(buffer.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b, 0) / n);
+		var signalToNoiseRatio = mean / standardDeviation;
 
-    var buffer = toneBuffer.slice(0).slice(toneStart, toneEnd);
-    var peak = Math.max(...buffer);
-    var peakIndex = buffer.reduce((a, b, i) => (peak == b ? i : a), 0);
-    buffer = buffer.slice(Math.max(0, peakIndex - 2), Math.min(buffer.length, peakIndex + 3));
-    //console.log("peak : " + peak + ", peakIndex : " + peakIndex + ", buffer : " + buffer.join(", "));
-    //_log("peak : " + peak + ", peakIndex : " + peakIndex + ", buffer : " + buffer.join(", "));
-    var n = buffer.length;
-    var mean = buffer.reduce((a, b) => a + b, 0) / n;
-    var standardDeviation = Math.sqrt(buffer.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b, 0) / n);
-    var signalToNoiseRatio = mean / standardDeviation;
+		if (previousPeak < peak && signalToNoiseRatio < snrThresholdMax && snrThreshold < signalToNoiseRatio) snrThreshold = signalToNoiseRatio;
 
-    if (previousPeak < peak && signalToNoiseRatio < snrThresholdMax && snrThreshold < signalToNoiseRatio) snrThreshold = signalToNoiseRatio;
-
-    var ditdah = (mean != 0 && signalToNoiseRatio <= snrThreshold);
-    //if (!ditdah && mean != 0) console.log("ditdah : " + ditdah + ", μ : " + mean + ", σ : " + standardDeviation.toFixed(2) + ", SNR : " + signalToNoiseRatio.toFixed(2));
-    //if (showDebug.checked && mean != 0) _log("ditdah : " + ditdah + ", μ : " + mean + ", σ : " + standardDeviation.toFixed(2) + ", SNR : " + signalToNoiseRatio.toFixed(2));
-
-    //if (mean > 0) printDitdah(ditdah, frameDuration);
-    printDitdah(ditdah, frameDuration);
-
+		var ditdah = (mean != 0 && signalToNoiseRatio <= snrThreshold);
+		processDitDah(ditdah, frameDuration);
+		previousSnr = signalToNoiseRatio;
+		timerId = setTimeout(processMorse, 1);
+	}
+}
+function processDitDah(ditdah, frameDuration) {
+	var conf = getSettings();
+    var ditDuration = parseInt(1200 / targetWpm);
+    var minDitDuration = parseInt(ditDuration * 0.1);
+    var maxDitDuration = parseInt(ditDuration * 2.0);
+    var minDitdahGap = parseInt(ditDuration * 0.5);
+    var maxDitdahGap = parseInt(ditDuration * 2.0);
+    var letterGapDuration = ditDuration * 6;
+	
+	//console.log("ditdah : " + ditdah + ", duration : " + frameDuration);
+	printDitdah(ditdah, frameDuration);
+	
     if (ditdah) {
         if (lastDitdah == false) {
             if (gapAmount < conf.gap.min) { // noise
                 console.error("GAP NOISE, " + gapAmount);
 				markDitdahError("gap noise " + (gapAmount / conf.unit).toFixed(2) + " unit");
-                if (!isNaN(previousSnr) && previousSnr < snrThresholdMax) snrThreshold = previousSnr;
+                if (!isNaN(previousSnr) && previousSnr < snrThresholdMax) snrThreshold = previousSnr; // should be moved to above function
             } else if (gapAmount < conf.gap.max) { // inter-dit-dah
                 console.log("INTER-DITDAH GAP, " + gapAmount);
                 doStat(0, 0, gapAmount + parseInt(frameDuration)); // TODO : need to precise stat gap
@@ -710,13 +762,9 @@ function processMorse() {
             printDecodedLine(" ");
             gapAmount = 0;
             maxGapReached = true;
-            //console.clear();
         }
     }
     lastDitdah = ditdah;
-    previousSnr = signalToNoiseRatio;
-
-    timerId = setTimeout(processMorse);
 }
 function increaseSnrThreshold() {
     snrThreshold += 1.0;
@@ -903,35 +951,14 @@ function isCallsign() {
 }
 
 stop.onclick = function() {
-    try { clearTimeout(timerId); }
+    try { clearTimeout(timerId); timerId = 0; }
     catch (e) {}
 
-    if (mediaRecorder != null) mediaRecorder.stop();
+    if (mediaRecorder != null && mediaRecorder.state == 'recording') mediaRecorder.stop();
 }
 clear.onclick = function() {
     clearDecodedLog();
     clearDitdah();
-/*
-navigator.hid.getDevices().then(devices => {
-	devices.forEach((device) => {
-		console.log(`HID: ${device.productName}`);
-	});
-})
-
-navigator.usb.getDevices().then(devices => {
-	devices.forEach(device => {
-		console.log(device.productName);
-		console.log(device.manufacturerName);
-	});
-})
-
-navigator.serial.getPorts().then(ports => {
-	ports.forEach(port => {
-		console.log(port.getInfo().usbProductId);
-		console.log(port.getInfo().usbVendorId);
-	});
-})
-*/
 }
 record.onchange = function() {
     if (isAndroid || isIOS) {
@@ -1088,6 +1115,7 @@ function initSettings() {
 	enableProfessionalSettings(professional.checked);
 	setProfessionalSettings(professional.checked);
 	if (!isAndroid && !isIOS) document.querySelector("#record_setting").style.display = "inline";
+	if (!isAndroid && !isIOS) document.querySelector("#key_setting").style.display = "inline";
 }
 window.addEventListener('DOMContentLoaded', function() {
     try {
@@ -1106,10 +1134,123 @@ window.addEventListener('DOMContentLoaded', function() {
 		if (window.localStorage.getItem('minGap')) minGap.value = parseFloat(window.localStorage.getItem('minGap'));
 		if (window.localStorage.getItem('maxGap')) maxGap.value = parseFloat(window.localStorage.getItem('maxGap'));
 		if (window.localStorage.getItem('letterGap')) letterGap.value = parseFloat(window.localStorage.getItem('letterGap'));
+        if (window.localStorage.getItem('volume')) volume.value = parseInt(window.localStorage.getItem('volume'));
 		initSettings();
         
     } catch (e) {}
 }, true);
+
+cwKey.onchange = function(e) {
+	if (isAndroid || isIOS) {
+        alert("Mobile devices don't support serial communication.");
+		cwKey.checked = false;
+        return;
+    }
+	
+	if (timerId != 0) {
+		alert("Mic-in mode, stop it first.");
+		cwKey.checked = false;
+		return;
+	}
+	
+	if (e.target.checked == false && cwPortOpen) {
+		alert("CW key connected, disconnect it first.");
+		return;
+	}
+}
+var volume = document.querySelector("#volume");
+volume.onchange = function() {
+    if (gain) gain.gain.value = parseInt(volume.value);
+    window.localStorage.setItem('volume', volume.value);
+}
+connect.addEventListener("click", async () => {
+	if (timerId != 0) {
+		alert("Mic-in mode, stop it first.");
+		return;
+	}
+	if (cwKey.checked == false) {
+		alert("CW key is not connected, connect it first.");
+		return;
+	}
+
+	var options = { baudRate: 115200, flowControl: 'hardware' };
+	if (!cwPortInitialized) {
+		navigator.serial.requestPort().then(async (port) => {
+			cwPort = port;
+			await cwPort.open(options); // DTR should be set on the radio
+			await cwPort.setSignals({dataTerminalReady:false});
+			keyStart();
+		}).catch((e) => {
+		});
+	} else if (!cwPortOpen) {
+		await cwPort.open(options);
+		await cwPort.setSignals({dataTerminalReady:false});
+		keyStart();
+	}
+}, false);
+disconnect.addEventListener("click", async () => {
+	if (mediaRecorder != null && mediaRecorder.state == 'recording') mediaRecorder.stop();
+	
+	if (cwPort != null && cwPortOpen) {
+		await cwPort.close();
+		toggleConnectButtons(false);
+		cwPortOpen = false;
+		
+		printDitdah(false, 1);
+		disconnected = true;
+		audioStop();
+	}
+}, false);
+function keyStart() {
+	toggleConnectButtons(true);
+	cwPortInitialized = true;
+	cwPortOpen = true;
+	disconnected = false;
+	clearDitdah();
+	audioStart();
+	recorderStart();
+	initProcessMorse();
+}
+function toggleConnectButtons(connected) {
+	connect.replaceChild(document.createTextNode(connected ? "CONNECTED!" : "CONNECT"), connect.firstChild);
+	disconnect.replaceChild(document.createTextNode(connected ? "DISCONNECT" : "DISCONNECTED!"), disconnect.firstChild);
+}
+
+var audioPlayInitialized = false, osc, gain = null, filter;
+function audioStart() {
+	if (!audioPlayInitialized) {
+        ac = (ac || new AudioContext());
+		
+		osc = ac.createOscillator();
+		osc.type = 'sine';
+		osc.frequency.value = 600;
+		
+		gain = ac.createGain();
+		gain.gain.value = 0;
+		osc.connect(gain);
+		
+		filter = ac.createBiquadFilter(); 
+		filter.frequency.value = 600;
+		filter.Q.value = 0;
+		gain.connect(filter);
+		filter.connect(ac.destination);
+		
+		osc.start(0);
+        audioPlayInitialized = true;
+    } else {
+        if (ac.state != "running") ac.resume();
+		
+		try { osc.start(0); }
+		catch (e) {}
+    }
+}
+function audioStop() {
+	if (!audioPlayInitialized) return;
+	osc.stop(0);
+}
+function audioPlay(playOrMute) {
+	if (gain) gain.gain.value = (playOrMute ? parseInt(volume.value) * 0.01: 0);
+}
 
 var decodedLog = document.querySelector("#decoded_log");
 var textNode = null;
@@ -1134,7 +1275,7 @@ function clearDecodedLog() {
     printDecodedChar("");
 }
 
-var ditdahLog = document.querySelector("#ditdah_log");
+var ditdahLog = document.querySelector("#ditdah");
 var lastDitdahLog = false, lastWidth = 0;
 function printDitdah(ditdah, len) {
     if (ditdah == lastDitdahLog && ditdahLog.childNodes.length > 0 && lastWidth < 8192) {
@@ -1150,6 +1291,8 @@ function printDitdah(ditdah, len) {
     if (ditdahLog.childNodes.length > 256) ditdahLog.removeChild(ditdahLog.firstChild);
     lastDitdahLog = ditdah;
     lastWidth = len;
+	
+	audioPlay(ditdah);
 }
 function markDitdahError(msg) {
 	if (professional.checked == false || ditdahLog.childNodes < 2) return;

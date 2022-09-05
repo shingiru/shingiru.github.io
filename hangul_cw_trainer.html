@@ -25,7 +25,7 @@ body {
     min-width: 760px;
     margin: 0 auto;
 }
-#page {
+.page {
     width: 90%;
     margin-left: auto;
     margin-right: auto;
@@ -178,7 +178,7 @@ textarea {
 </style>
 </head>
 <body>
-<div id="page">
+<div class="page">
 <h2>한글 CW 연습기 by DS1TZE</h2>
 <div class="setting">
 <span class="setting_group_2">
@@ -215,11 +215,11 @@ textarea {
 </span>
 </div>
 <div id="keyer_setting">
-<span class="setting_bold">CW Keyer</span> : 
+<span class="setting_bold">CW Keyer*</span> : 
 <button id="connect">CONNECT</button>
 <button id="disconnect">UNCONNECTED</button>
 &nbsp;
-(IC-7300,7610 : <span class="setting_bold">USB Keying(CW) - DTR*</span>)
+(IC-7300,7610 : <span class="setting_bold">USB Keying(CW) - DTR</span>)
 </span>
 </div>
 <div>
@@ -387,7 +387,7 @@ CW 청취 연습에 유용한 웹사이트인 Seiuchy를 사용하던 중, 그 �
 <br />
 <br />
 
-<h3>※ Keyer.</h3>
+<h3>※ As CW Keyer.</h3>
 최신 웹브라우저에선 COM 포트를 이용한 통신이 가능하며, 이를 이용해 컴퓨터와 연결된 무전기를 제어할 수 있습니다. (모바일에선 안됨)<br />
 IC-7300 이나 IC-7610 은 USB 케이블을 이용해 컴퓨터와 바로 연결하고, 다른 무전기들은 $2 미만의 USB to UART 모듈을 이용해 인터페이스 장치를 만들어 연결합니다.<br />
 <span class="setting_bold">CW Keying via Serial Port</span> 정도로 웹 검색을 하면, 간단하게 장치를 만드는 방법이 나옵니다.<br />
@@ -735,7 +735,7 @@ MorseNode.prototype.getSpaceDelayInMills = function() {
 }
 
 
-var ac, filter, morse, vol = 1.0, cwPort = null, cwPortInitialized = false, cwPortOpen = false;
+var ac, filter, morse, vol = 1.0, cwPort = null, cwPortInitialized = false, cwPortOpen = false;var ac, filter, morse, vol = 1.0, cwPort = null, cwPortInitialized = false, cwPortOpen = false;
 
 var ua = navigator.userAgent.toLowerCase();
 var isIOS = (ua.indexOf("iphone") > -1 || ua.indexOf("ipad") > -1 || ua.indexOf("ipod") > -1);
@@ -971,7 +971,7 @@ function highlight() {
         }
     }
     
-    if (!stopped) setTimeout(highlight, 7);
+    if (!stopped) setTimeout(highlight, 7); // 7ms is based on the sampling rate
 }
 function setMarker(start, end) {
     clearMarker();
