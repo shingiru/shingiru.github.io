@@ -1040,8 +1040,8 @@ function rollback(back) {
 	morse.timeMove(back ? -5 : 5);
 }
 
-var MP3_SAMPLE_RATE = 8000;
-var MP3_BIT_RATE = 8;
+var MP3_SAMPLE_RATE = 22050;//(isMobile ? 22050 : 8000);
+var MP3_BIT_RATE = 32;//(isMobile ? 32 : 8);
 make.onclick = function() {
 	stop.click();
 	
