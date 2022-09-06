@@ -1040,13 +1040,13 @@ function rollback(back) {
 	morse.timeMove(back ? -5 : 5);
 }
 
-var MP3_SAMPLE_RATE = 22050;//(isMobile ? 22050 : 8000);
-var MP3_BIT_RATE = 32;//(isMobile ? 32 : 8);
+var MP3_SAMPLE_RATE = (isMobile ? 16000 : 44100);
+var MP3_BIT_RATE = (isMobile ? 32 : 128);
 make.onclick = function() {
 	stop.click();
 	
 	var mp3 = document.querySelector("#mp3");
-	mp3.replaceChild(document.createTextNode(" GENERATING.."), mp3.firstChild);
+	mp3.replaceChild(document.createTextNode(" Generating.. Please wait a few minutes."), mp3.firstChild);
 	
 	setTimeout(makeMp3, 1);
 };
