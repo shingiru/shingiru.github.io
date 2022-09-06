@@ -175,6 +175,15 @@ textarea {
 #disconnect {
     color: red;
 }
+#mp3 {
+	display: inline-block;
+	margin: auto;
+	padding-left: 10px;
+}
+audio {
+	height: 1em;
+	margin-bottom: -3px;
+}
 </style>
 </head>
 <body>
@@ -200,6 +209,8 @@ textarea {
 <span class="setting_group_2">
 <button id="play">PLAY</button>
 <button id="stop">STOP</button>
+<button id="make">MAKE MP3</button>
+<span id="mp3"> </span>
 </span>
 <span class="setting_group">
 <span class="setting_bold">Play option</span> : <label><input type="checkbox" id="selection_only" /> Selection only</label>
@@ -417,6 +428,7 @@ Morse Code generator Javascript 라이브러리 - <a href="https://gist.github.c
 <br />
 <h3>Change Log</h3>
 <span class="font_medium">
+2022.09.06. MP3 file generation added. Playing position move function added : 5 sec forward/backward using arrow key.<br />
 2022.09.05. Extra Gap - random type added.<br />
 2022.09.03. Keyer function added.<br />
 2022.08.28. Noise effect added. Fading effect added(15 seconds cycle).<br />
@@ -429,6 +441,8 @@ Morse Code generator Javascript 라이브러리 - <a href="https://gist.github.c
 </span>
 </div>
 </body>
+<script>Mp3LameEncoderConfig = { memoryInitializerPrefixURL: "" };</script>
+<script src="Mp3LameEncoder.min.js"></script>
 <script type="text/javascript">
 (function(AudioContext) {
     AudioContext.prototype.createEffect = function() {
@@ -632,10 +646,36 @@ function MorseNode(ac, rate) {
     this._dot = 1.2 / rate; // formula from Wikipedia.
 
     this._oscillator.start(0);
+	this._moved = 0;
 }
 
 MorseNode.prototype.connect = function(target) {
     return this._gain.connect(target);
+}
+
+MorseNode.prototype.timeMove = function(sec) {
+	if (ac.currentTime + this._moved + sec < queue[0][0]) sec = queue[0][0] - ac.currentTime - this._moved;
+	else if (ac.currentTime + this._moved + sec > queue[queue.length - 1][0]) sec = queue[queue.length - 1][0] - ac.currentTime - this._moved;
+	this._moved += sec;
+	
+	console.log(sec);
+	
+	var i = 0;
+	for (; i < queue.length; i++)
+		if (queue[i][0] > ac.currentTime + this._moved) break;
+	
+	this._gain.disconnect(filter);
+	this._oscillator.disconnect(this._gain);
+	this._gain = ac.createGain();
+	this._gain.gain.value = 0;
+	this._oscillator.connect(this._gain);
+	this._gain.connect(filter);
+	
+	for (; i < queue.length; i++)
+		this._gain.gain.setValueAtTime(queue[i][1], queue[i][0] - this._moved);
+	
+	var min = timestamp[0];
+	timestamp.forEach((el, idx, ary) => { ary[idx] = el - sec; });
 }
 
 MorseNode.prototype.dotfac = function(t) {
@@ -666,18 +706,22 @@ MorseNode.prototype.dotfac = function(t) {
 
 }
 
-MorseNode.prototype.playChar = function(t, c, v) {
+MorseNode.prototype.playChar = function(queueOnly, t, c, v) {
     for (var i = 0; i < c.length; i++) {
         switch(c[i]) {
         case '.':
-            this._gain.gain.setValueAtTime(1.0 * v, t);
+            if (!queueOnly) this._gain.gain.setValueAtTime(1.0 * v, t);
+			enQueue(1.0 * v, t);
             t += this._dot * this.dotfac('.');
-            this._gain.gain.setValueAtTime(0.0, t);
+            if (!queueOnly) this._gain.gain.setValueAtTime(0.0, t);
+			enQueue(0.0, t)
             break;
         case '-':
-            this._gain.gain.setValueAtTime(1.0 * v, t);
+            if (!queueOnly) this._gain.gain.setValueAtTime(1.0 * v, t);
+			enQueue(1.0 * v, t);
             t += 3 * this._dot * this.dotfac('-');
-            this._gain.gain.setValueAtTime(0.0, t);
+            if (!queueOnly) this._gain.gain.setValueAtTime(0.0, t);
+			enQueue(0.0, t)
             break;
         }
         t += this._dot * this.dotfac('i');
@@ -686,12 +730,18 @@ MorseNode.prototype.playChar = function(t, c, v) {
 }
 
 var timestamp = [];
+var queue = [];
+function enQueue(v, t) {
+	queue.push([t, v]);
+}
 
-MorseNode.prototype.playString = function(t, w, v, k, fade) {
+MorseNode.prototype.playString = function(queueOnly, t, w, v, k, fade) {
     this.key = k;
     
     w = this.convertHangulAndProsign(w.toUpperCase());
     timestamp = [];
+	queue = [];
+	enQueue(0, 0);
     
     var start = t, fv = v;
     for (var n = 0; n < w.length; n++) {
@@ -708,7 +758,7 @@ MorseNode.prototype.playString = function(t, w, v, k, fade) {
                 t += 4 * this._dot * this.dotfac('s'); // 3 dots gap already added after ending letter before
             }
             else if ("undefined" != typeof this.MORSE[c[i]]) {
-                t = this.playChar(t, this.MORSE[c[i]], fv); // 1 gap after dit/dah
+                t = this.playChar(queueOnly, t, this.MORSE[c[i]], fv); // 1 gap after dit/dah
                 t += 2 * this._dot * this.dotfac('l'); // with this 2 more gap, whole gap between letter is 3
             }
         }
@@ -735,7 +785,7 @@ MorseNode.prototype.getSpaceDelayInMills = function() {
 }
 
 
-var ac, filter, morse, vol = 1.0, cwPort = null, cwPortInitialized = false, cwPortOpen = false;var ac, filter, morse, vol = 1.0, cwPort = null, cwPortInitialized = false, cwPortOpen = false;
+var ac, filter, morse = null, vol = 1.0, cwPort = null, cwPortInitialized = false, cwPortOpen = false;
 
 var ua = navigator.userAgent.toLowerCase();
 var isIOS = (ua.indexOf("iphone") > -1 || ua.indexOf("ipad") > -1 || ua.indexOf("ipod") > -1);
@@ -747,6 +797,7 @@ var wpm = document.querySelector("#speed");
 var volume = document.querySelector("#volume");
 var play = document.querySelector("#play");
 var stop = document.querySelector("#stop");
+var make = document.querySelector("#make");
 var keyComputer = document.querySelector('input[name="key"][value="computer"]');
 var keyElmer = document.querySelector('input[name="key"][value="elmer"]');
 var keyFarnsworth = document.querySelector('input[name="key"][value="farnsworth"]');
@@ -803,7 +854,7 @@ function renewMorse() {
     ac = (ac || new AudioContext());
     if (ac.state != "running") ac.resume();
 
-    morse && morse._oscillator.stop(0);
+    if (morse != null) morse._oscillator.stop(0);
     morse = new MorseNode(ac, parseInt(wpm.value));
     
     filter = ac.createBiquadFilter(); 
@@ -825,7 +876,7 @@ stop.onclick = function() {
     
     renewMorse();
     if (noiseNode) noiseGain.disconnect();
-    morse.playString(ac.currentTime, " ", vol, document.querySelector('input[name="key"]:checked').value, fading.checked);
+    morse.playString(false, ac.currentTime, " ", vol, document.querySelector('input[name="key"]:checked').value, fading.checked);
     doc.readOnly = false;
     
     addDitdah(false, 1); // this also manage cw port
@@ -901,7 +952,7 @@ play.onclick = function() {
     }
     highlightStart = highlightEnd = 0;
     
-    morse.playString(ac.currentTime + DELAY_AMOUNT, 
+    morse.playString(false, ac.currentTime + DELAY_AMOUNT, 
         txtValue, 
         vol * (noise.checked ? 0.5 : 1), 
         document.querySelector('input[name="key"]:checked').value,
@@ -918,7 +969,7 @@ play.onclick = function() {
     if (hideText.checked) setMarker(cursorTempFrom, cursorTempEnd);
     cm.focus();
     
-    if (selectionOnly.checked == false) repeatId = setTimeout(highlight, DELAY_AMOUNT * 1000);
+	if (selectionOnly.checked == false) repeatId = setTimeout(highlight, DELAY_AMOUNT * 1000);
     else highlight();
 }
 
@@ -982,6 +1033,85 @@ function clearMarker() {
     
     marker.clear();
     marker = null;
+}
+
+function rollback(back) {
+	if (stopped || morse == null) return;
+	morse.timeMove(back ? -5 : 5);
+}
+
+var MP3_SAMPLE_RATE = 8000;
+var MP3_BIT_RATE = 8;
+make.onclick = function() {
+	stop.click();
+	
+	var mp3 = document.querySelector("#mp3");
+	mp3.replaceChild(document.createTextNode(" GENERATING.."), mp3.firstChild);
+	
+	setTimeout(makeMp3, 1);
+};
+async function makeMp3() {
+	morse.playString(true, DELAY_AMOUNT, 
+		doc.getValue(), 
+		vol * (noise.checked ? 0.5 : 1), 
+		document.querySelector('input[name="key"]:checked').value,
+		fading.checked);
+		
+	var encoder = new Mp3LameEncoder(MP3_SAMPLE_RATE, MP3_BIT_RATE);
+	makeBufferAndEncode(encoder);
+	saveRecording(encoder.finish());
+}
+function makeBufferAndEncode(encoder) {
+	if (queue.length == 0) return;
+	
+	var queueLen = queue.length;
+	var duration = queue[queueLen - 1][0];
+	var sampleLen = parseInt((duration + DELAY_AMOUNT) * MP3_SAMPLE_RATE);
+	var buffer = new Float32Array(MP3_SAMPLE_RATE);
+	var angular_frequency = freq.value * 2 * Math.PI;
+	
+	var queueIndex = 0, sampleIndex = 0, volume = 0.0, nextVolume = 0.0;
+	for ( ; queueIndex < queueLen; queueIndex++) {
+		var item = queue[queueIndex];
+		if (item[1] > 0) {
+			sampleIndex = parseInt(item[0] * MP3_SAMPLE_RATE);
+			nextVolume = item[1];
+			break;
+		}
+	}
+	for (var i = 0, j = 0; i < sampleLen; i++, j++) {
+		if (j == MP3_SAMPLE_RATE) {
+			encoder.encode([buffer, buffer]);
+			buffer.fill(0);
+			j = 0;
+		}
+		
+		if (i > sampleIndex) {
+			if (queueIndex < queueLen - 1) queueIndex++;
+			sampleIndex = parseInt(queue[queueIndex][0] * MP3_SAMPLE_RATE);
+			volume = nextVolume;
+			nextVolume = queue[queueIndex][1];
+		}
+		
+		buffer[j] = generateSample(i, angular_frequency) * volume;
+	}
+	encoder.encode([buffer, buffer]);
+}
+function generateSample(sampleIndex, angular_frequency) {
+	var sampleTime = sampleIndex / MP3_SAMPLE_RATE;
+	var sampleAngle = sampleTime * angular_frequency;
+	return Math.sin(sampleAngle);
+}
+function saveRecording(blob) {
+	var url = URL.createObjectURL(blob);
+	
+	var sound = document.createElement("AUDIO");
+	sound.controls = 'controls';
+	sound.src = url;
+	sound.type = 'audio/mpeg';
+	
+	var mp3 = document.querySelector("#mp3");
+	mp3.replaceChild(sound, mp3.firstChild);
 }
 
 var ditdah = document.querySelector("#ditdah");
@@ -1082,7 +1212,9 @@ function makeEditor(textArea, display) {
         el.id = textArea.id;
         el.className = el.className + " " + textArea.className;
         textArea.parentNode.replaceChild(el, textArea);
-    }, {value: textArea.value, mode: "xml", lineWrapping: true, styleSelectedText: true});
+    }, {value: textArea.value, mode: "xml", lineWrapping: true, styleSelectedText: true,
+		extraKeys: { Left: function() {rollback(true);}, Right: function() {rollback(false);} }
+	});
 }
 makeEditor(document.querySelector("#hangul_txt_1"));
 makeEditor(document.querySelector("#hangul_txt_2"));
