@@ -1058,10 +1058,10 @@ async function makeMp3() {
 		fading.checked);
 		
 	var encoder = new Mp3LameEncoder(MP3_SAMPLE_RATE, MP3_BIT_RATE);
-	makeBufferAndEncode(encoder);
+	makeBufferAndEncode(encoder, noise.checked, vol);
 	saveRecording(encoder.finish());
 }
-function makeBufferAndEncode(encoder) {
+function makeBufferAndEncode(encoder, withNoise, noiseVolume) {
 	if (queue.length == 0) return;
 	
 	var queueLen = queue.length;
@@ -1094,6 +1094,7 @@ function makeBufferAndEncode(encoder) {
 		}
 		
 		buffer[j] = generateSample(i, angular_frequency) * volume;
+		//if (withNoise) buffer[j] = buffer[j] * Math.cos(0.5 * 0.5*Math.PI) + ((Math.random() * 2) - 1) * noiseVolume * Math.cos(0.5 * 0.5*Math.PI);
 	}
 	encoder.encode([buffer, buffer]);
 }
