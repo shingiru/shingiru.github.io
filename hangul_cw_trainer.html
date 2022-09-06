@@ -1058,8 +1058,8 @@ async function makeMp3() {
 		fading.checked);
 		
 	var encoder = new Mp3LameEncoder(MP3_SAMPLE_RATE, MP3_BIT_RATE);
-	makeBufferAndEncode(encoder, noise.checked, vol);
-	saveRecording(encoder.finish());
+	var duration = makeBufferAndEncode(encoder, noise.checked, vol);
+	saveRecording(encoder.finish(), duration);
 }
 function makeBufferAndEncode(encoder, withNoise, noiseVolume) {
 	if (queue.length == 0) return;
@@ -1097,13 +1097,15 @@ function makeBufferAndEncode(encoder, withNoise, noiseVolume) {
 		//if (withNoise) buffer[j] = buffer[j] * Math.cos(0.5 * 0.5*Math.PI) + ((Math.random() * 2) - 1) * noiseVolume * Math.cos(0.5 * 0.5*Math.PI);
 	}
 	encoder.encode([buffer, buffer]);
+	
+	return duration;
 }
 function generateSample(sampleIndex, angular_frequency) {
 	var sampleTime = sampleIndex / MP3_SAMPLE_RATE;
 	var sampleAngle = sampleTime * angular_frequency;
 	return Math.sin(sampleAngle);
 }
-function saveRecording(blob) {
+function saveRecording(blob, duration) {
 	var url = URL.createObjectURL(blob);
 	
 	var sound = document.createElement("AUDIO");
@@ -1111,8 +1113,19 @@ function saveRecording(blob) {
 	sound.src = url;
 	sound.type = 'audio/mpeg';
 	
+	var link = document.createElement("A");
+	link.href = url;
+	link.appendChild(document.createTextNode("[DOWN]"));
+	var filename = (new Date()).toISOString().replace(/[\-\:T]/ig, '').substring(0, 12);
+	filename += "_" + wpm.value + "wpm_" + parseInt(duration + 2) + "s_" + MP3_BIT_RATE + "kbps";
+	link.download = filename + ".mp3";
+	
+	var div = document.createElement("DIV");
+	div.appendChild(sound);
+	div.appendChild(link);
+	
 	var mp3 = document.querySelector("#mp3");
-	mp3.replaceChild(sound, mp3.firstChild);
+	mp3.replaceChild(div, mp3.firstChild);
 }
 
 var ditdah = document.querySelector("#ditdah");
