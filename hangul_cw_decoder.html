@@ -163,7 +163,7 @@ button {
     height: 10px;
     display: inline-block;
 }
-.ditdah_bar_correct {
+.ditdah_bar2 {
     background: blue;
     height: 10px;
     display: inline-block;
@@ -172,7 +172,7 @@ button {
     height: 10px;
     display: inline-block;
 }
-.ditdah_bar_err {
+.ditdah_bar2_err {
     background: red;
     height: 10px;
     display: inline-block;
@@ -1538,7 +1538,7 @@ function printDitdah(ditdah, len) {
         return;
     }
     var span = document.createElement("SPAN");
-    span.className = (ditdah ? (professional.checked ? "ditdah_bar_correct" : "ditdah_bar") : "ditdah_gap");
+    span.className = (ditdah ? (professional.checked ? "ditdah_bar2" : "ditdah_bar") : "ditdah_gap");
     span.style.width = parseInt(len >> 3) + "px";
     ditdahLog.appendChild(span);
     if (ditdahLog.childNodes.length > 256) ditdahLog.removeChild(ditdahLog.firstChild);
