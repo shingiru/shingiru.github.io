@@ -481,11 +481,12 @@ $2 미만의 USB to UART 모듈을 이용해 인터페이스 장치를 만들어
 <br />
 <br />
 
-<h3>※ 1TZE Player. <span class="font_medium font_normal">( pronounce as /wants/ )</span></h3>
+<h3>※ 1TZE Player. <span class="font_medium font_normal">( pronounce as /wantz/ )</span></h3>
 키 연습이나 교신 등 디코딩 과정을 기록하여 파일로 저장하고 재생할 수 있는 플레이어입니다.<br />
 파일 안에는 속도와 한글 디코딩 여부 등이 추가로 기록되며, 생성되는 파일의 용량은 무척 작습니다.<br />
 저장한 파일을 재생할 때는 점/선/갭 옵션을 다양하게 조정해가며 막대바에 나타나는 이상부호를 분석하면 훈련에 도움이 됩니다.<br />
-또, 본인 뿐만 아니라 타인의 학습에도 도움이 될만한 자료라면 저장한 파일을 공유할 수 있습니다.<br />
+또, 타인의 학습을 돕거나 타인과 함께 학습할 때도 파일을 만들어 공유하면 좋습니다.<br />
+<a href="hangul_cw_trainer.html" target="_blank">[한글 CW 청취 연습기]</a>에서는 문장을 입력해 MP3 파일과 1TZE 파일을 만들 수 있어 활용하기 좋습니다.<br />
 <br />
 <br />
 
@@ -1310,8 +1311,15 @@ function audioStop() {
 	try { osc.stop(0); }
 	catch (e) {}
 }
+var SMOOTHING_DURATION = 0.004;  // 10ms is very soft, icom default 4ms;
 function audioPlay(playOrMute) {
-	if (gain) gain.gain.value = (playOrMute ? parseInt(volume.value) * 0.01: 0);
+	//if (gain) gain.gain.value = (playOrMute ? parseInt(volume.value) * 0.01 : 0);
+	if (gain) {
+		var v = parseInt(volume.value) * 0.01;
+		var t = ac.currentTime + 0.01; // with this deplay, we prevent pop noise
+		gain.gain.setValueAtTime(gain.gain.value, t);
+		gain.gain.linearRampToValueAtTime((playOrMute ? v : 0), t + SMOOTHING_DURATION);
+	}
 }
 
 var tzeQueue = [], tzeRecording = false, tzePlaying = false, tzePaused = false, tzeMoving = false, tzeStartAt = 0, tzeQueueIndex = 0, tzePausedAt = 0;

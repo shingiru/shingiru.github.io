@@ -210,7 +210,9 @@ audio {
 <button id="play">PLAY</button>
 <button id="stop">STOP</button>
 <button id="make">MAKE MP3</button>
+<button id="make_tze">MAKE 1TZE</button>
 <span id="mp3"> </span>
+<a id="tze"></a>
 </span>
 <span class="setting_group">
 <span class="setting_bold">Play option</span> : <label><input type="checkbox" id="selection_only" /> Selection only</label>
@@ -428,6 +430,7 @@ Morse Code generator Javascript 라이브러리 - <a href="https://gist.github.c
 <br />
 <h3>Change Log</h3>
 <span class="font_medium">
+2022.09.07. 1TZE file generation added. Tone pitch rises for 4 mills.<br />
 2022.09.06. MP3 file generation added. Playing position move function added : 5 sec forward/backward using arrow key.<br />
 2022.09.05. Extra Gap - random type added.<br />
 2022.09.03. Keyer function added.<br />
@@ -441,7 +444,7 @@ Morse Code generator Javascript 라이브러리 - <a href="https://gist.github.c
 </span>
 </div>
 </body>
-<script>Mp3LameEncoderConfig = { memoryInitializerPrefixURL: "" };</script>
+<!--script>Mp3LameEncoderConfig = { memoryInitializerPrefixURL: "" };</script-->
 <script src="Mp3LameEncoder.min.js"></script>
 <script type="text/javascript">
 (function(AudioContext) {
@@ -706,21 +709,34 @@ MorseNode.prototype.dotfac = function(t) {
 
 }
 
+var SMOOTHING_DURATION = 0.004;  // 10ms is very soft, icom default 4ms;
 MorseNode.prototype.playChar = function(queueOnly, t, c, v) {
     for (var i = 0; i < c.length; i++) {
         switch(c[i]) {
         case '.':
-            if (!queueOnly) this._gain.gain.setValueAtTime(1.0 * v, t);
+            if (!queueOnly) {
+				this._gain.gain.setValueAtTime(0, t - SMOOTHING_DURATION);
+				this._gain.gain.linearRampToValueAtTime(1.0 * v, t);
+			}
 			enQueue(1.0 * v, t);
             t += this._dot * this.dotfac('.');
-            if (!queueOnly) this._gain.gain.setValueAtTime(0.0, t);
+            if (!queueOnly) {
+				this._gain.gain.setValueAtTime(1.0 * v, t - SMOOTHING_DURATION);
+				this._gain.gain.linearRampToValueAtTime(0.0, t);
+			}
 			enQueue(0.0, t)
             break;
         case '-':
-            if (!queueOnly) this._gain.gain.setValueAtTime(1.0 * v, t);
+            if (!queueOnly) {
+				this._gain.gain.setValueAtTime(0, t - SMOOTHING_DURATION);
+				this._gain.gain.linearRampToValueAtTime(1.0 * v, t);
+			}
 			enQueue(1.0 * v, t);
             t += 3 * this._dot * this.dotfac('-');
-            if (!queueOnly) this._gain.gain.setValueAtTime(0.0, t);
+            if (!queueOnly) {
+				this._gain.gain.setValueAtTime(1.0 * v, t - SMOOTHING_DURATION);
+				this._gain.gain.linearRampToValueAtTime(0.0, t);
+			}
 			enQueue(0.0, t)
             break;
         }
@@ -734,6 +750,7 @@ var queue = [];
 function enQueue(v, t) {
 	queue.push([t, v]);
 }
+var hasHangul = false;
 
 MorseNode.prototype.playString = function(queueOnly, t, w, v, k, fade) {
     this.key = k;
@@ -742,6 +759,7 @@ MorseNode.prototype.playString = function(queueOnly, t, w, v, k, fade) {
     timestamp = [];
 	queue = [];
 	enQueue(0, 0);
+	hasHangul = false;
     
     var start = t, fv = v;
     for (var n = 0; n < w.length; n++) {
@@ -764,6 +782,7 @@ MorseNode.prototype.playString = function(queueOnly, t, w, v, k, fade) {
         }
         if (hangul) {
             t += 2 * this._dot * this.dotfac('l');
+			hasHangul = true;
         }
         if (highlightSlowly.checked) timestamp.push(t);
     }
@@ -798,6 +817,7 @@ var volume = document.querySelector("#volume");
 var play = document.querySelector("#play");
 var stop = document.querySelector("#stop");
 var make = document.querySelector("#make");
+var makeTze = document.querySelector("#make_tze");
 var keyComputer = document.querySelector('input[name="key"][value="computer"]');
 var keyElmer = document.querySelector('input[name="key"][value="elmer"]');
 var keyFarnsworth = document.querySelector('input[name="key"][value="farnsworth"]');
@@ -905,7 +925,7 @@ play.onclick = function() {
             noiseNode.connect(noiseGain);
             bufferSource.start(0);
         }
-        noiseGain.gain.value = vol;
+        noiseGain.gain.value = vol * 0.5;
         noiseGain.connect(ac.destination);
     }
     
@@ -1040,8 +1060,9 @@ function rollback(back) {
 	morse.timeMove(back ? -5 : 5);
 }
 
-var MP3_SAMPLE_RATE = (isMobile ? 16000 : 44100);
-var MP3_BIT_RATE = (isMobile ? 32 : 128);
+var MP3_SAMPLE_RATE = 16000; //(isMobile ? 16000 : 44100);
+var MP3_BIT_RATE = 32; //(isMobile ? 32 : 128);
+var MP3_SAMPLE_BLOCK_SIZE = 1152;
 make.onclick = function() {
 	stop.click();
 	
@@ -1053,7 +1074,7 @@ make.onclick = function() {
 async function makeMp3() {
 	morse.playString(true, DELAY_AMOUNT, 
 		doc.getValue(), 
-		vol * (noise.checked ? 0.5 : 1), 
+		vol, 
 		document.querySelector('input[name="key"]:checked').value,
 		fading.checked);
 		
@@ -1065,10 +1086,14 @@ function makeBufferAndEncode(encoder, withNoise, noiseVolume) {
 	if (queue.length == 0) return;
 	
 	var queueLen = queue.length;
-	var duration = queue[queueLen - 1][0];
+	var duration = Math.ceil(queue[queueLen - 1][0]);
 	var sampleLen = parseInt((duration + DELAY_AMOUNT) * MP3_SAMPLE_RATE);
-	var buffer = new Float32Array(MP3_SAMPLE_RATE);
+	//sampleLen = Math.ceil(sampleLen / MP3_SAMPLE_BLOCK_SIZE) * MP3_SAMPLE_BLOCK_SIZE;
+	var buffer = new Float32Array(MP3_SAMPLE_BLOCK_SIZE);
 	var angular_frequency = freq.value * 2 * Math.PI;
+	var angular_frequency_factor = angular_frequency / MP3_SAMPLE_RATE;
+	var rising_step = rising_start_volume = rising_end_volume = 0;
+	var rising_steps = MP3_SAMPLE_RATE * SMOOTHING_DURATION;
 	
 	var queueIndex = 0, sampleIndex = 0, volume = 0.0, nextVolume = 0.0;
 	for ( ; queueIndex < queueLen; queueIndex++) {
@@ -1080,7 +1105,7 @@ function makeBufferAndEncode(encoder, withNoise, noiseVolume) {
 		}
 	}
 	for (var i = 0, j = 0; i < sampleLen; i++, j++) {
-		if (j == MP3_SAMPLE_RATE) {
+		if (j == MP3_SAMPLE_BLOCK_SIZE) {
 			encoder.encode([buffer, buffer]);
 			buffer.fill(0);
 			j = 0;
@@ -1089,21 +1114,25 @@ function makeBufferAndEncode(encoder, withNoise, noiseVolume) {
 		if (i > sampleIndex) {
 			if (queueIndex < queueLen - 1) queueIndex++;
 			sampleIndex = parseInt(queue[queueIndex][0] * MP3_SAMPLE_RATE);
+			if (volume != nextVolume) {
+				rising_step = rising_steps;
+				rising_start_volume = volume;
+				rising_end_volume = nextVolume;
+			}
 			volume = nextVolume;
 			nextVolume = queue[queueIndex][1];
 		}
 		
-		buffer[j] = generateSample(i, angular_frequency) * volume;
-		//if (withNoise) buffer[j] = buffer[j] * Math.cos(0.5 * 0.5*Math.PI) + ((Math.random() * 2) - 1) * noiseVolume * Math.cos(0.5 * 0.5*Math.PI);
+		if (rising_step-- > 0) {
+			if (rising_start_volume > rising_end_volume) volume = rising_end_volume + (rising_start_volume - rising_end_volume) * rising_step / rising_steps;
+			else volume = rising_start_volume + (rising_end_volume - rising_start_volume) * (rising_steps - rising_step) / rising_steps;
+		}
+		buffer[j] = Math.sin(i * angular_frequency_factor) * volume; // https://teropa.info/blog/2016/08/04/sine-waves.html
+		if (withNoise) buffer[j] = buffer[j] * Math.cos(0.5*0.5*Math.PI) + ((Math.random() * 2) - 1) * noiseVolume * Math.cos(0.5*0.5*Math.PI); // half + half
 	}
 	encoder.encode([buffer, buffer]);
 	
 	return duration;
-}
-function generateSample(sampleIndex, angular_frequency) {
-	var sampleTime = sampleIndex / MP3_SAMPLE_RATE;
-	var sampleAngle = sampleTime * angular_frequency;
-	return Math.sin(sampleAngle);
 }
 function saveRecording(blob, duration) {
 	var url = URL.createObjectURL(blob);
@@ -1115,7 +1144,7 @@ function saveRecording(blob, duration) {
 	
 	var link = document.createElement("A");
 	link.href = url;
-	link.appendChild(document.createTextNode("[DOWN]"));
+	link.appendChild(document.createTextNode("[MP3 DOWN]"));
 	var filename = (new Date()).toISOString().replace(/[\-\:T]/ig, '').substring(0, 12);
 	filename += "_" + wpm.value + "wpm_" + parseInt(duration + 2) + "s_" + MP3_BIT_RATE + "kbps";
 	link.download = filename + ".mp3";
@@ -1126,6 +1155,41 @@ function saveRecording(blob, duration) {
 	
 	var mp3 = document.querySelector("#mp3");
 	mp3.replaceChild(div, mp3.firstChild);
+}
+
+makeTze.onclick = function() {
+	stop.click();
+	morse.playString(true, DELAY_AMOUNT, 
+		doc.getValue(), 
+		1.0, 
+		document.querySelector('input[name="key"]:checked').value,
+		false);
+	queue.push([queue[queue.length - 1][0] + 1, 0]);
+	saveTzeFile();
+}
+function saveTzeFile() {
+	var data = packTzeFile();
+	var blob = new Blob([JSON.stringify(data)], {type:"application/json"});
+	var url = URL.createObjectURL(blob);
+	
+	var link = document.createElement("A");
+	link.href = url;
+	link.appendChild(document.createTextNode("[1TZE DOWN]"));
+	var filename = (new Date()).toISOString().replace(/[\-\:T]/ig, '').substring(0, 14);
+	link.download = filename + ".tze";
+	
+	var anchor = document.querySelector("#tze");
+    link.id = anchor.id;
+    anchor.parentNode.replaceChild(link, anchor);
+}
+function packTzeFile() {
+	return {
+		version: 1,
+		creatdAt: (new Date()).toISOString(),
+		wpm: parseInt(wpm.value),
+		hangul: hasHangul,
+		queue: queue.map(x => [x[0].toFixed(3),parseInt(x[1])])
+	};
 }
 
 var ditdah = document.querySelector("#ditdah");
