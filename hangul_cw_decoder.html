@@ -103,13 +103,19 @@ button {
 }
 .setting_group_4 {
     padding: 4px 0px 4px 10px;
-	margin: 4px 10px 4px 0px;
+	margin: 4px 10px 0px 0px;
     white-space: nowrap;
 	display: inline-block;
 }
 .setting_group_5 {
     padding: 0px 0px 4px 10px;
 	margin: 4px 10px 4px 0px;
+	white-space: nowrap;
+	display: inline-block;
+}
+.setting_group_6 {
+    padding: 0px 0px 4px 10px;
+	margin: 0px 10px 4px 0px;
 	display: inline-block;
 }
 .professional_setting {
@@ -418,7 +424,6 @@ details > summary {
 <input type="number" id="fixed_speed" value="20" size="2" min="5" max="50" /> WPM
 <span class="font_small">(1 unit = 1 dit = <span id="unit">60.0</span> ms)</span>
 </span>
-<br />
 <span id="key_setting" class="setting_group_5">
 <label class="setting_bold"><input type="checkbox" id="cw_key" /> CW Key*</label>&nbsp;&nbsp;
 <button id="connect">CONNECT</button>
@@ -426,7 +431,7 @@ details > summary {
 <span class="setting_bold">Volume</span> <input type="number" id="volume" value="100" size="3" min="1" max="100" step="1" /> %
 </span>
 <br />
-<span class="setting_group_5">
+<span class="setting_group_6">
 <span class="bullet">■</span>
 <span class="setting_bold">1TZE* Player</span>&nbsp;
 <button id="tze_record" class="record_stop">RECORD</button>
