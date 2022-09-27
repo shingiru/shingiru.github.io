@@ -203,8 +203,8 @@ function addCard(x, y, sn, op, date, time, cs, rst, band, mode) {
     svg.append(createText((x + 131) * SCALE_FACTOR, (y + 77) * SCALE_FACTOR, 'band', band));
     svg.append(createText((x + 170) * SCALE_FACTOR, (y + 77) * SCALE_FACTOR, 'mode', mode));
     svg.append(createText((x + 201) * SCALE_FACTOR, (y + 77) * SCALE_FACTOR, 'rst', rst));
-    svg.append(createText((x + 46) * SCALE_FACTOR, (y + 117) * SCALE_FACTOR, 'op', op));
-	//svg.append(createOpImage((x + 13) * SCALE_FACTOR, (y + 79) * SCALE_FACTOR, 'op', op));
+    //svg.append(createText((x + 46) * SCALE_FACTOR, (y + 117) * SCALE_FACTOR, 'op', op));
+	svg.append(createOpImage((x + 13) * SCALE_FACTOR, (y + 79) * SCALE_FACTOR, 'op', op));
     svg.append(createText((x + 60) * SCALE_FACTOR, (y + 139) * SCALE_FACTOR, 'sn', sn));
 }
 
