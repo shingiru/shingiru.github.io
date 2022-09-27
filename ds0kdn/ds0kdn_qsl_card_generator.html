@@ -171,7 +171,7 @@ var qslLogs = [
 </svg>
 </body>
 <script type="text/javascript">
-var QSL_SVG = "ds0kdn_qsl_card_back.svg";
+var QSL_SVG = "https://shingiru.github.io/ds0kdn/ds0kdn_qsl_card_back.svg";
 var COLS = 5, ROWS = Math.ceil(qslLogs * 1.0 / COLS); // when change this value, we need to change above svg width,height also
 var SCALE_FACTOR = 2;
 var CARD_WIDTH = 227, CARD_HEIGHT = 150;
@@ -220,7 +220,7 @@ function createText(x, y, className, value) {
 
 function createOpImage(x, y, className, op) {
 	var image = document.createElementNS('http://www.w3.org/2000/svg', "image");
-    image.setAttribute('href', op + ".svg");
+    image.setAttribute('href', "https://shingiru.github.io/ds0kdn/" + op + ".svg");
     image.setAttribute('x', x);
     image.setAttribute('y', y);
 	image.setAttribute('width', 135);
