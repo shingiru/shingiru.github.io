@@ -143,23 +143,23 @@ var qslLogs = [
     }
     .date {
         font-family: Courgette;
-        font-size: large;
+        font-size: 12pt;
     }
     .time {
         font-family: Courgette;
-        font-size: large;
+        font-size: 12pt;
     }
     .band {
         font-family: Courgette;
-        font-size: large;
+        font-size: 12pt;
     }
     .mode {
         font-family: Courgette;
-        font-size: large;
+        font-size: 12pt;
     }
     .rst {
         font-family: Courgette;
-        font-size: large;
+        font-size: 12pt;
     }
     .op {
         font-family: Secular One;
@@ -171,7 +171,7 @@ var qslLogs = [
     }
 	.msg {
         font-family: Yeon Sung;
-        font-size: large;
+        font-size: 12pt;
 	}
     </style>
 </svg>
@@ -179,8 +179,8 @@ var qslLogs = [
 <script type="text/javascript">
 var QSL_SVG = "https://shingiru.github.io/ds0kdn/ds0kdn_qsl_card_back.svg";
 var COLS = 5, ROWS = Math.ceil(qslLogs * 1.0 / COLS); // when change this value, we need to change above svg width,height also
-var SCALE_FACTOR = 2;
-var CARD_WIDTH = 227, CARD_HEIGHT = 150;
+var SCALE_FACTOR = 1;
+var CARD_WIDTH = 420, CARD_HEIGHT = 278;
 var svg = document.querySelector("#svg");
 document.querySelector("#save").addEventListener('click', saveSvg);
 
@@ -203,21 +203,18 @@ function addCard(x, y, sn, op, date, time, cs, rst, band, mode) {
     card.setAttribute('height', CARD_HEIGHT * SCALE_FACTOR);
     svg.append(card);
     
-    addText(svg, (x + 57) * SCALE_FACTOR, (y + 39) * SCALE_FACTOR, 'cs', cs, true); // scale factor will be treated in addText
-    addText(svg, (x + 39) * SCALE_FACTOR, (y + 77) * SCALE_FACTOR, 'date', date, true);
-    addText(svg, (x + 86) * SCALE_FACTOR, (y + 77) * SCALE_FACTOR, 'time', time, true);
-    addText(svg, (x + 131) * SCALE_FACTOR, (y + 77) * SCALE_FACTOR, 'band', band, true);
-    addText(svg, (x + 170) * SCALE_FACTOR, (y + 77) * SCALE_FACTOR, 'mode', mode, true);
-    addText(svg, (x + 201) * SCALE_FACTOR, (y + 77) * SCALE_FACTOR, 'rst', rst, true);
-    //addText(svg, (x + 46) * SCALE_FACTOR, (y + 117) * SCALE_FACTOR, 'op', op, true);
-	addOpImage(svg, (x + 13) * SCALE_FACTOR, (y + 79) * SCALE_FACTOR, 'op', op);
-    addText(svg, (x + 60) * SCALE_FACTOR, (y + 138) * SCALE_FACTOR, 'sn', sn, true);
-	addRect(svg, (x + 109) * SCALE_FACTOR, (y + 19) * SCALE_FACTOR, 108 * SCALE_FACTOR, 10 * SCALE_FACTOR);
-	addRect(svg, (x + 109) * SCALE_FACTOR, (y + 30.5) * SCALE_FACTOR, 108 * SCALE_FACTOR, 10 * SCALE_FACTOR);
-	addRect(svg, (x + 109) * SCALE_FACTOR, (y + 42.5) * SCALE_FACTOR, 108 * SCALE_FACTOR, 10 * SCALE_FACTOR);
-	addText(svg, (x + 113) * SCALE_FACTOR, (y + 27.5) * SCALE_FACTOR, 'msg', '가을이 시작된 법화산에서', false);
-	addText(svg, (x + 113) * SCALE_FACTOR, (y + 39) * SCALE_FACTOR, 'msg', '오엠님과 좋은 신호로 컨택되어서', false);
-	addText(svg, (x + 113) * SCALE_FACTOR, (y + 51) * SCALE_FACTOR, 'msg', '반갑고 기뻤습니다.', false);
+    addText(svg, (x + 105) * SCALE_FACTOR, (y + 74) * SCALE_FACTOR, 'cs', cs, true); // scale factor will be treated in addText
+    addText(svg, (x + 72) * SCALE_FACTOR, (y + 142) * SCALE_FACTOR, 'date', date, true);
+    addText(svg, (x + 158) * SCALE_FACTOR, (y + 142) * SCALE_FACTOR, 'time', time, true);
+    addText(svg, (x + 241) * SCALE_FACTOR, (y + 142) * SCALE_FACTOR, 'band', band, true);
+    addText(svg, (x + 313) * SCALE_FACTOR, (y + 142) * SCALE_FACTOR, 'mode', mode, true);
+    addText(svg, (x + 373) * SCALE_FACTOR, (y + 142) * SCALE_FACTOR, 'rst', rst, true);
+    //addText(svg, (x + 87) * SCALE_FACTOR, (y + 215) * SCALE_FACTOR, 'op', op, true);
+	addOpImage(svg, (x + 50) * SCALE_FACTOR, (y + 170) * SCALE_FACTOR, 'op', op);
+    addText(svg, (x + 108) * SCALE_FACTOR, (y + 256) * SCALE_FACTOR, 'sn', sn, true);
+	addText(svg, (x + 203) * SCALE_FACTOR, (y + 51) * SCALE_FACTOR, 'msg', '가을이 시작된 법화산에서', false);
+	addText(svg, (x + 203) * SCALE_FACTOR, (y + 73) * SCALE_FACTOR, 'msg', '오엠님과 좋은 신호로 만나뵙게 되어', false);
+	addText(svg, (x + 203) * SCALE_FACTOR, (y + 95) * SCALE_FACTOR, 'msg', '반갑고 기뻤습니다.', false);
 }
 
 function addText(svg, x, y, className, value, center) {
@@ -245,8 +242,8 @@ function addOpImage(svg, x, y, className, op) {
     image.setAttribute('href', "https://shingiru.github.io/ds0kdn/" + op + ".svg");
     image.setAttribute('x', x);
     image.setAttribute('y', y);
-	image.setAttribute('width', 135);
-	image.setAttribute('height', 135);
+	image.setAttribute('width', 71);
+	image.setAttribute('height', 71);
     image.setAttribute('class', className);
 	svg.append(image);
 }
