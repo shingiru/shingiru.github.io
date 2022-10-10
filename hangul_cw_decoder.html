@@ -425,12 +425,14 @@ details > summary {
 <input type="number" id="fixed_speed" value="20" size="2" min="5" max="50" /> WPM
 <span class="font_small">(1 unit = 1 dit = <span id="unit">60.0</span> ms)</span>
 </span>
+<br />
 <span id="key_setting" class="setting_group_5">
-<label class="setting_bold"><input type="checkbox" id="cw_key" /> CW Key*</label>&nbsp;&nbsp;
+<label class="setting_bold"><input type="checkbox" id="cw_key" /> CW Key*</label>
+(<label><input type="checkbox" id="paddle" disabled /> Paddle</label>)&nbsp;&nbsp;
 <button id="connect">CONNECT</button>
 <button id="disconnect">UNCONNECTED</button>&nbsp;&nbsp;
 <span class="setting_bold">Volume</span> <input type="number" id="volume" value="100" size="3" min="1" max="100" step="1" /> % &nbsp;&nbsp;
-<span class="setting_bold"> Remote Key Address</span>&nbsp;&nbsp;
+<span class="setting_bold"> Remote Address</span>&nbsp;&nbsp;
 <input type="text" id="remote_address" value="127.0.0.1:8080" /> &nbsp;&nbsp;
 <button id="remote_connect">CONNECT</button>
 <button id="remote_disconnect">UNCONNECTED</button>&nbsp;&nbsp;
@@ -512,7 +514,7 @@ Hangul CW Trainer - <a href="hangul_cw_trainer.html" target="_blank">http://shin
 <br />
 <h3>Change Log</h3>
 <span class="font_medium">
-2022.10.10. Remote Key (WebSocket Text Message. "1" : KEY DOWN, "0" : KEY UP) function added. Force hangul decoding mode added.<br />
+2022.10.10. CW Key-In : Paddle Mode added. Remote Key function added. (WebSocket Msg. "1" : KEY DOWN, "0" : KEY UP) Force hangul decoding option added.<br />
 2022.09.07. 1TZE Player added.<br />
 2022.09.05. CW Key-In Mode added.<br />
 2022.09.01. Professional Setting added.<br />
@@ -562,6 +564,7 @@ var letterGap = document.querySelector("#letter_gap");
 
 var cwPort = null, cwPortInitialized = false, cwPortOpen = false;
 var cwKey = document.querySelector("#cw_key");
+var paddle = document.querySelector("#paddle");
 var connect = document.querySelector("#connect");
 var disconnect = document.querySelector("#disconnect");
 var volume = document.querySelector("#volume");
@@ -728,9 +731,11 @@ function processMorse() {
 		if (tzePlaying) setTimeout(processMorse, 1);
 	} else if (cwPortOpen) {
 		cwPort.getSignals().then( (result) => {
-			var ditdah = result.clearToSend;
-			//console.log("dit : " + ditdah + ", dah : " + result.dataSetReady);
-			processDitDah(ditdah, frameDuration);
+			var cts = result.clearToSend;
+			var dsr = result.dataSetReady;
+			if (paddle.checked) processPaddle(cts, dsr, frameDuration);
+			else processDitDah(cts, frameDuration);
+			
 			if (cwPortOpen) setTimeout(processMorse, 1);
 		}).catch((e) => {
 		});
@@ -761,14 +766,45 @@ function processMorse() {
 		timerId = setTimeout(processMorse, 1);
 	}
 }
+var GAP = 0, DIT = 1, DAH = 2;
+var paddleState = {
+	cur : 0,
+	next : 0,
+	ms : 0,
+	forcedGap : false
+}
+function processPaddle(dit, dah, duration) {
+	var s = paddleState;
+	var unit = getSettings().unit;
+	
+	s.ms -= duration;
+	if (s.ms < 0) s.ms = 0;
+	
+	if (s.ms == 0) {
+		if (s.forcedGap) {
+			s.forcedGap = false;
+			s.ms = (s.cur == DIT ? unit : (s.cur == DAH ? unit * 3 : 0));
+		} else {
+			if (s.cur == GAP) {
+				s.cur = (dit ? DIT : (dah ? DAH : GAP));
+				s.ms = (s.cur == DIT ? unit : (s.cur == DAH ? unit * 3 : 0));
+			} else {
+				s.cur = s.next;
+				s.forcedGap = true;
+				s.ms = unit;
+				s.next = GAP;
+			}
+		}
+	} else {
+		if (!s.forcedGap && s.next == GAP) {
+			s.next = (s.cur == DIT ? (dah ? DAH : GAP) : (dit ? DIT : GAP));
+		}
+	}
+	
+	processDitDah((!s.forcedGap && s.cur != GAP), duration);
+}
 function processDitDah(ditdah, frameDuration) {
 	var conf = getSettings();
-    var ditDuration = parseInt(1200 / targetWpm);
-    var minDitDuration = parseInt(ditDuration * 0.1);
-    var maxDitDuration = parseInt(ditDuration * 2.0);
-    var minDitdahGap = parseInt(ditDuration * 0.5);
-    var maxDitdahGap = parseInt(ditDuration * 2.0);
-    var letterGapDuration = ditDuration * 6;
 	
 	//console.log("ditdah : " + ditdah + ", duration : " + frameDuration);
 	printDitdah(ditdah, frameDuration);
@@ -796,7 +832,7 @@ function processDitDah(ditdah, frameDuration) {
                 gapAmount = 0;
             }
         }
-        ditdahAmount += parseInt(frameDuration);
+        ditdahAmount += frameDuration;
         maxGapReached = false;
         lastLongDahCheckStartAt = 0;
     } else {
@@ -819,7 +855,7 @@ function processDitDah(ditdah, frameDuration) {
             }
         }
         ditdahAmount = 0;
-        gapAmount += parseInt(frameDuration);
+        gapAmount += frameDuration;
 
         // when enough gapAmount
         if (gapAmount > conf.gap.letter) {
@@ -846,7 +882,6 @@ var stat = {
     gap : []
 };
 var statistics = document.querySelector("#statistics");
-var SMOOTHING_FACTOR = 4 * 2; // 4ms to pitch
 function doStat(dit, dah, gap) {
     if (dit > 0) stat.dit.push(dit);
     else if (dah > 0) stat.dah.push(dah);
@@ -861,10 +896,10 @@ function doStat(dit, dah, gap) {
     if (ditLen + dahLen < 10 || gapLen < 5) return;
 
     var ditMean = parseInt(stat.dit.reduce((a, b) => a + b, 0) / ditLen) || 0;
-    var dahMean = parseInt(stat.dah.reduce((a, b) => a + SMOOTHING_FACTOR + b, 0) / dahLen) || 0;
-    var gapMean = parseInt(stat.gap.reduce((a, b) => a + SMOOTHING_FACTOR + b, 0) / gapLen) || 0;
+    var dahMean = parseInt(stat.dah.reduce((a, b) => a + b, 0) / dahLen) || 0;
+    var gapMean = parseInt(stat.gap.reduce((a, b) => a + b, 0) / gapLen) || 0;
     var mean = (ditMean + dahMean/3 + gapMean) / ((ditMean > 0 ? 1 : 0) + (dahMean > 0 ? 1 : 0) + (gapMean > 0 ? 1 : 0));
-    var wpmTemp = 1200 / mean;
+    var wpmTemp = Math.round(1200 / mean);
 
     updateWpm(parseInt(wpmTemp));
     mean = 1200 / targetWpm;
@@ -1120,7 +1155,7 @@ function saveDitDahGap() {
 	window.localStorage.setItem('minDah', minDah.value);
 	window.localStorage.setItem('maxDah', maxDah.value);
 	window.localStorage.setItem('minGap', minGap.value);
-	window.localStorage.setItem('maxGap', maxGap.value);
+	window.localStorage.setItem('maxGap', maxGap.value); 
 	window.localStorage.setItem('letterGap', letterGap.value);
 	window.localStorage.setItem('speedProfile', document.querySelector('input[name="speed_profile"]:checked').value);
 }
@@ -1222,6 +1257,7 @@ window.addEventListener('DOMContentLoaded', function() {
         if (window.localStorage.getItem('showDebug')) showDebug.checked = window.localStorage.getItem('showDebug') == 'true';
 		if (window.localStorage.getItem('professional')) professional.checked = window.localStorage.getItem('professional') == 'true';
 		if (window.localStorage.getItem('fixedWpm')) fixedWpm.checked = window.localStorage.getItem('fixedWpm') == 'true';
+		if (window.localStorage.getItem('paddle')) paddle.checked = window.localStorage.getItem('paddle') == 'true';
 		if (window.localStorage.getItem('fixedSpeed')) fixedSpeed.value = parseInt(window.localStorage.getItem('fixedSpeed'));
 		if (window.localStorage.getItem('speedProfile')) document.querySelector('input[name="speed_profile"][value="'+window.localStorage.getItem('speedProfile')+'"]').checked = true;
 		if (window.localStorage.getItem('minDit')) minDit.value = parseFloat(window.localStorage.getItem('minDit'));
@@ -1256,6 +1292,13 @@ cwKey.onchange = function(e) {
 		cwKey.checked = true;
 		return;
 	}
+	
+	paddle.disabled = !cwKey.checked;
+	if (cwKey.checked && paddle.checked && !fixedWpm.checked) fixedWpm.click();
+}
+paddle.onchange = function() {
+	if (paddle.checked && !fixedWpm.checked) fixedWpm.click();
+	window.localStorage.setItem('paddle', paddle.checked);
 }
 var volume = document.querySelector("#volume");
 volume.onchange = function() {
