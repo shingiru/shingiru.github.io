@@ -374,7 +374,8 @@ details > summary {
 <span class="setting_bold">Current </span>&nbsp;<span id="target_speed">20</span> WPM
 </span>
 <span class="setting_group_3">
-<label><input type="checkbox" id="hangul" /> Hangul</label>&nbsp;&nbsp;
+<label><input type="checkbox" id="hangul" /> Hangul</label>
+(<label><input type="checkbox" id="force" /> Force</label>)&nbsp;&nbsp;
 </span>
 <span class="setting_group_2">
 <button id="start">START</button>
@@ -410,7 +411,7 @@ details > summary {
 <span class="setting_group_2">
 <span class="setting_bold">Gap</span>&nbsp;
 <input type="number" id="min_gap" class="ditdahgap" value="0.5" size="3" min="0.1" max="1.0" step="0.1" /> ~ 
-<input type="number" id="max_gap" class="ditdahgap" value="2.0" size="3" min="1.1" max="3.0" step="0.1" />
+<input type="number" id="max_gap" class="ditdahgap" value="1.5" size="3" min="1.1" max="3.0" step="0.1" />
 <span class="font_small">unit</span>
 </span>
 <span class="setting_group_2">
@@ -428,7 +429,11 @@ details > summary {
 <label class="setting_bold"><input type="checkbox" id="cw_key" /> CW Key*</label>&nbsp;&nbsp;
 <button id="connect">CONNECT</button>
 <button id="disconnect">UNCONNECTED</button>&nbsp;&nbsp;
-<span class="setting_bold">Volume</span> <input type="number" id="volume" value="100" size="3" min="1" max="100" step="1" /> %
+<span class="setting_bold">Volume</span> <input type="number" id="volume" value="100" size="3" min="1" max="100" step="1" /> % &nbsp;&nbsp;
+<span class="setting_bold"> Remote Key Address</span>&nbsp;&nbsp;
+<input type="text" id="remote_address" value="127.0.0.1:8080" /> &nbsp;&nbsp;
+<button id="remote_connect">CONNECT</button>
+<button id="remote_disconnect">UNCONNECTED</button>&nbsp;&nbsp;
 </span>
 <br />
 <span class="setting_group_6">
@@ -475,9 +480,9 @@ details > summary {
 
 <h3>※ CW Key-In Support.</h3>
 최신 웹브라우저에선 COM 포트를 이용한 통신이 가능하며, 이를 이용해 컴퓨터와 연결된 CW Key 신호를 받을 수 있습니다. (모바일에선 안됨)<br />
-$2 미만의 USB to UART 모듈을 이용해 인터페이스 장치를 만들어, 스트레이트키를 컴퓨터와 연결합니다.<br />
+$2 미만의 USB to TTL 모듈을 이용해 키와 컴퓨터를 연결하는 장치를 만듭니다.<br />
 <span class="setting_bold">Connect CW Key to PC</span> 정도로 웹 검색을 하면, 간단하게 장치를 만드는 방법이 나옵니다.<br />
-이 프로그램에선 COM 포트의 CTS 핀이 ON(Low)인지 OFF(High)인지 확인하며, 인터페이스 장치는 DTR <-> 저항(4.7k) <-> CTS <-> CW Key <-> GND 의 단순한 회로로 만듭니다.<br />
+이 프로그램에선 COM 포트의 CTS 핀을 확인하며, 인터페이스 장치는 DTR <-> 저항(4.7k) <-> CTS <-> CW Key <-> GND 의 단순한 회로로 만듭니다.<br />
 <br />
 <br />
 
@@ -507,6 +512,7 @@ Hangul CW Trainer - <a href="hangul_cw_trainer.html" target="_blank">http://shin
 <br />
 <h3>Change Log</h3>
 <span class="font_medium">
+2022.10.10. Remote Key (WebSocket Text Message. "1" : KEY DOWN, "0" : KEY UP) function added. Force hangul decoding mode added.<br />
 2022.09.07. 1TZE Player added.<br />
 2022.09.05. CW Key-In Mode added.<br />
 2022.09.01. Professional Setting added.<br />
@@ -531,6 +537,7 @@ var isMobile = (isIOS || isAndroid);
 var speed = document.querySelector("#speed");
 var targetSpeed = document.querySelector("#target_speed");
 var hangul = document.querySelector("#hangul");
+var force = document.querySelector("#force");
 var start = document.querySelector("#start");
 var stop = document.querySelector("#stop");
 var clear = document.querySelector("#clear");
@@ -558,6 +565,9 @@ var cwKey = document.querySelector("#cw_key");
 var connect = document.querySelector("#connect");
 var disconnect = document.querySelector("#disconnect");
 var volume = document.querySelector("#volume");
+var remoteAddress = document.querySelector("#remote_address");
+var remoteConnect = document.querySelector("#remote_connect");
+var remoteDisconnect = document.querySelector("#remote_disconnect");
 
 start.addEventListener("click", async () => {
 	if (cwKey.checked) {
@@ -687,22 +697,22 @@ function getSettings() {
 		dit : {
 			min : (use ? minDitValue : 0.1) * unit,
 			max : (use ? maxDitValue : 2.0) * unit,
-			strictMin : 0.7 * unit,
-			strictMax : 1.3 * unit
+			strictMin : (use ? minDitValue : 0.7) * unit,
+			strictMax : (use ? maxDitValue : 1.3) * unit
 		},
 		dah : {
 			min : (use ? minDahValue : 2.0) * unit,
-			max : (use ? maxDahValue : 4.0) * unit/*,
-			strictMin : 2.7 * unit,
-			strictMax : 3.3 * unit*/
+			max : (use ? maxDahValue : 4.0) * unit,
+			strictMin : (use ? minDahValue : 2.7) * unit,
+			strictMax : (use ? maxDahValue : 3.3) * unit
 		},
 		gap : {
 			min : (use ? minGapValue : 0.5) * unit,
 			max : (use ? maxGapValue : 2.0) * unit,
 			letter : (use ? letterGapValue : 6.0) * unit,
 			line : (use ? letterGapValue * 5 : 30.0) * unit,
-			strictMin : 0.7 * unit,
-			strictMax : 1.3 * unit
+			strictMin : (use ? minGapValue : 0.7) * unit,
+			strictMax : (use ? maxGapValue : 1.3) * unit
 		}
 	};
 }
@@ -719,6 +729,7 @@ function processMorse() {
 	} else if (cwPortOpen) {
 		cwPort.getSignals().then( (result) => {
 			var ditdah = result.clearToSend;
+			//console.log("dit : " + ditdah + ", dah : " + result.dataSetReady);
 			processDitDah(ditdah, frameDuration);
 			if (cwPortOpen) setTimeout(processMorse, 1);
 		}).catch((e) => {
@@ -770,7 +781,7 @@ function processDitDah(ditdah, frameDuration) {
                 if (!isNaN(previousSnr) && previousSnr < snrThresholdMax) snrThreshold = previousSnr; // should be moved to above function
             } else if (gapAmount < conf.gap.max) { // inter-dit-dah
                 console.log("INTER-DITDAH GAP, " + gapAmount);
-                doStat(0, 0, gapAmount + parseInt(frameDuration)); // TODO : need to precise stat gap
+                doStat(0, 0, gapAmount);
 				
 				if (gapAmount < conf.gap.strictMin || gapAmount > conf.gap.strictMax)
 					markDitdahError("gap " + (gapAmount / conf.unit).toFixed(2) + " unit");
@@ -796,14 +807,14 @@ function processDitDah(ditdah, frameDuration) {
             } else if (ditdahAmount < conf.dit.max) { // dit
                 console.log("DIT, " + ditdahAmount);
                 addToLetter(true);
-                doStat(ditdahAmount + parseInt(frameDuration), 0, 0); // TODO : need to precise stat gap
+                doStat(ditdahAmount, 0, 0);
 				if (ditdahAmount < conf.dit.strictMin || ditdahAmount > conf.dit.strictMax)
 					markDitdahError("dit " + (ditdahAmount / conf.unit).toFixed(2) + " unit");
             } else { // dah
                 console.log("DAH, " + ditdahAmount);
                 addToLetter(false);
-                doStat(0, ditdahAmount + parseInt(frameDuration), 0); // TODO : need to precise stat gap
-				if (ditdahAmount < conf.dah.min || ditdahAmount > conf.dah.max)
+                doStat(0, ditdahAmount, 0);
+				if (ditdahAmount < conf.dah.strictMin || ditdahAmount > conf.dah.strictMax)
 					markDitdahError("dah " + (ditdahAmount / conf.unit).toFixed(2) + " unit");
             }
         }
@@ -835,6 +846,7 @@ var stat = {
     gap : []
 };
 var statistics = document.querySelector("#statistics");
+var SMOOTHING_FACTOR = 4 * 2; // 4ms to pitch
 function doStat(dit, dah, gap) {
     if (dit > 0) stat.dit.push(dit);
     else if (dah > 0) stat.dah.push(dah);
@@ -849,8 +861,8 @@ function doStat(dit, dah, gap) {
     if (ditLen + dahLen < 10 || gapLen < 5) return;
 
     var ditMean = parseInt(stat.dit.reduce((a, b) => a + b, 0) / ditLen) || 0;
-    var dahMean = parseInt(stat.dah.reduce((a, b) => a + b, 0) / dahLen) || 0;
-    var gapMean = parseInt(stat.gap.reduce((a, b) => a + b, 0) / gapLen) || 0;
+    var dahMean = parseInt(stat.dah.reduce((a, b) => a + SMOOTHING_FACTOR + b, 0) / dahLen) || 0;
+    var gapMean = parseInt(stat.gap.reduce((a, b) => a + SMOOTHING_FACTOR + b, 0) / gapLen) || 0;
     var mean = (ditMean + dahMean/3 + gapMean) / ((ditMean > 0 ? 1 : 0) + (dahMean > 0 ? 1 : 0) + (gapMean > 0 ? 1 : 0));
     var wpmTemp = 1200 / mean;
 
@@ -919,6 +931,7 @@ function makeCharacter(makeHangul) {
                     printDecodedChar(letter);
                     if ("undefined" != typeof HANGUL[ditdahs]) {
                         hangulLetters.push(HANGUL[ditdahs]);
+						if (forceHangul) updateDecodedChar(HANGUL[ditdahs]);
                     }
                 } else if (hangulLetters.length == 1) { // with current letter, 2 letters
                     if ("undefined" != typeof HANGUL[ditdahs]) {
@@ -929,6 +942,7 @@ function makeCharacter(makeHangul) {
                         } else {
                             hangulLetters.shift();
                             printDecodedChar(letter);
+							if (forceHangul) updateDecodedChar(HANGUL[ditdahs]);
                         }
                     } else {
                         hangulLetters.shift();
@@ -970,7 +984,12 @@ function makeCharacter(makeHangul) {
     ditdahs = "";
 }
 function printDecodedHangul(character) {
-    if (Hangul.isComplete(character)) printDecodedChar(character);
+    if (forceHangul) {
+		printDecodedChar(character);
+		return;
+	}
+	
+	if (Hangul.isComplete(character)) printDecodedChar(character);
     else {
         var s = "";
         for (var value of Hangul.disassemble(character)) s += hangulToAlphabet(value);
@@ -978,7 +997,12 @@ function printDecodedHangul(character) {
     }
 }
 function updateDecodedHangul(character) {
-    if (Hangul.isComplete(character)) updateDecodedChar(character);
+    if (forceHangul) {
+		updateDecodedChar(character);
+		return;
+	}
+	
+	if (Hangul.isComplete(character)) updateDecodedChar(character);
     else {
         var s = "";
         for (var value of Hangul.disassemble(character)) s += hangulToAlphabet(value);
@@ -1034,8 +1058,18 @@ snr.onchange = function() {
     snrThreshold = parseFloat(snr.value);
     snrThresholdMax = snrThreshold;
 }
+var forceHangul = false;
 hangul.onchange = function() {
     window.localStorage.setItem('hangul', hangul.checked);
+	setHangulConfig();
+}
+force.onchange = function() {
+    window.localStorage.setItem('force', force.checked);
+	setHangulConfig();
+}
+function setHangulConfig() {
+	force.disabled = !hangul.checked;
+	forceHangul = hangul.checked && force.checked;
 }
 professional.onchange = function() {
     window.localStorage.setItem('professional', professional.checked);
@@ -1104,7 +1138,7 @@ customProfile.onchange = function() {
 	saveDitDahGap();
 }
 noviceProfile.onchange = function(e) {
-	if (e.target.checked) setDitDahGap(0.1, 2.0, 2.0, 4.0, 0.1, 2.5, 7.0);
+	if (e.target.checked) setDitDahGap(0.3, 1.7, 2.2, 3.8, 0.3, 1.8, 9.9);
 	saveDitDahGap();
 }
 normalProfile.onchange = function(e) {
@@ -1174,12 +1208,17 @@ function initSettings() {
 	setProfessionalSettings(professional.checked);
 	if (!isAndroid && !isIOS) document.querySelector("#record_setting").style.display = "inline";
 	if (!isAndroid && !isIOS) document.querySelector("#key_setting").style.display = "inline";
+	setHangulConfig();
+}
+remoteAddress.onchange = function() {
+	window.localStorage.setItem('remoteAddress', remoteAddress.value);
 }
 window.addEventListener('DOMContentLoaded', function() {
     try {
         if (window.localStorage.getItem('speed')) speed.value = parseInt(window.localStorage.getItem('speed'));
         if (window.localStorage.getItem('snr')) snr.value = parseFloat(window.localStorage.getItem('snr'));
         if (window.localStorage.getItem('hangul')) hangul.checked = window.localStorage.getItem('hangul') == 'true';
+        if (window.localStorage.getItem('force')) force.checked = window.localStorage.getItem('force') == 'true';
         if (window.localStorage.getItem('showDebug')) showDebug.checked = window.localStorage.getItem('showDebug') == 'true';
 		if (window.localStorage.getItem('professional')) professional.checked = window.localStorage.getItem('professional') == 'true';
 		if (window.localStorage.getItem('fixedWpm')) fixedWpm.checked = window.localStorage.getItem('fixedWpm') == 'true';
@@ -1193,6 +1232,7 @@ window.addEventListener('DOMContentLoaded', function() {
 		if (window.localStorage.getItem('maxGap')) maxGap.value = parseFloat(window.localStorage.getItem('maxGap'));
 		if (window.localStorage.getItem('letterGap')) letterGap.value = parseFloat(window.localStorage.getItem('letterGap'));
         if (window.localStorage.getItem('volume')) volume.value = parseInt(window.localStorage.getItem('volume'));
+        if (window.localStorage.getItem('remoteAddress')) remoteAddress.value = window.localStorage.getItem('remoteAddress');
 		initSettings();
         
     } catch (e) {}
@@ -1272,6 +1312,58 @@ function keyStart() {
 function toggleConnectButtons(connected) {
 	connect.replaceChild(document.createTextNode(connected ? "CONNECTED!" : "CONNECT"), connect.firstChild);
 	disconnect.replaceChild(document.createTextNode(connected ? "DISCONNECT" : "DISCONNECTED!"), disconnect.firstChild);
+}
+
+var remoteConnected = false, ws = null;
+remoteConnect.addEventListener("click", async () => {
+	//if (!cwPortOpen) {
+	//	alert("CW key is not connected, connect it first.");
+	//	return;
+	//}
+	
+	ws = new WebSocket("ws://" + remoteAddress.value, ["1tze"]);
+	ws.onopen = function(e){
+		toggleRemoteConnectButtons(true);
+		remoteConnected = true;
+		console.log("Connected");
+	};
+	ws.onclose = function(e){
+		toggleRemoteConnectButtons(false);
+		remoteConnected = false;
+		console.log("Disconnected");
+	};
+	ws.onerror = function(e){
+		toggleRemoteConnectButtons(false);
+		remoteConnected = false;
+		console.log("ws error", e);
+	};
+	ws.onmessage = function(e){
+		var msg = "";
+		if(e.data instanceof ArrayBuffer){
+			msg = "BIN:";
+			var bytes = new Uint8Array(e.data);
+			for (var i = 0; i < bytes.length; i++) {
+				msg += String.fromCharCode(bytes[i]);
+			}
+		} else {
+			msg = "TXT:"+e.data;
+		}
+		console.log(msg);
+	};
+	
+}, false);
+remoteDisconnect.addEventListener("click", async () => {
+	if (!remoteConnected) return;
+	ws.send("0");
+	ws.close();
+	remoteConnected = false;
+}, false);
+function remoteSend(ditdah) {
+	if (remoteConnected) ws.send(ditdah ? "1" : "0");
+}
+function toggleRemoteConnectButtons(connected) {
+	remoteConnect.replaceChild(document.createTextNode(connected ? "CONNECTED!" : "CONNECT"), remoteConnect.firstChild);
+	remoteDisconnect.replaceChild(document.createTextNode(connected ? "DISCONNECT" : "DISCONNECTED!"), remoteDisconnect.firstChild);
 }
 
 var audioPlayInitialized = false, osc, gain = null, filter;
@@ -1547,6 +1639,7 @@ function printDitdah(ditdah, len) {
 	
 	recordTzeDitdah(ditdah);
 	audioPlay(ditdah);
+	remoteSend(ditdah);
 }
 function markDitdahError(msg) {
 	if (professional.checked == false || ditdahLog.childNodes < 2) return;
