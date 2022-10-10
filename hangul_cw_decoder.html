@@ -428,7 +428,8 @@ details > summary {
 <br />
 <span id="key_setting" class="setting_group_5">
 <label class="setting_bold"><input type="checkbox" id="cw_key" /> CW Key*</label>
-(<label><input type="checkbox" id="paddle" disabled /> Paddle</label>)&nbsp;&nbsp;
+(<label><input type="checkbox" id="paddle" disabled /> Paddle</label>
+<label><input type="checkbox" id="swap" disabled /> Swap Left/Right</label>)&nbsp;&nbsp;
 <button id="connect">CONNECT</button>
 <button id="disconnect">UNCONNECTED</button>&nbsp;&nbsp;
 <span class="setting_bold">Volume</span> <input type="number" id="volume" value="100" size="3" min="1" max="100" step="1" /> % &nbsp;&nbsp;
@@ -565,6 +566,7 @@ var letterGap = document.querySelector("#letter_gap");
 var cwPort = null, cwPortInitialized = false, cwPortOpen = false;
 var cwKey = document.querySelector("#cw_key");
 var paddle = document.querySelector("#paddle");
+var swap = document.querySelector("#swap");
 var connect = document.querySelector("#connect");
 var disconnect = document.querySelector("#disconnect");
 var volume = document.querySelector("#volume");
@@ -733,7 +735,7 @@ function processMorse() {
 		cwPort.getSignals().then( (result) => {
 			var cts = result.clearToSend;
 			var dsr = result.dataSetReady;
-			if (paddle.checked) processPaddle(cts, dsr, frameDuration);
+			if (paddle.checked) processPaddle((swap.checked ? dsr : cts), (swap.checked ? cts : dsr), frameDuration);
 			else processDitDah(cts, frameDuration);
 			
 			if (cwPortOpen) setTimeout(processMorse, 1);
@@ -1258,6 +1260,7 @@ window.addEventListener('DOMContentLoaded', function() {
 		if (window.localStorage.getItem('professional')) professional.checked = window.localStorage.getItem('professional') == 'true';
 		if (window.localStorage.getItem('fixedWpm')) fixedWpm.checked = window.localStorage.getItem('fixedWpm') == 'true';
 		if (window.localStorage.getItem('paddle')) paddle.checked = window.localStorage.getItem('paddle') == 'true';
+		if (window.localStorage.getItem('swap')) swap.checked = window.localStorage.getItem('swap') == 'true';
 		if (window.localStorage.getItem('fixedSpeed')) fixedSpeed.value = parseInt(window.localStorage.getItem('fixedSpeed'));
 		if (window.localStorage.getItem('speedProfile')) document.querySelector('input[name="speed_profile"][value="'+window.localStorage.getItem('speedProfile')+'"]').checked = true;
 		if (window.localStorage.getItem('minDit')) minDit.value = parseFloat(window.localStorage.getItem('minDit'));
@@ -1293,12 +1296,15 @@ cwKey.onchange = function(e) {
 		return;
 	}
 	
-	paddle.disabled = !cwKey.checked;
+	paddle.disabled = swap.disabled = !cwKey.checked;
 	if (cwKey.checked && paddle.checked && !fixedWpm.checked) fixedWpm.click();
 }
 paddle.onchange = function() {
 	if (paddle.checked && !fixedWpm.checked) fixedWpm.click();
 	window.localStorage.setItem('paddle', paddle.checked);
+}
+swap.onchange = function() {
+	window.localStorage.setItem('swap', swap.checked);
 }
 var volume = document.querySelector("#volume");
 volume.onchange = function() {
