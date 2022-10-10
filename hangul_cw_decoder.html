@@ -1319,13 +1319,13 @@ connect.addEventListener("click", async () => {
 		navigator.serial.requestPort().then(async (port) => {
 			cwPort = port;
 			await cwPort.open(options); // DTR should be set on the radio
-			await cwPort.setSignals({dataTerminalReady:false});
+			//await cwPort.setSignals({dataTerminalReady:false});
 			keyStart();
 		}).catch((e) => {
 		});
 	} else if (!cwPortOpen) {
 		await cwPort.open(options);
-		await cwPort.setSignals({dataTerminalReady:false});
+		//await cwPort.setSignals({dataTerminalReady:false});
 		keyStart();
 	}
 }, false);
