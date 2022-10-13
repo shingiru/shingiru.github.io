@@ -4,7 +4,7 @@
 <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="viewport" content="width=device-width" />
-<title>한글 CW 해독기</title>
+<title>Hangul CW Decoder</title>
 <script src="hangul_for_cw.js"></script>
 <style>
 body {
@@ -366,7 +366,7 @@ details > summary {
 </head>
 <body>
 <div class="page">
-<h2>한글 CW 해독기 by DS1TZE</h2>
+<h2>Hangul CW Decoder by DS1TZE</h2>
 <div class="setting">
 <span class="setting_group_2">
 <span class="setting_bold">Start </span> <input type="number" id="speed" value="20" size="2" min="5" max="50" /> WPM
@@ -736,7 +736,7 @@ function processMorse() {
 			var cts = result.clearToSend;
 			var dsr = result.dataSetReady;
 			if (paddle.checked) processPaddle((swap.checked ? dsr : cts), (swap.checked ? cts : dsr), frameDuration);
-			else processDitDah(cts, frameDuration);
+			else processDitDah((cts || dsr), frameDuration);
 			
 			if (cwPortOpen) setTimeout(processMorse, 1);
 		}).catch((e) => {
@@ -772,38 +772,38 @@ var GAP = 0, DIT = 1, DAH = 2;
 var paddleState = {
 	cur : 0,
 	next : 0,
-	ms : 0,
-	forcedGap : false
+	duration : 0, // millis
+	inForcedGap : false
 }
 function processPaddle(dit, dah, duration) {
 	var s = paddleState;
-	var unit = getSettings().unit;
+	var unit = getSettings().unit; // dit duration
 	
-	s.ms -= duration;
-	if (s.ms < 0) s.ms = 0;
+	s.duration -= duration;
+	if (s.duration < 0) s.duration = 0;
 	
-	if (s.ms == 0) {
-		if (s.forcedGap) {
-			s.forcedGap = false;
-			s.ms = (s.cur == DIT ? unit : (s.cur == DAH ? unit * 3 : 0));
+	if (s.duration == 0) {
+		if (s.inForcedGap) {
+			s.inForcedGap = false;
+			s.duration = (s.cur == DIT ? unit : (s.cur == DAH ? unit * 3 : 0));
 		} else {
 			if (s.cur == GAP) {
 				s.cur = (dit ? DIT : (dah ? DAH : GAP));
-				s.ms = (s.cur == DIT ? unit : (s.cur == DAH ? unit * 3 : 0));
+				s.duration = (s.cur == DIT ? unit : (s.cur == DAH ? unit * 3 : 0));
 			} else {
 				s.cur = s.next;
-				s.forcedGap = true;
-				s.ms = unit;
+				s.inForcedGap = true;
+				s.duration = unit;
 				s.next = GAP;
 			}
 		}
 	} else {
-		if (!s.forcedGap && s.next == GAP) {
+		if (!s.inForcedGap && s.next == GAP) {
 			s.next = (s.cur == DIT ? (dah ? DAH : GAP) : (dit ? DIT : GAP));
 		}
 	}
 	
-	processDitDah((!s.forcedGap && s.cur != GAP), duration);
+	processDitDah((!s.inForcedGap && s.cur != GAP), duration);
 }
 function processDitDah(ditdah, frameDuration) {
 	var conf = getSettings();
