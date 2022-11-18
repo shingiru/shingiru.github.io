@@ -902,6 +902,7 @@ stop.onclick = function() {
     addDitdah(false, 1); // this also manage cw port
 	
 	clearMarker();
+	cm.setOption("extraKeys", {});
     cm.focus();
     if (cursorFrom != null) {
         doc.setSelection(cursorFrom, cursorTo);
@@ -987,6 +988,7 @@ play.onclick = function() {
     cm.focus();
     if (highlightSlowly.checked) doc.setSelection(cursorTempFrom, cursorTempFrom);
     if (hideText.checked) setMarker(cursorTempFrom, cursorTempEnd);
+	cm.setOption("extraKeys", { Left: function() {rollback(true);}, Right: function() {rollback(false);} });
     cm.focus();
     
 	if (selectionOnly.checked == false) repeatId = setTimeout(highlight, DELAY_AMOUNT * 1000);
@@ -1290,8 +1292,8 @@ function makeEditor(textArea, display) {
         el.id = textArea.id;
         el.className = el.className + " " + textArea.className;
         textArea.parentNode.replaceChild(el, textArea);
-    }, {value: textArea.value, mode: "xml", lineWrapping: true, styleSelectedText: true,
-		extraKeys: { Left: function() {rollback(true);}, Right: function() {rollback(false);} }
+    }, {value: textArea.value, mode: "xml", lineWrapping: true, styleSelectedText: true
+		//, extraKeys: { Left: function() {rollback(true);}, Right: function() {rollback(false);} }
 	});
 }
 makeEditor(document.querySelector("#hangul_txt_1"));
