@@ -398,25 +398,25 @@ details > summary {
 </span>
 <span class="setting_group_2">
 <span class="setting_bold">Dit</span>&nbsp;
-<input type="number" id="min_dit" class="ditdahgap" value="0.1" size="3" min="0.1" max="1.0" step="0.1" /> ~ 
+<input type="number" id="min_dit" class="ditdahgap" value="0.3" size="3" min="0.1" max="1.0" step="0.1" /> ~ 
 <input type="number" id="max_dit" class="ditdahgap" value="2.0" size="3" min="1.1" max="3.0" step="0.1" />
 <span class="font_small">unit</span>
 </span>
 <span class="setting_group_2">
 <span class="setting_bold">Dah</span>&nbsp;
-<input type="number" id="min_dah" class="ditdahgap" value="2.0" size="3" min="1.1" max="3.0" step="0.1" /> ~ 
-<input type="number" id="max_dah" class="ditdahgap" value="4.0" size="3" min="3.1" max="5.0" step="0.1" />
+<input type="number" id="min_dah" class="ditdahgap" value="2.1" size="3" min="1.1" max="3.0" step="0.1" /> ~ 
+<input type="number" id="max_dah" class="ditdahgap" value="4.5" size="3" min="3.1" max="9.9" step="0.1" />
 <span class="font_small">unit</span>
 </span>
 <span class="setting_group_2">
 <span class="setting_bold">Gap</span>&nbsp;
-<input type="number" id="min_gap" class="ditdahgap" value="0.5" size="3" min="0.1" max="1.0" step="0.1" /> ~ 
-<input type="number" id="max_gap" class="ditdahgap" value="1.5" size="3" min="1.1" max="3.0" step="0.1" />
+<input type="number" id="min_gap" class="ditdahgap" value="0.3" size="3" min="0.1" max="1.0" step="0.1" /> ~ 
+<input type="number" id="max_gap" class="ditdahgap" value="2.5" size="3" min="1.1" max="3.0" step="0.1" />
 <span class="font_small">unit</span>
 </span>
 <span class="setting_group_2">
 <span class="setting_bold">Letter Gap</span>
-<input type="number" id="letter_gap" class="ditdahgap" value="5.0" size="3" min="3.1" max="9.9" step="0.1" />
+<input type="number" id="letter_gap" class="ditdahgap" value="7" size="3" min="5" max="30" step="1" />
 <span class="font_small">unit</span>
 </span>
 <br />
@@ -700,24 +700,24 @@ function getSettings() {
 	return {
 		unit : unit,
 		dit : {
-			min : (use ? minDitValue : 0.1) * unit,
+			min : (use ? minDitValue : 0.3) * unit,
 			max : (use ? maxDitValue : 2.0) * unit,
 			strictMin : (use ? minDitValue : 0.7) * unit,
-			strictMax : (use ? maxDitValue : 1.3) * unit
+			strictMax : (use ? maxDitValue : 1.6) * unit
 		},
 		dah : {
-			min : (use ? minDahValue : 2.0) * unit,
-			max : (use ? maxDahValue : 4.0) * unit,
-			strictMin : (use ? minDahValue : 2.7) * unit,
-			strictMax : (use ? maxDahValue : 3.3) * unit
+			min : (use ? minDahValue : 2.1) * unit,
+			max : (use ? maxDahValue : 4.5) * unit,
+			strictMin : (use ? minDahValue : 2.5) * unit,
+			strictMax : (use ? maxDahValue : 3.5) * unit
 		},
 		gap : {
-			min : (use ? minGapValue : 0.5) * unit,
-			max : (use ? maxGapValue : 2.0) * unit,
-			letter : (use ? letterGapValue : 6.0) * unit,
+			min : (use ? minGapValue : 0.3) * unit,
+			max : (use ? maxGapValue : 2.5) * unit,
+			letter : (use ? letterGapValue : 5) * unit,
 			line : (use ? letterGapValue * 5 : 30.0) * unit,
 			strictMin : (use ? minGapValue : 0.7) * unit,
-			strictMax : (use ? maxGapValue : 1.3) * unit
+			strictMax : (use ? maxGapValue : 1.5) * unit
 		}
 	};
 }
@@ -885,7 +885,9 @@ var stat = {
 };
 var statistics = document.querySelector("#statistics");
 function doStat(dit, dah, gap) {
-    if (dit > 0) stat.dit.push(dit);
+    // PARIS : 10 dits + 3 dahs + 9 gaps + 4 letter gaps + 1 word gap
+	
+	if (dit > 0) stat.dit.push(dit);
     else if (dah > 0) stat.dah.push(dah);
     else if (gap > 0) stat.gap.push(gap);
 
@@ -908,7 +910,7 @@ function doStat(dit, dah, gap) {
 
     if (statistics.childNodes.length > 0) statistics.removeChild(statistics.firstChild);
     statistics.appendChild(document.createTextNode(
-        "wpm target : " + targetWpm + ", wpm temp : " + wpmTemp.toFixed(1)
+        "wpm : " + wpmTemp
         + ", dit : " + ditMean + " ms (" + parseInt(ditMean * 100 / mean) + " %)"
         + ", dah : " + dahMean + " ms (" + parseInt(dahMean * 100 / mean / 3) + " %)"
         + ", gap : " + gapMean + " ms (" + parseInt(gapMean * 100 / mean) + " %)"
@@ -1175,15 +1177,15 @@ customProfile.onchange = function() {
 	saveDitDahGap();
 }
 noviceProfile.onchange = function(e) {
-	if (e.target.checked) setDitDahGap(0.3, 1.7, 2.2, 3.8, 0.3, 1.8, 9.9);
+	if (e.target.checked) setDitDahGap(0.3, 2.0, 2.1, 4.5, 0.3, 2.5, 9);
 	saveDitDahGap();
 }
 normalProfile.onchange = function(e) {
-	if (e.target.checked) setDitDahGap(0.5, 1.5, 2.5, 3.5, 0.5, 1.5, 6.0);
+	if (e.target.checked) setDitDahGap(0.5, 1.8, 2.3, 4.0, 0.5, 2.0, 7);
 	saveDitDahGap();
 }
 guruProfile.onchange = function(e) {
-	if (e.target.checked) setDitDahGap(0.7, 1.3, 2.7, 3.3, 0.7, 1.3, 4.7);
+	if (e.target.checked) setDitDahGap(0.7, 1.6, 2.5, 3.5, 0.7, 1.5, 5);
 	saveDitDahGap();
 }
 var minDitValue, maxDitValue, minDahValue, maxDahValue, minGapValue, maxGapValue, letterGapValue;
@@ -1232,7 +1234,7 @@ maxGap.onchange = function() {
 	saveDitDahGap();
 }
 letterGap.onchange = function() {
-	letterGapValue = parseFloat(letterGap.value);
+	letterGapValue = parseInt(letterGap.value);
 	if (letterGapValue < maxGapValue) letterGapValue = maxGapValue;
 	letterGap.value = letterGapValue;
 	customProfile.checked = true;
@@ -1269,7 +1271,7 @@ window.addEventListener('DOMContentLoaded', function() {
 		if (window.localStorage.getItem('maxDah')) maxDah.value = parseFloat(window.localStorage.getItem('maxDah'));
 		if (window.localStorage.getItem('minGap')) minGap.value = parseFloat(window.localStorage.getItem('minGap'));
 		if (window.localStorage.getItem('maxGap')) maxGap.value = parseFloat(window.localStorage.getItem('maxGap'));
-		if (window.localStorage.getItem('letterGap')) letterGap.value = parseFloat(window.localStorage.getItem('letterGap'));
+		if (window.localStorage.getItem('letterGap')) letterGap.value = parseInt(window.localStorage.getItem('letterGap'));
         if (window.localStorage.getItem('volume')) volume.value = parseInt(window.localStorage.getItem('volume'));
         if (window.localStorage.getItem('remoteAddress')) remoteAddress.value = window.localStorage.getItem('remoteAddress');
 		initSettings();
@@ -1452,14 +1454,14 @@ function audioStop() {
 	try { osc.stop(0); }
 	catch (e) {}
 }
-var SMOOTHING_DURATION = 0.004;  // 10ms is very soft, icom default 4ms;
+var SMOOTHING_DURATION = 0.02; //0.004;  // 10ms is very soft, icom default 4ms;
 function audioPlay(playOrMute) {
 	//if (gain) gain.gain.value = (playOrMute ? parseInt(volume.value) * 0.01 : 0);
 	if (gain) {
 		var v = parseInt(volume.value) * 0.01;
-		var t = ac.currentTime + 0.01; // with this deplay, we prevent pop noise
+		var t = ac.currentTime; //+ 0.01;
 		gain.gain.setValueAtTime(gain.gain.value, t);
-		gain.gain.linearRampToValueAtTime((playOrMute ? v : 0), t + SMOOTHING_DURATION);
+		gain.gain.linearRampToValueAtTime((playOrMute ? v : 0.001), t + SMOOTHING_DURATION);
 	}
 }
 
@@ -1678,6 +1680,11 @@ function printDitdah(ditdah, len) {
         span.style.width = (parseInt(lastWidth) >> 3) + "px";
         return;
     }
+	
+	recordTzeDitdah(ditdah);
+	audioPlay(ditdah);
+	remoteSend(ditdah);
+	
     var span = document.createElement("SPAN");
     span.className = (ditdah ? (professional.checked ? "ditdah_bar2" : "ditdah_bar") : "ditdah_gap");
     span.style.width = parseInt(len >> 3) + "px";
@@ -1685,10 +1692,6 @@ function printDitdah(ditdah, len) {
     if (ditdahLog.childNodes.length > 256) ditdahLog.removeChild(ditdahLog.firstChild);
     lastDitdahLog = ditdah;
     lastWidth = len;
-	
-	recordTzeDitdah(ditdah);
-	audioPlay(ditdah);
-	remoteSend(ditdah);
 }
 function markDitdahError(msg) {
 	if (professional.checked == false || ditdahLog.childNodes < 2) return;
