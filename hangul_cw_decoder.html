@@ -1461,7 +1461,7 @@ function audioPlay(playOrMute) {
 		var v = parseInt(volume.value) * 0.01;
 		var t = ac.currentTime; //+ 0.01;
 		gain.gain.setValueAtTime(gain.gain.value, t);
-		gain.gain.linearRampToValueAtTime((playOrMute ? v : 0.001), t + SMOOTHING_DURATION);
+		gain.gain.linearRampToValueAtTime((playOrMute ? v : 0), t + SMOOTHING_DURATION);
 	}
 }
 
