@@ -709,7 +709,7 @@ MorseNode.prototype.dotfac = function(t) {
 
 }
 
-var SMOOTHING_DURATION = 0.004;  // 10ms is very soft, icom default 4ms;
+var SMOOTHING_DURATION = 0.2; //0.004;  // 10ms is very soft, icom default 4ms;
 MorseNode.prototype.playChar = function(queueOnly, t, c, v) {
     for (var i = 0; i < c.length; i++) {
         switch(c[i]) {
