@@ -424,6 +424,14 @@ details > summary {
 <label class="setting_bold"><input type="checkbox" id="fixed_wpm" /> Fixed Speed</label>
 <input type="number" id="fixed_speed" value="20" size="2" min="5" max="50" /> WPM
 <span class="font_small">(1 unit = 1 dit = <span id="unit">60.0</span> ms)</span>
+&nbsp;
+<span class="setting_bold">Frequency</span> <input type="number" id="freq" value="600" step="10" size="4" min="200" max="1200" /> Hz 
+&nbsp;
+<span class="setting_bold">Volume</span> <input type="number" id="volume" value="100" size="3" min="1" max="100" step="1" /> % 
+&nbsp;
+<span class="setting_group">
+<span class="setting_bold">Effect</span> : <label><input type="checkbox" id="flute"> Flute Sound</label>&nbsp;
+</span>
 </span>
 <br />
 <span id="key_setting" class="setting_group_5">
@@ -432,9 +440,8 @@ details > summary {
 <label><input type="checkbox" id="swap" disabled /> Swap Left/Right</label>)&nbsp;&nbsp;
 <button id="connect">CONNECT</button>
 <button id="disconnect">UNCONNECTED</button>&nbsp;&nbsp;
-<span class="setting_bold">Volume</span> <input type="number" id="volume" value="100" size="3" min="1" max="100" step="1" /> % &nbsp;&nbsp;
 <span class="setting_bold"> Remote Address</span>&nbsp;&nbsp;
-<input type="text" id="remote_address" value="127.0.0.1:8080" /> &nbsp;&nbsp;
+<input type="text" id="remote_address" value="127.0.0.1:7010" />&nbsp;
 <button id="remote_connect">CONNECT</button>
 <button id="remote_disconnect">UNCONNECTED</button>&nbsp;&nbsp;
 </span>
@@ -486,7 +493,7 @@ details > summary {
 $2 미만의 USB to TTL 모듈을 이용해 키와 컴퓨터를 연결하는 장치를 만듭니다.<br />
 <span class="setting_bold">Connect CW Key to PC</span> 정도로 웹 검색을 하면, 간단하게 장치를 만드는 방법이 나옵니다.<br />
 이 프로그램에선 COM 포트의 CTS 핀을 확인하며, 인터페이스 장치는 DTR <-> 저항(4.7k) <-> CTS <-> CW Key <-> GND 의 단순한 회로로 만듭니다.<br />
-<span class="setting_bold">소리 지연 해결 : Windows 설정 -> 시스템 -> 소리 진입 후, 출력 장치의 장치 속성 -> 추가 장치 속성 -> 개선 기능 -> 모든 사운드 효과 사용 안함을 선택해주면 됩니다. 영어로 나올 경우 Enhancements -> Disable all enhancements 를 선택해주면 됩니다.</span><br />
+<span class="setting_bold">소리 지연 해결 : Windows 설정 -> 시스템 -> 소리 진입 후, 출력 장치의 장치 속성 -> 추가 장치 속성 -> 개선 기능 -> 모든 사운드 효과 사용 안함을 선택해주면 됩니다. 영어로 나올 경우 Enhancements -> Disable all enhancements 를 선택해주면 됩니다. 여전히 지연이 있다면 ASIO4ALL 드라이버를 검색해 설치하면 추가적으로 개선됩니다.</span><br />
 <br />
 <br />
 
@@ -516,6 +523,7 @@ Hangul CW Trainer - <a href="hangul_cw_trainer.html" target="_blank">http://shin
 <br />
 <h3>Change Log</h3>
 <span class="font_medium">
+2022.11.21. Flute-like sound effect added. Solution about CW keying sound delay issue added in below comment.<br />
 2022.10.10. CW Key-In : Paddle Mode added. Remote Key function added. (WebSocket Msg. "1" : KEY DOWN, "0" : KEY UP) Force hangul decoding option added.<br />
 2022.09.07. 1TZE Player added.<br />
 2022.09.05. CW Key-In Mode added.<br />
@@ -570,7 +578,9 @@ var paddle = document.querySelector("#paddle");
 var swap = document.querySelector("#swap");
 var connect = document.querySelector("#connect");
 var disconnect = document.querySelector("#disconnect");
+var freq = document.querySelector("#freq")
 var volume = document.querySelector("#volume");
+var flute = document.querySelector("#flute");
 var remoteAddress = document.querySelector("#remote_address");
 var remoteConnect = document.querySelector("#remote_connect");
 var remoteDisconnect = document.querySelector("#remote_disconnect");
@@ -1273,7 +1283,9 @@ window.addEventListener('DOMContentLoaded', function() {
 		if (window.localStorage.getItem('minGap')) minGap.value = parseFloat(window.localStorage.getItem('minGap'));
 		if (window.localStorage.getItem('maxGap')) maxGap.value = parseFloat(window.localStorage.getItem('maxGap'));
 		if (window.localStorage.getItem('letterGap')) letterGap.value = parseInt(window.localStorage.getItem('letterGap'));
+        if (window.localStorage.getItem('freq')) freq.value = parseInt(window.localStorage.getItem('freq'));
         if (window.localStorage.getItem('volume')) volume.value = parseInt(window.localStorage.getItem('volume'));
+		if (window.localStorage.getItem('flute')) flute.checked = window.localStorage.getItem('flute') == 'true';
         if (window.localStorage.getItem('remoteAddress')) remoteAddress.value = window.localStorage.getItem('remoteAddress');
 		initSettings();
         
@@ -1309,9 +1321,14 @@ paddle.onchange = function() {
 swap.onchange = function() {
 	window.localStorage.setItem('swap', swap.checked);
 }
-var volume = document.querySelector("#volume");
+freq.onchange = function() {
+    window.localStorage.setItem('freq', freq.value);
+}
 volume.onchange = function() {
     window.localStorage.setItem('volume', volume.value);
+}
+flute.onchange = function() {
+    window.localStorage.setItem('flute', flute.checked);
 }
 connect.addEventListener("click", async () => {
 	if (timerId != 0) {
@@ -1425,14 +1442,14 @@ function audioStart() {
 		
 		osc = ac.createOscillator();
 		osc.type = 'sine';
-		osc.frequency.value = 600;
+		osc.frequency.value = parseInt(freq.value);
 		
 		gain = ac.createGain();
 		gain.gain.value = 0;
 		osc.connect(gain);
 		
 		filter = ac.createBiquadFilter(); 
-		filter.frequency.value = 600;
+		filter.frequency.value = parseInt(freq.value);
 		filter.Q.value = 0;
 		gain.connect(filter);
 		filter.connect(ac.destination);
@@ -1445,7 +1462,7 @@ function audioStart() {
 		osc.disconnect(gain);
 		osc = ac.createOscillator();
 		osc.type = 'sine';
-		osc.frequency.value = 600;
+		osc.frequency.value = parseInt(freq.value);
 		osc.connect(gain);
 		osc.start(0);
     }
@@ -1455,14 +1472,12 @@ function audioStop() {
 	try { osc.stop(0); }
 	catch (e) {}
 }
-var SMOOTHING_DURATION = 0.02; //0.004;  // 10ms is very soft, icom default 4ms;
 function audioPlay(playOrMute) {
-	//if (gain) gain.gain.value = (playOrMute ? parseInt(volume.value) * 0.01 : 0);
 	if (gain) {
 		var v = parseInt(volume.value) * 0.01;
 		var t = ac.currentTime; //+ 0.01;
 		gain.gain.setValueAtTime(gain.gain.value, t);
-		gain.gain.linearRampToValueAtTime((playOrMute ? v : 0), t + SMOOTHING_DURATION);
+		gain.gain.linearRampToValueAtTime((playOrMute ? v : 0), t + (flute.checked ? 0.02 : 0.004));
 	}
 }
 

@@ -204,7 +204,7 @@ audio {
 <label><input type="radio" name="key" value="farnsworth" /> Large</label>
 <label><input type="radio" name="key" value="straightmed" /> Random - Medium</label>
 <label><input type="radio" name="key" value="straightbad" /> Random - Bad</label>
-<label><input type="radio" name="key" value="straightvbad" /> Random - Very Bad</label>&nbsp;
+<label><input type="radio" name="key" value="straightvbad" /> Random - Very Bad</label>&nbsp;&nbsp;
 </span>
 <span class="setting_group_2">
 <button id="play">PLAY</button>
@@ -223,8 +223,9 @@ audio {
 <label><input type="checkbox" id="hide_text" /> Hide text</label>&nbsp;
 </span>
 <span class="setting_group">
-<span class="setting_bold">Effect</span> : <label><input type="checkbox" id="noise"> Noise</label>
-<label><input type="checkbox" id="fading"> Fading</label>&nbsp;
+<span class="setting_bold">Effect</span> : <label><input type="checkbox" id="flute"> Flute Sound</label>
+<label><input type="checkbox" id="noise"> Noise</label>
+<label><input type="checkbox" id="fading"> Fading</label>&nbsp;&nbsp;
 </span>
 </div>
 <div id="keyer_setting">
@@ -430,6 +431,7 @@ Morse Code generator Javascript 라이브러리 - <a href="https://gist.github.c
 <br />
 <h3>Change Log</h3>
 <span class="font_medium">
+2022.11.21. Flute-like sound effect added.<br />
 2022.09.07. 1TZE file generation added. Tone pitch rises for 4 mills.<br />
 2022.09.06. MP3 file generation added. Playing position move function added : 5 sec forward/backward using arrow key.<br />
 2022.09.05. Extra Gap - random type added.<br />
@@ -709,32 +711,32 @@ MorseNode.prototype.dotfac = function(t) {
 
 }
 
-var SMOOTHING_DURATION = 0.02; //0.004;  // 10ms is very soft, icom default 4ms;
+var smoothingDuration = 0.004;  // 10ms is very soft, icom default 4ms;
 MorseNode.prototype.playChar = function(queueOnly, t, c, v) {
     for (var i = 0; i < c.length; i++) {
         switch(c[i]) {
         case '.':
             if (!queueOnly) {
-				this._gain.gain.setValueAtTime(0, t - SMOOTHING_DURATION);
+				this._gain.gain.setValueAtTime(0, t - smoothingDuration);
 				this._gain.gain.linearRampToValueAtTime(1.0 * v, t);
 			}
 			enQueue(1.0 * v, t);
             t += this._dot * this.dotfac('.');
             if (!queueOnly) {
-				this._gain.gain.setValueAtTime(1.0 * v, t - SMOOTHING_DURATION);
+				this._gain.gain.setValueAtTime(1.0 * v, t - smoothingDuration);
 				this._gain.gain.linearRampToValueAtTime(0.0, t);
 			}
 			enQueue(0.0, t)
             break;
         case '-':
             if (!queueOnly) {
-				this._gain.gain.setValueAtTime(0, t - SMOOTHING_DURATION);
+				this._gain.gain.setValueAtTime(0, t - smoothingDuration);
 				this._gain.gain.linearRampToValueAtTime(1.0 * v, t);
 			}
 			enQueue(1.0 * v, t);
             t += 3 * this._dot * this.dotfac('-');
             if (!queueOnly) {
-				this._gain.gain.setValueAtTime(1.0 * v, t - SMOOTHING_DURATION);
+				this._gain.gain.setValueAtTime(1.0 * v, t - smoothingDuration);
 				this._gain.gain.linearRampToValueAtTime(0.0, t);
 			}
 			enQueue(0.0, t)
@@ -824,6 +826,7 @@ var keyFarnsworth = document.querySelector('input[name="key"][value="farnsworth"
 var keyStraightMed = document.querySelector('input[name="key"][value="straightmed"]');
 var keyStraightBad = document.querySelector('input[name="key"][value="straightbad"]');
 var keyStraightVBad = document.querySelector('input[name="key"][value="straightvbad"]');
+var flute = document.querySelector("#flute");
 var noise = document.querySelector("#noise");
 var fading = document.querySelector("#fading");
 var selectionOnly = document.querySelector("#selection_only");
@@ -1095,7 +1098,7 @@ function makeBufferAndEncode(encoder, withNoise, noiseVolume) {
 	var angular_frequency = freq.value * 2 * Math.PI;
 	var angular_frequency_factor = angular_frequency / MP3_SAMPLE_RATE;
 	var rising_step = rising_start_volume = rising_end_volume = 0;
-	var rising_steps = MP3_SAMPLE_RATE * SMOOTHING_DURATION;
+	var rising_steps = MP3_SAMPLE_RATE * smoothingDuration;
 	
 	var queueIndex = 0, sampleIndex = 0, volume = 0.0, nextVolume = 0.0;
 	for ( ; queueIndex < queueLen; queueIndex++) {
@@ -1248,6 +1251,10 @@ keyStraightBad.onchange = function() {
 keyStraightVBad.onchange = function() {
     window.localStorage.setItem('key', document.querySelector('input[name="key"]:checked').value);
 }
+flute.onchange = function() {
+	smoothingDuration = flute.checked ? 0.02 : 0.004;
+    window.localStorage.setItem('flute', flute.checked);
+}
 noise.onchange = function() {
     window.localStorage.setItem('noise', noise.checked);
 }
@@ -1272,6 +1279,8 @@ window.addEventListener('DOMContentLoaded', function() {
         if (window.localStorage.getItem('wpm')) wpm.value = parseInt(window.localStorage.getItem('wpm'));
         if (window.localStorage.getItem('volume')) volume.value = parseInt(window.localStorage.getItem('volume'));
         vol = volume.value / 100.0;
+        if (window.localStorage.getItem('flute')) flute.checked = window.localStorage.getItem('flute') == 'true';
+		smoothingDuration = flute.checked ? 0.02 : 0.004;
         if (window.localStorage.getItem('noise')) noise.checked = window.localStorage.getItem('noise') == 'true';
         if (window.localStorage.getItem('fading')) fading.checked = window.localStorage.getItem('fading') == 'true';
         if (window.localStorage.getItem('selection_only')) selectionOnly.checked = window.localStorage.getItem('selection_only') == 'true';
