@@ -390,7 +390,7 @@ details > summary {
 <details>
 <summary>Professional Setting</summary>
 <span class="setting_group_3">
-<label class="setting_bold"><input type="checkbox" id="professional" /> DitDahGap</label>
+<label class="setting_bold"><input type="checkbox" id="professional" /> DitDahGap : </label>
 <label><input type="radio" name="speed_profile" value="custom" checked /> Custom</label>
 <label><input type="radio" name="speed_profile" value="novice" /> Novice</label>
 <label><input type="radio" name="speed_profile" value="normal" /> Normal</label>
@@ -431,6 +431,12 @@ details > summary {
 &nbsp;
 <span class="setting_group">
 <span class="setting_bold">Effect</span> : <label><input type="checkbox" id="flute"> Flute Sound</label>&nbsp;&nbsp;
+</span>
+&nbsp;
+<span class="setting_group">
+<span class="setting_bold">Interface : </span>
+<label><input type="radio" name="interface_type" value="1tze" checked /> 1TZE</label>
+<label><input type="radio" name="interface_type" value="third" /> 3rd Party</label>&nbsp;&nbsp;
 </span>
 </span>
 <br />
@@ -523,6 +529,7 @@ Hangul CW Trainer - <a href="hangul_cw_trainer.html" target="_blank">http://shin
 <br />
 <h3>Change Log</h3>
 <span class="font_medium">
+2022.12.01. Interface type option added.<br />
 2022.11.21. Flute-like sound effect added. Solution about CW keying sound delay issue added in below comment.<br />
 2022.10.10. CW Key-In : Paddle Mode added. Remote Key function added. (WebSocket Msg. "1" : KEY DOWN, "0" : KEY UP) Force hangul decoding option added.<br />
 2022.09.07. 1TZE Player added.<br />
@@ -581,6 +588,8 @@ var disconnect = document.querySelector("#disconnect");
 var freq = document.querySelector("#freq")
 var volume = document.querySelector("#volume");
 var flute = document.querySelector("#flute");
+var tzeInterface = document.querySelector('input[name="interface_type"][value="1tze"]');
+var thirdInterface = document.querySelector('input[name="interface_type"][value="third"]');
 var remoteAddress = document.querySelector("#remote_address");
 var remoteConnect = document.querySelector("#remote_connect");
 var remoteDisconnect = document.querySelector("#remote_disconnect");
@@ -1286,7 +1295,8 @@ window.addEventListener('DOMContentLoaded', function() {
         if (window.localStorage.getItem('freq')) freq.value = parseInt(window.localStorage.getItem('freq'));
         if (window.localStorage.getItem('volume')) volume.value = parseInt(window.localStorage.getItem('volume'));
 		if (window.localStorage.getItem('flute')) flute.checked = window.localStorage.getItem('flute') == 'true';
-        if (window.localStorage.getItem('remoteAddress')) remoteAddress.value = window.localStorage.getItem('remoteAddress');
+        if (window.localStorage.getItem('interfaceType')) document.querySelector('input[name="interface_type"][value="'+window.localStorage.getItem('interfaceType')+'"]').checked = true;
+		if (window.localStorage.getItem('remoteAddress')) remoteAddress.value = window.localStorage.getItem('remoteAddress');
 		initSettings();
         
     } catch (e) {}
@@ -1330,6 +1340,12 @@ volume.onchange = function() {
 flute.onchange = function() {
     window.localStorage.setItem('flute', flute.checked);
 }
+tzeInterface.onchange = function(e) {
+	window.localStorage.setItem('interfaceType', document.querySelector('input[name="interface_type"]:checked').value);
+}
+thirdInterface.onchange = function(e) {
+	window.localStorage.setItem('interfaceType', document.querySelector('input[name="interface_type"]:checked').value);
+}
 connect.addEventListener("click", async () => {
 	if (timerId != 0) {
 		alert("Mic-in mode, stop it first.");
@@ -1339,19 +1355,21 @@ connect.addEventListener("click", async () => {
 		alert("CW key is not connected, connect it first.");
 		return;
 	}
-
+	
 	var options = { baudRate: 115200, flowControl: 'hardware' };
 	if (!cwPortInitialized) {
 		navigator.serial.requestPort().then(async (port) => {
 			cwPort = port;
 			await cwPort.open(options); // DTR should be set on the radio
-			//await cwPort.setSignals({dataTerminalReady:false});
+			if (document.querySelector('input[name="interface_type"]:checked').value == '1tze')
+				await cwPort.setSignals({dataTerminalReady:false});
 			keyStart();
 		}).catch((e) => {
 		});
 	} else if (!cwPortOpen) {
 		await cwPort.open(options);
-		//await cwPort.setSignals({dataTerminalReady:false});
+		if (document.querySelector('input[name="interface_type"]:checked').value == '1tze')
+			await cwPort.setSignals({dataTerminalReady:false});
 		keyStart();
 	}
 }, false);
