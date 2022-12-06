@@ -596,7 +596,7 @@ var remoteDisconnect = document.querySelector("#remote_disconnect");
 
 start.addEventListener("click", async () => {
 	if (cwKey.checked) {
-		alert("CW key-in mode, disable it first.");
+		alert("CW key-in mode. Press DISCONNECT button and uncheck CW Key checkbox first.");
 		return;
 	}
 
@@ -1183,7 +1183,12 @@ function saveDitDahGap() {
 	window.localStorage.setItem('letterGap', letterGap.value);
 	window.localStorage.setItem('speedProfile', document.querySelector('input[name="speed_profile"]:checked').value);
 }
-fixedWpm.onchange = function() {
+fixedWpm.onchange = function(e) {
+	if (e.target.checked == false && paddle.checked) {
+		alert("In paddle mode, Fixed Speed setting is needed to set keyer's speed.");
+		fixedWpm.checked = true;
+		return;
+	}
     window.localStorage.setItem('fixedWpm', fixedWpm.checked);
 	speedFixed = fixedWpm.checked;
 	fixedSpeed.disabled = !speedFixed;
@@ -1310,13 +1315,13 @@ cwKey.onchange = function(e) {
     }
 	
 	if (timerId != 0) {
-		alert("Mic-in mode, stop it first.");
+		alert("Mic-in mode. Press STOP button first.");
 		cwKey.checked = false;
 		return;
 	}
 	
 	if (e.target.checked == false && cwPortOpen) {
-		alert("CW key connected, disconnect it first.");
+		alert("CW key connected, press DISCONNECT button first.");
 		cwKey.checked = true;
 		return;
 	}
@@ -1332,6 +1337,10 @@ swap.onchange = function() {
 	window.localStorage.setItem('swap', swap.checked);
 }
 freq.onchange = function() {
+	if (audioPlayInitialized) {
+		osc.frequency.value = parseInt(freq.value);
+		filter.frequency.value = parseInt(freq.value);
+	}
     window.localStorage.setItem('freq', freq.value);
 }
 volume.onchange = function() {
@@ -1348,11 +1357,11 @@ thirdInterface.onchange = function(e) {
 }
 connect.addEventListener("click", async () => {
 	if (timerId != 0) {
-		alert("Mic-in mode, stop it first.");
+		alert("Mic-in mode. Press STOP button first.");
 		return;
 	}
 	if (cwKey.checked == false) {
-		alert("CW key is not connected, connect it first.");
+		alert("CW key is not enabled. Check CW Key checkbox first.");
 		return;
 	}
 	
