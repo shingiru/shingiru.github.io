@@ -1184,7 +1184,7 @@ function saveDitDahGap() {
 	window.localStorage.setItem('speedProfile', document.querySelector('input[name="speed_profile"]:checked').value);
 }
 fixedWpm.onchange = function(e) {
-	if (e.target.checked == false && paddle.checked) {
+	if (e.target.checked == false && cwKey.checked && paddle.checked) {
 		alert("In paddle mode, Fixed Speed setting is needed to set keyer's speed.");
 		fixedWpm.checked = true;
 		return;
