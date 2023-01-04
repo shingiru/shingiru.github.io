@@ -202,6 +202,7 @@ audio {
 <label><input type="radio" name="key" value="computer" checked /> None</label>
 <label><input type="radio" name="key" value="elmer" /> Small</label>
 <label><input type="radio" name="key" value="farnsworth" /> Large</label>
+<label><input type="radio" name="key" value="hangul" /> Hangul Train</label>
 <label><input type="radio" name="key" value="straightmed" /> Random - Medium</label>
 <label><input type="radio" name="key" value="straightbad" /> Random - Bad</label>
 <label><input type="radio" name="key" value="straightvbad" /> Random - Very Bad</label>&nbsp;&nbsp;
@@ -431,6 +432,7 @@ Morse Code generator Javascript 라이브러리 - <a href="https://gist.github.c
 <br />
 <h3>Change Log</h3>
 <span class="font_medium">
+2023.01.04. Extra Gap - Hangul training type added.<br />
 2022.11.21. Flute-like sound effect added.<br />
 2022.09.07. 1TZE file generation added. Tone pitch rises for 4 mills.<br />
 2022.09.06. MP3 file generation added. Playing position move function added : 5 sec forward/backward using arrow key.<br />
@@ -700,6 +702,9 @@ MorseNode.prototype.dotfac = function(t) {
             if (t=='.' || t=='i') return Math.random()*1.6+0.8;
             if (t=='s') return Math.random()*0.85+0.4;
             return Math.random()*0.8+0.6;
+		case 'hangul':
+			if (t=='s') return 3;
+            if (t=='l') return 3;
         case 'farnsworth': //uses farnsworth
             if (t=='s') return 6;
             if (t=='l') return 4;
@@ -823,6 +828,7 @@ var makeTze = document.querySelector("#make_tze");
 var keyComputer = document.querySelector('input[name="key"][value="computer"]');
 var keyElmer = document.querySelector('input[name="key"][value="elmer"]');
 var keyFarnsworth = document.querySelector('input[name="key"][value="farnsworth"]');
+var keyHangul = document.querySelector('input[name="key"][value="hangul"]');
 var keyStraightMed = document.querySelector('input[name="key"][value="straightmed"]');
 var keyStraightBad = document.querySelector('input[name="key"][value="straightbad"]');
 var keyStraightVBad = document.querySelector('input[name="key"][value="straightvbad"]');
@@ -1240,6 +1246,9 @@ keyElmer.onchange = function() {
     window.localStorage.setItem('key', document.querySelector('input[name="key"]:checked').value);
 }
 keyFarnsworth.onchange = function() {
+    window.localStorage.setItem('key', document.querySelector('input[name="key"]:checked').value);
+}
+keyHangul.onchange = function() {
     window.localStorage.setItem('key', document.querySelector('input[name="key"]:checked').value);
 }
 keyStraightMed.onchange = function() {
