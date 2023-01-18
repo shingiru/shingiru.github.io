@@ -756,7 +756,7 @@ function processMorse() {
 			var cts = result.clearToSend;
 			var dsr = result.dataSetReady;
 			if (paddle.checked) processPaddle((swap.checked ? dsr : cts), (swap.checked ? cts : dsr), frameDuration);
-			else processDitDah((cts || dsr), frameDuration);
+			else processDitDah(cts, frameDuration);
 			
 			if (cwPortOpen) setTimeout(processMorse, 1);
 		}).catch((e) => {
