@@ -398,7 +398,16 @@ TU E E
 아래 랜덤 문구 생성 기능을 이용해 연습할 문구를 생성하세요.
 </textarea>
 <div id="random_txt_caption" class="hidden_sample">
+<span class="setting_group">
+    <span class="setting_bold">REPEAT</span> : 
+    <label><input type="radio" name="repeat_count" value="1" checked /> 1</label>
+    <label><input type="radio" name="repeat_count" value="2" /> 2</label>
+    <label><input type="radio" name="repeat_count" value="3" /> 3</label>
+</span>
     <button id="random_hl_callsigns">Random HL Callsigns</button>
+    <button id="random_ja_callsigns">Random JA Callsigns</button>
+    <button id="random_babv_callsigns">Random BA/BV Callsigns</button>
+    <button id="random_hljababv_callsigns">Random HL/JA/BA/BV Callsigns</button>
 </div>
 
 <br />
@@ -851,6 +860,9 @@ var repeat = document.querySelector("#repeat");
 var connect = document.querySelector("#connect");
 var disconnect = document.querySelector("#disconnect");
 var randomHLCallsigns = document.querySelector("#random_hl_callsigns");
+var randomJACallsigns = document.querySelector("#random_ja_callsigns");
+var randomBABVCallsigns = document.querySelector("#random_babv_callsigns");
+var randomHLJABABVCallsigns = document.querySelector("#random_hljababv_callsigns");
 
 connect.addEventListener("click", async () => {
 	if (isAndroid || isIOS) {
@@ -1405,21 +1417,72 @@ function generateSuffix(length) {
         result += ALPHABET[Math.floor(Math.random() * ALPHABET.length)];
     return result;
 }
-randomHLCallsigns.onclick = function() {
+function getRepeatCount() {
+    return document.querySelector('input[name="repeat_count"]:checked').value;
+}
+function generateHLCallsigns(count, repeatCount) {
     var callsigns = [];
     var PREFIX = [
         "HL1", "HL2", "HL3", "HL4", "HL5",
         "DS1", "DS2", "DS3", "DS4", "DS5",
         "6K2", "6K5", "6L5"
-            ];
-    for (var i = 0; i < NUM_RANDOM_CALLSIGNS; i++) {
+        ];
+    for (var i = 0; i < count; i++) {
         var prefix = PREFIX[Math.floor(Math.random() * PREFIX.length)];
-        var suffixLength = (prefix.startsWith("HL") ? Math.floor(Math.random() * 2) + 2 : 3);
+        var suffixLength = (prefix.startsWith("HL") ? (Math.random() > 0.2 ? 3 : 2) : 3);
         var callsign = prefix + generateSuffix(suffixLength);
-        callsigns.push(callsign);
+        for (var j = 0; j < repeatCount; j++) callsigns.push(callsign);
     }
-
-    doc.setValue(callsigns.join(" "));
+    return callsigns;
+}
+randomHLCallsigns.onclick = function() {
+    doc.setValue(generateHLCallsigns(NUM_RANDOM_CALLSIGNS, getRepeatCount()).join(" "));
+}
+function generateJACallsigns(count, repeatCount) {
+    var callsigns = [];
+    var PREFIX = [];
+    var PRE_PREFIX = ["A", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S"].map(x => "J" + x);
+    PRE_PREFIX.push("7J", "8J", "8N");
+    for (var i = 0; i < 10; i++)
+        for (var pre of PRE_PREFIX)
+            PREFIX.push(pre + i);
+    for (var i = 0; i < count; i++) {
+        var prefix = PREFIX[Math.floor(Math.random() * PREFIX.length)];
+        var callsign = prefix + generateSuffix(3);
+        for (var j = 0; j < repeatCount; j++) callsigns.push(callsign);
+    }
+    return callsigns;
+}
+randomJACallsigns.onclick = function() {
+    doc.setValue(generateJACallsigns(NUM_RANDOM_CALLSIGNS, getRepeatCount()).join(" "));
+}
+function generateBABVCallsigns(count, repeatCount) {
+    var callsigns = [];
+    var PREFIX = [];
+    var PRE_PREFIX = ["A", "D", "G", "T", "Y", "Z", "V"].map(x => "B" + x);
+    for (var i = 0; i < 10; i++)
+        for (var pre of PRE_PREFIX)
+            PREFIX.push(pre + i);
+    for (var i = 0; i < count; i++) {
+        var prefix = PREFIX[Math.floor(Math.random() * PREFIX.length)];
+        var callsign = prefix + generateSuffix(3);
+        for (var j = 0; j < repeatCount; j++) callsigns.push(callsign);
+    }
+    return callsigns;
+}
+randomBABVCallsigns.onclick = function() {
+    doc.setValue(generateBABVCallsigns(NUM_RANDOM_CALLSIGNS, getRepeatCount()).join(" "));
+}
+randomHLJABABVCallsigns.onclick = function() {
+    var callsigns = generateHLCallsigns(NUM_RANDOM_CALLSIGNS / 2, 1);
+    callsigns = callsigns.concat(generateJACallsigns(NUM_RANDOM_CALLSIGNS / 4, 1));
+    callsigns = callsigns.concat(generateBABVCallsigns(NUM_RANDOM_CALLSIGNS / 4, 1));
+    callsigns.sort(() => Math.random() - 0.5);
+    var repeated = [];
+    for (var callsign of callsigns)
+        for (var i = 0; i < getRepeatCount(); i++)
+            repeated.push(callsign);
+    doc.setValue(repeated.join(" "));
 }
 </script>
 </html>
