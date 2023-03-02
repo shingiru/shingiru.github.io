@@ -246,6 +246,7 @@ audio {
 <button id="english_qso_1">English Sample 1</button>
 <button id="english_qso_2">English Sample 2</button>
 <button id="user_qso">User Text</button>
+<button id="random_qso">Random Text</button>
 </span>
 </div>
 <div class="log_container_ditdah"><span id="ditdah"></span></div>
@@ -393,6 +394,13 @@ TU E E
 </textarea>
 <div id="user_txt_caption" class="hidden_sample"></div>
 
+<textarea id="random_txt" rows="16" class="hidden_sample">
+아래 랜덤 문구 생성 기능을 이용해 연습할 문구를 생성하세요.
+</textarea>
+<div id="random_txt_caption" class="hidden_sample">
+    <button id="random_hl_callsign">Random HL Callsign</button>
+</div>
+
 <br />
 <h3>Intro.</h3>
 안녕하세요. DS1TZE 입니다.<br /><br />
@@ -432,6 +440,7 @@ Morse Code generator Javascript 라이브러리 - <a href="https://gist.github.c
 <br />
 <h3>Change Log</h3>
 <span class="font_medium">
+2023.03.02. Random text generation added.<br />
 2023.01.04. Extra Gap - Hangul training type added.<br />
 2022.11.21. Flute-like sound effect added.<br />
 2022.09.07. 1TZE file generation added. Tone pitch rises for 4 mills.<br />
@@ -841,6 +850,7 @@ var hideText = document.querySelector("#hide_text");
 var repeat = document.querySelector("#repeat");
 var connect = document.querySelector("#connect");
 var disconnect = document.querySelector("#disconnect");
+var randomHLCallsign = document.querySelector("#random_hl_callsign");
 
 connect.addEventListener("click", async () => {
 	if (isAndroid || isIOS) {
@@ -1321,6 +1331,7 @@ makeEditor(document.querySelector("#hangul_txt_4"));
 makeEditor(document.querySelector("#english_txt_1"));
 makeEditor(document.querySelector("#english_txt_2"));
 makeEditor(document.querySelector("#user_txt"));
+makeEditor(document.querySelector("#random_txt"));
 var txt = document.querySelector("#hangul_txt_1");
 var userTxt = document.querySelector("#user_txt");
 
@@ -1331,6 +1342,7 @@ var hangulQso4 = document.querySelector("#hangul_qso_4");
 var englishQso1 = document.querySelector("#english_qso_1");
 var englishQso2 = document.querySelector("#english_qso_2");
 var userQso = document.querySelector("#user_qso");
+var randomQso = document.querySelector("#random_qso");
 
 function changeQsoSample(newTxtId) {
     var newTxt = document.querySelector("#" + newTxtId);
@@ -1381,6 +1393,33 @@ englishQso2.onclick = function() {
 userQso.onclick = function() {
     changeQsoSample("user_txt");
 }
+randomQso.onclick = function() {
+    changeQsoSample("random_txt");
+}
 
+var NUM_RANDOM_CALLSIGNS = 100;
+function generateSuffix(length) {
+    var ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    var result = ALPHABET[Math.floor(Math.random() * ALPHABET.length)];
+    for (var i = 1; i < length; i++)
+        result += ALPHABET[Math.floor(Math.random() * ALPHABET.length)];
+    return result;
+}
+randomHLCallsign.onclick = function() {
+    var callsigns = [];
+    var PREFIX = [
+        "HL1", "HL2", "HL3", "HL4", "HL5",
+        "DS1", "DS2", "DS3", "DS4", "DS5",
+        "6K2", "6K5", "6L5"
+            ];
+    for (var i = 0; i < NUM_RANDOM_CALLSIGNS; i++) {
+        var prefix = PREFIX[Math.floor(Math.random() * PREFIX.length)];
+        var suffixLength = (prefix.startsWith("HL") ? Math.floor(Math.random() * 2) + 2 : 3);
+        var callsign = prefix + generateSuffix(suffixLength);
+        callsigns.push(callsign);
+    }
+
+    doc.setValue(callsigns.join(" "));
+}
 </script>
 </html>
