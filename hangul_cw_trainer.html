@@ -405,9 +405,12 @@ TU E E
     <label><input type="radio" name="repeat_count" value="3" /> 3</label>
 </span>
     <button id="random_hl_callsigns">Random HL Callsigns</button>
-    <button id="random_ja_callsigns">Random JA Callsigns</button>
-    <button id="random_babv_callsigns">Random BA/BV Callsigns</button>
-    <button id="random_hljababv_callsigns">Random HL/JA/BA/BV Callsigns</button>
+    <button id="random_ja_callsigns">JA Callsigns</button>
+    <button id="random_babv_callsigns">BA/BV Callsigns</button>
+    <button id="random_hljababv_callsigns">HL/JA/BA/BV Callsigns</button>
+    <button id="random_qso_elements">QSO Elements</button>
+    <button id="random_qso_basic_elements">Basic Elements</button>
+    <button id="random_stamp_qso">Stamp QSO Examples</button>
 </div>
 
 <br />
@@ -863,6 +866,9 @@ var randomHLCallsigns = document.querySelector("#random_hl_callsigns");
 var randomJACallsigns = document.querySelector("#random_ja_callsigns");
 var randomBABVCallsigns = document.querySelector("#random_babv_callsigns");
 var randomHLJABABVCallsigns = document.querySelector("#random_hljababv_callsigns");
+var randomQSOElements = document.querySelector("#random_qso_elements");
+var randomQSOBasicElements = document.querySelector("#random_qso_basic_elements");
+var randomStampQSO = document.querySelector("#random_stamp_qso");
 
 connect.addEventListener("click", async () => {
 	if (isAndroid || isIOS) {
@@ -1483,6 +1489,97 @@ randomHLJABABVCallsigns.onclick = function() {
         for (var i = 0; i < getRepeatCount(); i++)
             repeated.push(callsign);
     doc.setValue(repeated.join(" "));
+}
+
+randomQSOElements.onclick = function() {
+    var QSO_ELEMENTS = [
+        "DE", "GM", "GA", "GE", "DR", "OM", "TNX", "TKS", "FER", "CALL", "<BT>",
+        "ES", "UR", "RST", "RPRT", "RPT", "IS", "599", "5NN", "579", "57N", "559", "55N",
+        "HR", "OP", "NAME", "QTH", "KDN", "HW", "HW?", "CPI", "CPY",
+        "QSO", "CU", "AGN", "CUAGN", "HOPE", "HPE", "QSL", "VIA", "BURO",
+        "DX", "GL", "GB", "GUD", "73", "88", "PSE", "CQ", "QRL", "QRZ",
+        "CFM", "SRI", "TU", "VY", "QRS", "QRP", "QRM", "QSB", "TEST",
+        "OK", "FB", "BK", "<BK>", "RR", "ALL", "RIG", "PWR", "ANT", "WX", "TEMP",
+        "K", "<KN>", "<AR>", "<VA>", "<AS>", "?"
+    ];
+    var repeated = [];
+    for (var n = 0; n < 5; n++) {
+        QSO_ELEMENTS.sort(() => Math.random() - 0.5);
+        for (var element of QSO_ELEMENTS)
+            for (var i = 0; i < getRepeatCount(); i++)
+                repeated.push(element);
+    }
+    doc.setValue(repeated.join(" "));
+}
+randomQSOBasicElements.onclick = function() {
+    QSO_BASIC_ELEMENTS = [
+        "CQ", "DE", "PSE", "K", "<AR>",
+        "GM", "GA", "GE", "DR", "OM",
+        "TNX", "FER", "CALL", "<BT>",
+        "ES", "UR", "RST", "IS", "599", "5NN",
+        "HR", "OP", "NAME",
+        "HW?",
+        "HPE", "CUAGN", "GL", "GB", "77", "TU",
+        "RR", "OK", "FB", "BK", "<BK>",
+        "<KN>", "<VA>"
+    ];
+    var repeated = [];
+    for (var n = 0; n < 10; n++) {
+        QSO_BASIC_ELEMENTS.sort(() => Math.random() - 0.5);
+        for (var element of QSO_BASIC_ELEMENTS)
+            for (var i = 0; i < getRepeatCount(); i++)
+                repeated.push(element);
+    }
+    doc.setValue(repeated.join(" "));
+}
+randomStampQSO.onclick = function() {
+    GREETINGS = [
+        "GM DR OM",
+        "GA DR OM",
+        "GE DR OM"
+    ];
+    THANKS = [
+        "TNX FER CALL",
+        "TKS FER CALL",
+        "TNX FER RPRT",
+        "TKS FER RPRT",
+    ];
+    RSTS = [
+        "UR RST 599 5NN",
+        "UR 599 5NN",
+        "UR RST IS 599 5NN",
+    ];
+    NAMES = [
+        "HR OP IS KIM KIM",
+        "HR OP CHOI CHOI",
+        "NAME IS KIM KIM",
+        "NAME NAME PARK PARK"
+    ];
+    FINALS = [
+        "CUAGN 73 TU EE",
+        "HPE CUAGN 73 <VA>",
+        "73 TU <VA> EE",
+        "HW? <BK>",
+        "<BK>",
+        "73 TU TU <VA> EE"
+    ];
+    
+    var qsos = [];
+    for (var n = 0; n < 10; n++) {
+        var greeting = GREETINGS[Math.floor(Math.random() * GREETINGS.length)];
+        var thank = THANKS[Math.floor(Math.random() * THANKS.length)];
+        var rst = RSTS[Math.floor(Math.random() * RSTS.length)];
+        var name = NAMES[Math.floor(Math.random() * NAMES.length)];
+        var final = FINALS[Math.floor(Math.random() * FINALS.length)];
+
+        var qso = (Math.random() > 0.5 ? "  " : "  ") + greeting;
+        qso += (Math.random() > 0.5 ? (Math.random() > 0.5 ? " " : " <BT> ") + thank + " " : "");
+        qso += (Math.random() > 0.5 ? " ES " : " <BT> ") + rst;
+        qso += (name.startsWith("NAME") ? " <BT> " : (Math.random() > 0.5 ? " ES " : " <BT> ")) + name;
+        qso += (final.startsWith("<BK>") ? " " : " <BT> ") + final;
+        qsos.push(qso);
+    }
+    doc.setValue(qsos.join("   \n"));
 }
 </script>
 </html>
