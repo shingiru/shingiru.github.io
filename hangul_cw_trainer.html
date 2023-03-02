@@ -398,7 +398,7 @@ TU E E
 아래 랜덤 문구 생성 기능을 이용해 연습할 문구를 생성하세요.
 </textarea>
 <div id="random_txt_caption" class="hidden_sample">
-    <button id="random_hl_callsign">Random HL Callsign</button>
+    <button id="random_hl_callsigns">Random HL Callsigns</button>
 </div>
 
 <br />
@@ -850,7 +850,7 @@ var hideText = document.querySelector("#hide_text");
 var repeat = document.querySelector("#repeat");
 var connect = document.querySelector("#connect");
 var disconnect = document.querySelector("#disconnect");
-var randomHLCallsign = document.querySelector("#random_hl_callsign");
+var randomHLCallsigns = document.querySelector("#random_hl_callsigns");
 
 connect.addEventListener("click", async () => {
 	if (isAndroid || isIOS) {
@@ -1405,7 +1405,7 @@ function generateSuffix(length) {
         result += ALPHABET[Math.floor(Math.random() * ALPHABET.length)];
     return result;
 }
-randomHLCallsign.onclick = function() {
+randomHLCallsigns.onclick = function() {
     var callsigns = [];
     var PREFIX = [
         "HL1", "HL2", "HL3", "HL4", "HL5",
