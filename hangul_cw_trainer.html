@@ -1580,7 +1580,7 @@ randomStampQSO.onclick = function() {
         var final = FINALS[Math.floor(Math.random() * FINALS.length)];
 
         var qso = (Math.random() > 0.5 ? "  " : "  ") + greeting;
-        qso += (Math.random() > 0.5 ? (Math.random() > 0.5 ? " " : " <BT> ") + thank + " " : "");
+        qso += (Math.random() > 0.5 ? (Math.random() > 0.5 ? " " : " <BT> ") + thank : "");
         qso += (Math.random() > 0.5 ? " ES " : " <BT> ") + rst;
         qso += (name.startsWith("NAME") ? " <BT> " : (Math.random() > 0.5 ? " ES " : " <BT> ")) + name;
         qso += (final.startsWith("<BK>") ? " " : " <BT> ") + final;
