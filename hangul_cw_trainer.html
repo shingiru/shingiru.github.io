@@ -1424,7 +1424,7 @@ function generateSuffix(length) {
     return result;
 }
 function getRepeatCount() {
-    return document.querySelector('input[name="repeat_count"]:checked').value;
+    return parseInt(document.querySelector('input[name="repeat_count"]:checked').value);
 }
 function generateHLCallsigns(count, repeatCount) {
     var callsigns = [];
@@ -1437,12 +1437,13 @@ function generateHLCallsigns(count, repeatCount) {
         var prefix = PREFIX[Math.floor(Math.random() * PREFIX.length)];
         var suffixLength = (prefix.startsWith("HL") ? (Math.random() > 0.2 ? 3 : 2) : 3);
         var callsign = prefix + generateSuffix(suffixLength);
-        for (var j = 0; j < repeatCount; j++) callsigns.push(callsign);
+        callsigns.push(Array(repeatCount).fill(callsign).join(" "));
     }
     return callsigns;
 }
 randomHLCallsigns.onclick = function() {
-    doc.setValue(generateHLCallsigns(NUM_RANDOM_CALLSIGNS, getRepeatCount()).join(" "));
+    stop.click();
+    doc.setValue(generateHLCallsigns(NUM_RANDOM_CALLSIGNS, getRepeatCount()).join("   "));
 }
 function generateJACallsigns(count, repeatCount) {
     var callsigns = [];
@@ -1455,12 +1456,13 @@ function generateJACallsigns(count, repeatCount) {
     for (var i = 0; i < count; i++) {
         var prefix = PREFIX[Math.floor(Math.random() * PREFIX.length)];
         var callsign = prefix + generateSuffix(3);
-        for (var j = 0; j < repeatCount; j++) callsigns.push(callsign);
+        callsigns.push(Array(repeatCount).fill(callsign).join(" "));
     }
     return callsigns;
 }
 randomJACallsigns.onclick = function() {
-    doc.setValue(generateJACallsigns(NUM_RANDOM_CALLSIGNS, getRepeatCount()).join(" "));
+    stop.click();
+    doc.setValue(generateJACallsigns(NUM_RANDOM_CALLSIGNS, getRepeatCount()).join("   "));
 }
 function generateBABVCallsigns(count, repeatCount) {
     var callsigns = [];
@@ -1472,26 +1474,28 @@ function generateBABVCallsigns(count, repeatCount) {
     for (var i = 0; i < count; i++) {
         var prefix = PREFIX[Math.floor(Math.random() * PREFIX.length)];
         var callsign = prefix + generateSuffix(3);
-        for (var j = 0; j < repeatCount; j++) callsigns.push(callsign);
+        callsigns.push(Array(repeatCount).fill(callsign).join(" "));
     }
     return callsigns;
 }
 randomBABVCallsigns.onclick = function() {
-    doc.setValue(generateBABVCallsigns(NUM_RANDOM_CALLSIGNS, getRepeatCount()).join(" "));
+    stop.click();
+    doc.setValue(generateBABVCallsigns(NUM_RANDOM_CALLSIGNS, getRepeatCount()).join("   "));
 }
 randomHLJABABVCallsigns.onclick = function() {
+    stop.click();
     var callsigns = generateHLCallsigns(NUM_RANDOM_CALLSIGNS / 2, 1);
     callsigns = callsigns.concat(generateJACallsigns(NUM_RANDOM_CALLSIGNS / 4, 1));
     callsigns = callsigns.concat(generateBABVCallsigns(NUM_RANDOM_CALLSIGNS / 4, 1));
     callsigns.sort(() => Math.random() - 0.5);
-    var repeated = [];
+    var repeated = [], repeatCount = getRepeatCount();
     for (var callsign of callsigns)
-        for (var i = 0; i < getRepeatCount(); i++)
-            repeated.push(callsign);
-    doc.setValue(repeated.join(" "));
+        repeated.push(Array(repeatCount).fill(callsign).join(" "));
+    doc.setValue(repeated.join("   "));
 }
 
 randomQSOElements.onclick = function() {
+    stop.click();
     var QSO_ELEMENTS = [
         "DE", "GM", "GA", "GE", "DR", "OM", "TNX", "TKS", "FER", "CALL", "<BT>",
         "ES", "UR", "RST", "RPRT", "RPT", "IS", "599", "5NN", "579", "57N", "559", "55N",
@@ -1502,16 +1506,16 @@ randomQSOElements.onclick = function() {
         "OK", "FB", "BK", "<BK>", "RR", "ALL", "RIG", "PWR", "ANT", "WX", "TEMP",
         "K", "<KN>", "<AR>", "<VA>", "<AS>", "?"
     ];
-    var repeated = [];
+    var repeated = [], repeatCount = getRepeatCount();
     for (var n = 0; n < 5; n++) {
         QSO_ELEMENTS.sort(() => Math.random() - 0.5);
         for (var element of QSO_ELEMENTS)
-            for (var i = 0; i < getRepeatCount(); i++)
-                repeated.push(element);
+            repeated.push(Array(repeatCount).fill(element).join(" "));
     }
-    doc.setValue(repeated.join(" "));
+    doc.setValue(repeated.join("   "));
 }
 randomQSOBasicElements.onclick = function() {
+    stop.click();
     QSO_BASIC_ELEMENTS = [
         "CQ", "DE", "PSE", "K", "<AR>",
         "GM", "GA", "GE", "DR", "OM",
@@ -1523,16 +1527,16 @@ randomQSOBasicElements.onclick = function() {
         "RR", "OK", "FB", "<BK>",
         "<KN>", "<VA>"
     ];
-    var repeated = [];
+    var repeated = [], repeatCount = getRepeatCount();
     for (var n = 0; n < 10; n++) {
         QSO_BASIC_ELEMENTS.sort(() => Math.random() - 0.5);
         for (var element of QSO_BASIC_ELEMENTS)
-            for (var i = 0; i < getRepeatCount(); i++)
-                repeated.push(element);
+            repeated.push(Array(repeatCount).fill(element).join(" "));
     }
-    doc.setValue(repeated.join(" "));
+    doc.setValue(repeated.join("   "));
 }
 randomStampQSO.onclick = function() {
+    stop.click();
     GREETINGS = [
         "GM DR OM",
         "GA DR OM",
