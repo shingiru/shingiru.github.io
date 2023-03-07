@@ -411,6 +411,8 @@ TU E E
     <button id="random_qso_elements">QSO Elements</button>
     <button id="random_qso_basic_elements">Basic Elements</button>
     <button id="random_stamp_qso">Stamp QSO Examples</button>
+    <button id="random_hl_words">Hangul Words</button>
+    <button id="random_hl_phrases">Hangul Phrases</button>
 </div>
 
 <br />
@@ -869,6 +871,8 @@ var randomHLJABABVCallsigns = document.querySelector("#random_hljababv_callsigns
 var randomQSOElements = document.querySelector("#random_qso_elements");
 var randomQSOBasicElements = document.querySelector("#random_qso_basic_elements");
 var randomStampQSO = document.querySelector("#random_stamp_qso");
+var randomHLWords = document.querySelector("#random_hl_words");
+var randomHLPhrases = document.querySelector("#random_hl_phrases");
 
 connect.addEventListener("click", async () => {
 	if (isAndroid || isIOS) {
@@ -1591,6 +1595,56 @@ randomStampQSO.onclick = function() {
         qsos.push(qso);
     }
     doc.setValue(qsos.join("   \n"));
+}
+randomHLWords.onclick = function() {
+    stop.click();
+    QSO_WORDS = [
+        "안녕하세요", "예", "신호", "599", "5NN",
+        "오엠님", "말씀", "잘", "수신", "입니다",
+        "고맙습니다", "오늘", "교신", "한글",
+        "전신", "대단히", "그동안", "저는", "여기는", "이곳은",
+        "패이딩", "운영자", "드립니다",
+        "다음", "주말", "즐거운", "저녁", "또",
+        "오랜만에", "이곳", "뵙겠습니다", "종료합니다", "이만"
+    ];
+    var repeated = [], repeatCount = getRepeatCount();
+    for (var n = 0; n < 5; n++) {
+        QSO_WORDS.sort(() => Math.random() - 0.5);
+        for (var word of QSO_WORDS)
+            repeated.push(Array(repeatCount).fill(word).join("  "));
+    }
+    doc.setValue(repeated.join("    "));
+}
+randomHLPhrases.onclick = function() {
+    stop.click();
+    var QSO_PHRASES = [
+        "안녕하세요?",
+        "반갑습니다.",
+        "예,",
+        "오엠님",
+        "말씀 잘 수신했습니다.",
+        "신호는 599 5NN 입니다.",
+        "오늘 교신 고맙습니다.",
+        "잘 지내셨나요?",
+        "그동안 잘 지내셨는지요?",
+        "저는 용인, 용인 에 사는 김대성, 김대성 입니다.",
+        "여기는 고양, 고양 이고 운영자는 최영일, 최영일 입니다.",
+        "이곳은 성남, 성남 이고 저는 최병태, 최병태 입니다.",
+        "운영자는 배태원, 배태원 이고 경기광주, 경기광주 에서 신호 드리고 있습니다.",
+        "안녕히계세요.",
+        "다음에 또 뵙겠습니다.",
+        "한글 전신 교신 대단히 감사합니다.",
+        "평안한 저녁 되세요.",
+        "오랜만에 뵙습니다.",
+        "신호 받아주셔서 고맙습니다."
+    ];
+    var repeated = [];
+    for (var n = 0; n < 3; n++) {
+        QSO_PHRASES.sort(() => Math.random() - 0.5);
+        for (var phrase of QSO_PHRASES)
+            repeated.push(phrase);
+    }
+    doc.setValue(repeated.join("    "));
 }
 </script>
 </html>
