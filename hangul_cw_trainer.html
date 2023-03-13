@@ -454,6 +454,7 @@ Morse Code generator Javascript 라이브러리 - <a href="https://gist.github.c
 <br />
 <h3>Change Log</h3>
 <span class="font_medium">
+2023.03.13. Pause and Resume function added.<br /> 
 2023.03.02. Random text generation added.<br />
 2023.01.04. Extra Gap - Hangul training type added.<br />
 2022.11.21. Flute-like sound effect added.<br />
@@ -928,11 +929,11 @@ function renewMorse() {
     morse._dot = 1.2 / parseFloat(wpm.value);
     morse._oscillator.frequency.value = parseInt(freq.value);
 }
-var stopped = true;
-var cm, doc, txtValue, cursorFrom = null, cursorTo, cursorTempFrom, cursorTempTo, cursorTempEnd, highlightStart, hightlightEnd, repeatId, marker = null;
+var stopped = true, paused = false;
+var cm, doc, txtValue, cursorFrom = null, cursorTo, cursorTempFrom, cursorTempTo, cursorTempEnd, highlightStart, hightlightEnd, repeatId = -1, marker = null;
 var DELAY_AMOUNT = 1; // seconds
 stop.onclick = function() {
-    try { clearTimeout(repeatId); }
+    try { clearTimeout(repeatId); repeatId = -1;}
     catch (e) {}
     
     renewMorse();
@@ -950,10 +951,28 @@ stop.onclick = function() {
         cm.refresh();
     }
     stopped = true;
+
+    play.replaceChild(document.createTextNode("PLAY"), play.firstChild);
+    paused = false;
 }
 var bufferSource = noiseNode = noiseGain = null;
 play.onclick = function() {
-    try { clearTimeout(repeatId); }
+    if (paused) {
+        play.replaceChild(document.createTextNode("PAUSE"), play.firstChild);
+        paused = false;
+        ac.resume();
+        return;
+    } else if (stopped == false && repeatId == -1) {
+        play.replaceChild(document.createTextNode("RESUME"), play.firstChild);
+        paused = true;
+        ac.suspend();
+        return;
+    } else {
+        play.replaceChild(document.createTextNode("PAUSE"), play.firstChild);
+        paused = false;
+    }
+    
+    try { clearTimeout(repeatId); repeatId = -1;}
     catch (e) {}
 
     renewMorse();
@@ -1630,7 +1649,7 @@ randomHLPhrases.onclick = function() {
         "저는 용인, 용인 에 사는 김대성, 김대성 입니다.",
         "여기는 고양, 고양 이고 운영자는 최영일, 최영일 입니다.",
         "이곳은 성남, 성남 이고 저는 최병태, 최병태 입니다.",
-        "운영자는 배태원, 배태원 이고 경기광주, 경기광주 에서 신호 드리고 있습니다.",
+        "이름은 배태원, 배태원 이고 경기광주, 경기광주 에서 신호 드리고 있습니다.",
         "안녕히계세요.",
         "다음에 또 뵙겠습니다.",
         "한글 전신 교신 대단히 감사합니다.",
