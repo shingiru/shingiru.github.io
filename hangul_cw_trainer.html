@@ -1051,8 +1051,8 @@ play.onclick = function() {
 	cm.setOption("extraKeys", { Left: function() {rollback(true);}, Right: function() {rollback(false);} });
     cm.focus();
     
-	if (selectionOnly.checked == false) repeatId = setTimeout(highlight, DELAY_AMOUNT * 1000);
-    else highlight();
+	/*if (selectionOnly.checked == false) repeatId = setTimeout(highlight, DELAY_AMOUNT * 1000);
+    else */highlight();
 }
 
 function delayedRepeat() {
