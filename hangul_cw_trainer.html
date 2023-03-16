@@ -1786,15 +1786,15 @@ hangulInitialConsonants.onclick = function() {
     if (isExtend()) vowels = vowels.concat(["ㅗ","ㅛ","ㅜ","ㅠ","ㅡ","ㅣ","ㅔ","ㅐ"]);
     var repeated = [];
     for (var i = 0; i < (isExtend() ? 2 : 5); i++) {
-        var syllables = [];
-        for (var c of consonants) {
-            for (var v of vowels) {
+        for (var v of vowels) {
+            var syllables = [];
+            for (var c of consonants) {
                 var letter = Hangul.a([c, v]);
                 if (isKSX1001(letter)) syllables.push(letter);
             }
+            if (isRandom()) syllables.sort(() => Math.random() - 0.5);
+            repeated = repeated.concat(syllables);
         }
-        if (isRandom()) syllables.sort(() => Math.random() - 0.5);
-        repeated = repeated.concat(syllables);
     }
     doc.setValue(repeated.join("   "));
 }
