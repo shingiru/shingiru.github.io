@@ -200,12 +200,13 @@ audio {
 <span class="setting_group">
 <span class="setting_bold">Extra Gap</span> : 
 <label><input type="radio" name="key" value="computer" checked /> None</label>
-<label><input type="radio" name="key" value="hangul" /> Hangul Training</label>
+<label><input type="radio" name="key" value="hangul_small" /> Hangul Small</label>
+<label><input type="radio" name="key" value="hangul" /> Hangul Large</label>
 <label><input type="radio" name="key" value="elmer" /> Small</label>
-<label><input type="radio" name="key" value="farnsworth" /> Large</label>
-<label><input type="radio" name="key" value="straightmed" /> Random - Medium</label>
+<label><input type="radio" name="key" value="farnsworth" /> Large</label>&nbsp;&nbsp;
+<!--label><input type="radio" name="key" value="straightmed" /> Random - Medium</label>
 <label><input type="radio" name="key" value="straightbad" /> Random - Bad</label>
-<label><input type="radio" name="key" value="straightvbad" /> Random - Very Bad</label>&nbsp;&nbsp;
+<label><input type="radio" name="key" value="straightvbad" /> Random - Very Bad</label-->
 </span>
 <span class="setting_group_2">
 <button id="play">PLAY</button>
@@ -476,6 +477,7 @@ Morse Code generator Javascript 라이브러리 - <a href="https://gist.github.c
 <br />
 <h3>Change Log</h3>
 <span class="font_medium">
+2023.04.09. Extra Gap - Hangul training type updated, random type removed.<br />
 2023.03.13. Pause and Resume function added. Korean Letter Training Feature added.<br /> 
 2023.03.02. Random text generation added.<br />
 2023.01.04. Extra Gap - Hangul training type added.<br />
@@ -748,7 +750,10 @@ MorseNode.prototype.dotfac = function(t) {
             if (t=='.' || t=='i') return Math.random()*1.6+0.8;
             if (t=='s') return Math.random()*0.85+0.4;
             return Math.random()*0.8+0.6;
-		case 'hangul':
+        case 'hangul_small':
+			if (t=='s') return 2;
+            if (t=='l') return 2;
+        case 'hangul':
 			if (t=='s') return 3;
             if (t=='l') return 3;
         case 'farnsworth': //uses farnsworth
@@ -874,10 +879,11 @@ var makeTze = document.querySelector("#make_tze");
 var keyComputer = document.querySelector('input[name="key"][value="computer"]');
 var keyElmer = document.querySelector('input[name="key"][value="elmer"]');
 var keyFarnsworth = document.querySelector('input[name="key"][value="farnsworth"]');
+var keyHangulSmall = document.querySelector('input[name="key"][value="hangul_small"]');
 var keyHangul = document.querySelector('input[name="key"][value="hangul"]');
-var keyStraightMed = document.querySelector('input[name="key"][value="straightmed"]');
-var keyStraightBad = document.querySelector('input[name="key"][value="straightbad"]');
-var keyStraightVBad = document.querySelector('input[name="key"][value="straightvbad"]');
+//var keyStraightMed = document.querySelector('input[name="key"][value="straightmed"]');
+//var keyStraightBad = document.querySelector('input[name="key"][value="straightbad"]');
+//var keyStraightVBad = document.querySelector('input[name="key"][value="straightvbad"]');
 var flute = document.querySelector("#flute");
 var noise = document.querySelector("#noise");
 var fading = document.querySelector("#fading");
@@ -1312,10 +1318,13 @@ keyElmer.onchange = function() {
 keyFarnsworth.onchange = function() {
     window.localStorage.setItem('key', document.querySelector('input[name="key"]:checked').value);
 }
+keyHangulSmall.onchange = function() {
+    window.localStorage.setItem('key', document.querySelector('input[name="key"]:checked').value);
+}
 keyHangul.onchange = function() {
     window.localStorage.setItem('key', document.querySelector('input[name="key"]:checked').value);
 }
-keyStraightMed.onchange = function() {
+/*keyStraightMed.onchange = function() {
     window.localStorage.setItem('key', document.querySelector('input[name="key"]:checked').value);
 }
 keyStraightBad.onchange = function() {
@@ -1323,7 +1332,7 @@ keyStraightBad.onchange = function() {
 }
 keyStraightVBad.onchange = function() {
     window.localStorage.setItem('key', document.querySelector('input[name="key"]:checked').value);
-}
+}*/
 flute.onchange = function() {
 	smoothingDuration = flute.checked ? 0.02 : 0.004;
     window.localStorage.setItem('flute', flute.checked);
