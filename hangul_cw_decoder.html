@@ -1136,7 +1136,7 @@ professional.onchange = function() {
 	setProfessionalSettings(professional.checked);
 }
 function enableProfessionalSettings(enable) {
-	fixedSpeed.disabled = !(fixedWpm.checked);
+	//fixedSpeed.disabled = !(fixedWpm.checked);
 	customProfile.disabled = !enable;
 	noviceProfile.disabled = !enable;
 	normalProfile.disabled = !enable;
@@ -1191,7 +1191,7 @@ fixedWpm.onchange = function(e) {
 	}
     window.localStorage.setItem('fixedWpm', fixedWpm.checked);
 	speedFixed = fixedWpm.checked;
-	fixedSpeed.disabled = !speedFixed;
+	//fixedSpeed.disabled = !speedFixed;
 	setFixedSpeedValue();
 }
 fixedSpeed.onchange = function() {
