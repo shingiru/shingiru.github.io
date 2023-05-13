@@ -845,7 +845,7 @@ MorseNode.prototype.playString = function(queueOnly, t, w, v, k, fade) {
             }
         }
         if (hangul) {
-            t += 2 * this._dot * this.dotfac('l');
+            t += (5+2) * this._dot * this.dotfac('l');
 			hasHangul = true;
         }
         if (highlightSlowly.checked) timestamp.push(t);
