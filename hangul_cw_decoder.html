@@ -767,7 +767,7 @@ function processMorse() {
 		catch (e) { return; }
 		
 		var bucketSize = 44100 / 2 / binCount;
-		var toneStart = Math.max(parseInt(500 / bucketSize), 1);
+		var toneStart = Math.max(parseInt(400 / bucketSize), 1);
 		var toneEnd = Math.min(parseInt(800 / bucketSize), binCount - 1);
 		var buffer = toneBuffer.slice(0).slice(toneStart, toneEnd);
 		var peak = Math.max(...buffer);
