@@ -479,6 +479,7 @@ Morse Code generator Javascript 라이브러리 - <a href="https://gist.github.c
 <br />
 <h3>Change Log</h3>
 <span class="font_medium">
+2023.05.13. Extra Gap - Hangul's syllable gap enlarged.<br />
 2023.04.16. Extra Gap types simplified.<br />
 2023.04.09. Extra Gap - Hangul training type updated, random type removed. Random text - Hangul words updated as 2 letter words. Hangul letter - Frequent Syllables added(using 2 letter words' syllables).<br />
 2023.03.13. Pause and Resume function added. Hangul Letter Training Feature added.<br /> 
@@ -845,7 +846,7 @@ MorseNode.prototype.playString = function(queueOnly, t, w, v, k, fade) {
             }
         }
         if (hangul) {
-            t += 2 * this._dot * this.dotfac('l');
+            t += (2+2) * this._dot * this.dotfac('l');
 			hasHangul = true;
         }
         if (highlightSlowly.checked) timestamp.push(t);
