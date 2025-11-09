@@ -1520,13 +1520,13 @@ function generateHLCallsigns(count, repeatCount) {
         var prefix = PREFIX[Math.floor(Math.random() * PREFIX.length)];
         var suffixLength = (prefix.startsWith("HL") ? (Math.random() > 0.2 ? 3 : 2) : 3);
         var callsign = prefix + generateSuffix(suffixLength);
-        callsigns.push(Array(repeatCount).fill(callsign).join(" "));
+        callsigns.push(Array(repeatCount).fill(callsign).join("   "));
     }
     return callsigns;
 }
 randomHLCallsigns.onclick = function() {
     stop.click();
-    doc.setValue(generateHLCallsigns(NUM_RANDOM_CALLSIGNS, getRepeatCount()).join("   "));
+    doc.setValue(generateHLCallsigns(NUM_RANDOM_CALLSIGNS, getRepeatCount()).join("      "));
 }
 function generateJACallsigns(count, repeatCount) {
     var callsigns = [];
@@ -1539,13 +1539,13 @@ function generateJACallsigns(count, repeatCount) {
     for (var i = 0; i < count; i++) {
         var prefix = PREFIX[Math.floor(Math.random() * PREFIX.length)];
         var callsign = prefix + generateSuffix(3);
-        callsigns.push(Array(repeatCount).fill(callsign).join(" "));
+        callsigns.push(Array(repeatCount).fill(callsign).join("   "));
     }
     return callsigns;
 }
 randomJACallsigns.onclick = function() {
     stop.click();
-    doc.setValue(generateJACallsigns(NUM_RANDOM_CALLSIGNS, getRepeatCount()).join("   "));
+    doc.setValue(generateJACallsigns(NUM_RANDOM_CALLSIGNS, getRepeatCount()).join("      "));
 }
 function generateBABVCallsigns(count, repeatCount) {
     var callsigns = [];
@@ -1557,13 +1557,13 @@ function generateBABVCallsigns(count, repeatCount) {
     for (var i = 0; i < count; i++) {
         var prefix = PREFIX[Math.floor(Math.random() * PREFIX.length)];
         var callsign = prefix + generateSuffix(3);
-        callsigns.push(Array(repeatCount).fill(callsign).join(" "));
+        callsigns.push(Array(repeatCount).fill(callsign).join("   "));
     }
     return callsigns;
 }
 randomBABVCallsigns.onclick = function() {
     stop.click();
-    doc.setValue(generateBABVCallsigns(NUM_RANDOM_CALLSIGNS, getRepeatCount()).join("   "));
+    doc.setValue(generateBABVCallsigns(NUM_RANDOM_CALLSIGNS, getRepeatCount()).join("      "));
 }
 randomHLJABABVCallsigns.onclick = function() {
     stop.click();
@@ -1573,8 +1573,8 @@ randomHLJABABVCallsigns.onclick = function() {
     callsigns.sort(() => Math.random() - 0.5);
     var repeated = [], repeatCount = getRepeatCount();
     for (var callsign of callsigns)
-        repeated.push(Array(repeatCount).fill(callsign).join(" "));
-    doc.setValue(repeated.join("   "));
+        repeated.push(Array(repeatCount).fill(callsign).join("   "));
+    doc.setValue(repeated.join("      "));
 }
 
 randomQSOElements.onclick = function() {
@@ -1593,9 +1593,9 @@ randomQSOElements.onclick = function() {
     for (var n = 0; n < 5; n++) {
         QSO_ELEMENTS.sort(() => Math.random() - 0.5);
         for (var element of QSO_ELEMENTS)
-            repeated.push(Array(repeatCount).fill(element).join(" "));
+            repeated.push(Array(repeatCount).fill(element).join("   "));
     }
-    doc.setValue(repeated.join("   "));
+    doc.setValue(repeated.join("      "));
 }
 randomQSOBasicElements.onclick = function() {
     stop.click();
@@ -1614,9 +1614,9 @@ randomQSOBasicElements.onclick = function() {
     for (var n = 0; n < 10; n++) {
         QSO_BASIC_ELEMENTS.sort(() => Math.random() - 0.5);
         for (var element of QSO_BASIC_ELEMENTS)
-            repeated.push(Array(repeatCount).fill(element).join(" "));
+            repeated.push(Array(repeatCount).fill(element).join("   "));
     }
-    doc.setValue(repeated.join("   "));
+    doc.setValue(repeated.join("      "));
 }
 randomStampQSO.onclick = function() {
     stop.click();
@@ -1673,7 +1673,7 @@ randomStampQSO.onclick = function() {
         qso += (final.startsWith("<BK>") ? " " : " <BT> ") + final;
         qsos.push(qso);
     }
-    doc.setValue(qsos.join("   \n"));
+    doc.setValue(qsos.join("      \n"));
 }
 randomHLWords.onclick = function() {
     stop.click();
@@ -1709,9 +1709,9 @@ randomHLWords.onclick = function() {
         QSO_WORDS.sort(() => Math.random() - 0.5);
         QSO_WORDS.sort(() => Math.random() - 0.5);
         for (var word of QSO_WORDS)
-            repeated.push(Array(repeatCount).fill(word).join("  "));
+            repeated.push(Array(repeatCount).fill(word).join("    "));
     }
-    doc.setValue(repeated.join("   "));
+    doc.setValue(repeated.join("      "));
 }
 randomHLPhrases.onclick = function() {
     stop.click();
@@ -1742,7 +1742,7 @@ randomHLPhrases.onclick = function() {
         for (var phrase of QSO_PHRASES)
             repeated.push(phrase);
     }
-    doc.setValue(repeated.join("    "));
+    doc.setValue(repeated.join("       "));
 }
 randomKDN.onclick = function() {
     stop.click();
@@ -1774,9 +1774,9 @@ randomKDN.onclick = function() {
         KDNs.sort(() => Math.random() - 0.5);
         KDNs.sort(() => Math.random() - 0.5);
         for (var kdn of KDNs)
-            repeated.push(Array(repeatCount).fill(kdn).join(" "));
+            repeated.push(Array(repeatCount).fill(kdn).join("   "));
     }
-    doc.setValue(repeated.join("   "));
+    doc.setValue(repeated.join("      "));
 }
 randomKDNCity.onclick = function() {
     stop.click();
@@ -1808,7 +1808,7 @@ randomKDNCity.onclick = function() {
         KDNCities.sort(() => Math.random() - 0.5);
         KDNCities.sort(() => Math.random() - 0.5);
         for (var city of KDNCities)
-            repeated.push(Array(repeatCount).fill(city).join("  "));
+            repeated.push(Array(repeatCount).fill(city).join("    "));
     }
     doc.setValue(repeated.join("   "));
 }
@@ -1841,7 +1841,7 @@ hangulInitialConsonants.onclick = function() {
             repeated = repeated.concat(syllables);
         }
     }
-    doc.setValue(repeated.join("   "));
+    doc.setValue(repeated.join("     "));
 }
 hangulSimpleVowels.onclick = function() {
     stop.click();
@@ -1861,7 +1861,7 @@ hangulSimpleVowels.onclick = function() {
         if (isRandom()) syllables.sort(() => Math.random() - 0.5);
         repeated = repeated.concat(syllables);
     }
-    doc.setValue(repeated.join("   "));
+    doc.setValue(repeated.join("     "));
 }
 hangulSimpleSyllables.onclick = function() {
     stop.click();
@@ -1881,7 +1881,7 @@ hangulSimpleSyllables.onclick = function() {
         if (isRandom()) syllables.sort(() => Math.random() - 0.5);
         repeated = repeated.concat(syllables);
     }
-    doc.setValue(repeated.join("   "));
+    doc.setValue(repeated.join("     "));
 }
 hangulFinalConsonants.onclick = function() {
     stop.click();
@@ -1903,7 +1903,7 @@ hangulFinalConsonants.onclick = function() {
         if (isRandom()) syllables.sort(() => Math.random() - 0.5);
         repeated = repeated.concat(syllables);
     }
-    doc.setValue(repeated.join("   "));
+    doc.setValue(repeated.join("     "));
 }
 hangulSyllables.onclick = function() {
     stop.click();
@@ -1927,7 +1927,7 @@ hangulSyllables.onclick = function() {
         if (isRandom()) syllables.sort(() => Math.random() - 0.5);
         repeated = repeated.concat(syllables);
     }
-    doc.setValue(repeated.join("   "));
+    doc.setValue(repeated.join("     "));
 }
 hangulComplexVowels.onclick = function() {
     stop.click();
@@ -1947,7 +1947,7 @@ hangulComplexVowels.onclick = function() {
         if (isRandom()) syllables.sort(() => Math.random() - 0.5);
         repeated = repeated.concat(syllables);
     }
-    doc.setValue(repeated.join("   "));
+    doc.setValue(repeated.join("     "));
 }
 hangulComplexSyllables.onclick = function() {
     stop.click();
@@ -1971,7 +1971,7 @@ hangulComplexSyllables.onclick = function() {
         if (isRandom()) syllables.sort(() => Math.random() - 0.5);
         repeated = repeated.concat(syllables);
     }
-    doc.setValue(repeated.join("   "));
+    doc.setValue(repeated.join("     "));
 }
 hangulRandomSyllables.onclick = function() {
     stop.click();
@@ -1996,7 +1996,7 @@ hangulRandomSyllables.onclick = function() {
         if (isRandom()) syllables.sort(() => Math.random() - 0.5);
         repeated = repeated.concat(syllables);
     }
-    doc.setValue(repeated.join("   "));
+    doc.setValue(repeated.join("     "));
 }
 hangulFrequentSyllables.onclick = function() {
     stop.click();
@@ -2006,7 +2006,7 @@ hangulFrequentSyllables.onclick = function() {
     SYLLABLES.sort(() => Math.random() - 0.5);
     SYLLABLES.sort(() => Math.random() - 0.5);
     SYLLABLES.sort(() => Math.random() - 0.5);
-    doc.setValue(SYLLABLES.join("   "));
+    doc.setValue(SYLLABLES.join("     "));
 }
 </script>
 </html>
