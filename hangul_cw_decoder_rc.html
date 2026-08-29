@@ -1,0 +1,2261 @@
+
+<!DOCType HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:fb="http://ogp.me/ns/fb#" manifest="cache.manifest">
+<head>
+<meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="viewport" content="width=device-width" />
+<title>Hangul CW Decoder</title>
+<script src="hangul_for_cw.js"></script>
+<style>
+body {
+    background-color: white ;
+    font-family: 'Helvetica', 'sans serif';
+    font-size: medium;
+	line-height: 1.5;
+    min-width: 760px;
+    margin: 0 auto;
+}
+.page {
+    width: 90%;
+	margin-left: auto;
+    margin-right: auto;
+    padding: 1em;
+}
+p {
+    padding: 4px;
+    background: white;
+    color: black;
+}
+input {
+    padding: 4px;
+    border: 1px solid lightsalmon;
+    transition: box-shadow 0.3s;
+    background: lightyellow;
+    border-radius: 5px;
+    color: black;
+    font-family: 'Helvetica', 'sans serif';
+    font-size: large;
+}
+input:focus {
+    border: 1px solid teal;
+    box-shadow: 0 0 5px 1px powderblue;
+}
+input:disabled {
+	color: #444;
+}
+button {
+    color: black;
+    font-family: 'Helvetica', 'sans serif';
+    font-size: large;
+    font-weight: bold;
+}
+#start {
+    color: blue;
+}
+#stop {
+    color: red;
+}
+#freq {
+    width: 3em;
+}
+#speed {
+    width: 3em;
+}
+#target_speed {
+    width: 2em;
+	font-weight: bold;
+    font-size: large;
+	color : green;
+}
+#snr {
+    width: 3em;
+}
+.hidden_sample {
+    display : none;
+}
+#counter {
+    float: right;
+}
+.font_medium {
+    font-size : medium;
+}
+.setting {
+    line-height: 2;
+}
+.setting_bold {
+    font-weight: 600;
+}
+.setting_group {
+    padding: 4px 0px 4px 10px;
+	margin: 4px 10px 4px 0px;
+    border: 1px dotted teal;
+    white-space: nowrap;
+}
+.setting_group_2 {
+	margin: 4px 10px 4px 0px;
+    white-space: nowrap;
+}
+.setting_group_3 {
+    padding: 4px 0px 4px 10px;
+	margin: 4px 10px 4px 0px;
+    border: 1px dotted teal;
+    white-space: nowrap;
+}
+.setting_group_4 {
+    padding: 4px 0px 4px 10px;
+	margin: 4px 10px 0px 0px;
+    white-space: nowrap;
+	display: inline-block;
+}
+.setting_group_5 {
+    padding: 0px 0px 4px 10px;
+	margin: 4px 10px 4px 0px;
+	white-space: nowrap;
+	display: inline-block;
+}
+.setting_group_6 {
+    padding: 0px 0px 4px 10px;
+	margin: 0px 10px 4px 0px;
+	display: inline-block;
+}
+.professional_setting {
+	padding: 4px 0px 4px 10px;
+    border: 1px dotted teal;
+}
+.log_container {
+    width : 100%;
+    height : 20em;
+    overflow-y: auto;
+    padding: 10px;
+    border: 1px solid lightsalmon;
+    transition: box-shadow 0.3s;
+    background: lightyellow;
+    border-radius: 5px;
+    color: black;
+    font-family: 'Helvetica', 'sans serif';
+    font-size: x-large;
+    font-weight: bold;
+    line-height: 1.5;
+    margin-top: 20px;
+}
+.log_container_ditdah {
+    width : 100%;
+    height : 16px;
+    overflow: hidden;
+    padding: 10px;
+    border: 1px solid lightsalmon;
+    transition: box-shadow 0.3s;
+    background: lightyellow;
+    border-radius: 5px;
+    color: black;
+    font-family: 'monospace';
+    font-size: small;
+    display: block;
+    white-space: nowrap;
+    margin-top: 20px;
+}
+#ditdah {
+    height:10px;
+    float: right;
+}
+.ditdah_bar {
+    background: green;
+    height: 10px;
+    display: inline-block;
+}
+.ditdah_bar2 {
+    background: blue;
+    height: 10px;
+    display: inline-block;
+}
+.ditdah_gap {
+    height: 10px;
+    display: inline-block;
+}
+.ditdah_bar2_err {
+    background: red;
+    height: 10px;
+    display: inline-block;
+}
+.ditdah_gap_err {
+    background: lightgreen;
+	height: 10px;
+    display: inline-block;
+}
+.font_x-large {
+    font-size : x-large;
+}
+.font_small {
+	font-size : small;
+}
+.prevent_wrap {
+    white-space: nowrap;
+}
+::selection {
+    background-color: rgba(255, 0, 0, 0.5);
+}
+.strikethrough {
+    text-decoration: line-through;
+}
+.debug_container {
+    margin-top: 10px;
+    padding : 4px;
+    color : black;
+    font-weight: bold;
+}
+#stat_container {
+    display: none;
+}
+#statistics {
+    font-weight: normal;
+    margin-left: 10px;
+}
+#record_setting {
+    display: none;
+}
+#log {
+    font-weight: normal;
+}
+.font_normal {
+	font-weight: normal;
+}
+.ditdahgap {
+	width: 3em;
+}
+details {
+	width : 100%;
+    border: 1px dotted teal;
+	padding: 4px 0px 4px 10px;
+	margin-top: 10px;
+}
+details > summary {
+	width : 100%;
+    padding: 4px 0px 4px 10px;
+	cursor:pointer;
+}
+#key_setting {
+    display: none;
+}
+#connect {
+    color: blue;
+}
+#disconnect {
+    color: red;
+}
+.bullet {
+	margin: 0px 3px;
+	font-size: x-large;
+}
+.record_stop {
+    color: black;
+}
+.recording {
+    color: red;
+}
+#tze_display {
+    font-weight: bold;
+    font-size: large;
+	color : green;
+}
+</style>
+<style>
+[data-tooltip] {
+    display: inline-block;
+    position: relative;
+    cursor: help;
+    padding: 4px;
+}
+/* Tooltip styling */
+[data-tooltip]:before {
+    content: attr(data-tooltip);
+    display: none;
+    position: absolute;
+    background: #000;
+    color: #fff;
+    padding: 4px 8px;
+    font-size: 14px;
+    line-height: 1.4;
+    min-width: 100px;
+    text-align: center;
+    border-radius: 4px;
+}
+/* Dynamic horizontal centering */
+[data-tooltip-position="top"]:before,
+[data-tooltip-position="bottom"]:before {
+    left: 50%;
+    -ms-transform: translateX(-50%);
+    -moz-transform: translateX(-50%);
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+}
+/* Dynamic vertical centering */
+[data-tooltip-position="right"]:before,
+[data-tooltip-position="left"]:before {
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    -moz-transform: translateY(-50%);
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+[data-tooltip-position="top"]:before {
+    bottom: 100%;
+    margin-bottom: 6px;
+}
+[data-tooltip-position="right"]:before {
+    left: 100%;
+    margin-left: 6px;
+}
+[data-tooltip-position="bottom"]:before {
+    top: 100%;
+    margin-top: 6px;
+}
+[data-tooltip-position="left"]:before {
+    right: 100%;
+    margin-right: 6px;
+}
+
+/* Tooltip arrow styling/placement */
+[data-tooltip]:after {
+    content: '';
+    display: none;
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-color: transparent;
+    border-style: solid;
+}
+/* Dynamic horizontal centering for the tooltip */
+[data-tooltip-position="top"]:after,
+[data-tooltip-position="bottom"]:after {
+    left: 50%;
+    margin-left: -6px;
+}
+/* Dynamic vertical centering for the tooltip */
+[data-tooltip-position="right"]:after,
+[data-tooltip-position="left"]:after {
+    top: 50%;
+    margin-top: -6px;
+}
+[data-tooltip-position="top"]:after {
+    bottom: 100%;
+    border-width: 6px 6px 0;
+    border-top-color: #000;
+}
+[data-tooltip-position="right"]:after {
+    left: 100%;
+    border-width: 6px 6px 6px 0;
+    border-right-color: #000;
+}
+[data-tooltip-position="bottom"]:after {
+    top: 100%;
+    border-width: 0 6px 6px;
+    border-bottom-color: #000;
+}
+[data-tooltip-position="left"]:after {
+    right: 100%;
+    border-width: 6px 0 6px 6px;
+    border-left-color: #000;
+}
+/* Show the tooltip when hovering */
+[data-tooltip]:hover:before,
+[data-tooltip]:hover:after {
+    display: block;
+    z-index: 50;
+}
+</style>
+</head>
+<body>
+<div class="page">
+<h2>Hangul CW Decoder by DS1TZE</h2>
+<div class="setting">
+<span class="setting_group_2">
+<span class="setting_bold">Start </span> <input type="number" id="speed" value="20" size="2" min="5" max="50" /> WPM
+&nbsp;
+<span class="setting_bold">Current </span>&nbsp;<span id="target_speed">20</span> WPM
+</span>
+<span class="setting_group_3">
+<label><input type="checkbox" id="hangul" /> Hangul</label>
+(<label><input type="checkbox" id="force" /> Force</label>)&nbsp;&nbsp;
+</span>
+<span class="setting_group_2">
+<button id="start">START</button>
+<button id="stop">STOP</button>
+<button id="clear">CLEAR</button>
+</span>
+<span id="record_setting" class="setting_group">
+<label><input type="checkbox" id="record" /> Record screen</label>&nbsp;
+<a id="download_link"></a>&nbsp;
+</span>
+</div>
+<details>
+<summary>Professional Setting</summary>
+<span class="setting_group_3">
+<label class="setting_bold"><input type="checkbox" id="professional" /> DitDahGap : </label>
+<label><input type="radio" name="speed_profile" value="custom" checked /> Custom</label>
+<label><input type="radio" name="speed_profile" value="novice" /> Novice</label>
+<label><input type="radio" name="speed_profile" value="normal" /> Normal</label>
+<label><input type="radio" name="speed_profile" value="guru" /> Guru</label>&nbsp;
+</span>
+<span class="setting_group_2">
+<span class="setting_bold">Dit</span>&nbsp;
+<input type="number" id="min_dit" class="ditdahgap" value="0.3" size="3" min="0.1" max="1.0" step="0.1" /> ~ 
+<input type="number" id="max_dit" class="ditdahgap" value="2.0" size="3" min="1.1" max="3.0" step="0.1" />
+<span class="font_small">unit</span>
+</span>
+<span class="setting_group_2">
+<span class="setting_bold">Dah</span>&nbsp;
+<input type="number" id="min_dah" class="ditdahgap" value="2.1" size="3" min="1.1" max="3.0" step="0.1" /> ~ 
+<input type="number" id="max_dah" class="ditdahgap" value="4.5" size="3" min="3.1" max="9.9" step="0.1" />
+<span class="font_small">unit</span>
+</span>
+<span class="setting_group_2">
+<span class="setting_bold">Gap</span>&nbsp;
+<input type="number" id="min_gap" class="ditdahgap" value="0.3" size="3" min="0.1" max="1.0" step="0.1" /> ~ 
+<input type="number" id="max_gap" class="ditdahgap" value="2.0" size="3" min="1.1" max="3.0" step="0.1" />
+<span class="font_small">unit</span>
+</span>
+<span class="setting_group_2">
+<span class="setting_bold">Letter Gap</span>
+<input type="number" id="letter_gap" class="ditdahgap" value="7" size="3" min="5" max="30" step="1" />
+<span class="font_small">unit</span>
+</span>
+<br />
+<span class="setting_group_4">
+<label class="setting_bold"><input type="checkbox" id="fixed_wpm" /> Fixed Speed</label>
+<input type="number" id="fixed_speed" value="20" size="2" min="5" max="50" /> WPM
+<span class="font_small">(1 unit = 1 dit = <span id="unit">60.0</span> ms)</span>
+&nbsp;
+<span class="setting_bold">Frequency</span> <input type="number" id="freq" value="600" step="10" size="4" min="200" max="1200" /> Hz 
+&nbsp;
+<span class="setting_bold">Volume</span> <input type="number" id="volume" value="100" size="3" min="1" max="100" step="1" /> % 
+&nbsp;
+<span class="setting_group">
+<span class="setting_bold">Effect</span> : <label><input type="checkbox" id="flute"> Flute Sound</label>&nbsp;&nbsp;
+</span>
+&nbsp;
+<span class="setting_group">
+<span class="setting_bold">Interface : </span>
+<label><input type="radio" name="interface_type" value="1tze" checked /> 1TZE</label>
+<label><input type="radio" name="interface_type" value="third" /> 3rd Party</label>&nbsp;&nbsp;
+</span>
+</span>
+<br />
+<span id="key_setting" class="setting_group_5">
+<label class="setting_bold"><input type="checkbox" id="cw_key" /> CW Key*</label>
+(<label><input type="checkbox" id="paddle" disabled /> Paddle</label>
+<label><input type="checkbox" id="swap" disabled /> Swap Left/Right</label>)&nbsp;&nbsp;
+<button id="connect">CONNECT</button>
+<button id="disconnect">UNCONNECTED</button>&nbsp;&nbsp;
+<span class="setting_bold"> Remote Address</span>&nbsp;&nbsp;
+<input type="text" id="remote_address" value="127.0.0.1:7010" />&nbsp;
+<button id="remote_connect">CONNECT</button>
+<button id="remote_disconnect">UNCONNECTED</button>&nbsp;&nbsp;
+</span>
+<br />
+<span class="setting_group_6">
+<span class="bullet">■</span>
+<span class="setting_bold">1TZE* Player</span>&nbsp;
+<button id="tze_record" class="record_stop">RECORD</button>
+<button id="tze_load">LOAD</button>
+<button id="tze_load_sample">LOAD SAMPLE</button>
+<button id="tze_play">PLAY</button>
+<button id="tze_rew">REW</button>
+<button id="tze_ff">FF</button>
+<button id="tze_stop">STOP</button>
+&nbsp;&nbsp;<span id="tze_display"> </span>&nbsp;&nbsp;
+<input type="file" id="hidden_file" accept=".tze" style="display:none">
+<a id="file_link"></a>
+</span>
+</details>
+<div class="log_container_ditdah"><span id="ditdah"></span></div>
+<div class="log_container"><span id="decoded_log"></span></div>
+<div>Recommended Web-brwoser : Android - Only FireFox. iOS/Mac/PC - Chrome, Opera.</div>
+<div class="debug_container">
+<label class="setting_bold"><input type="checkbox" id="show_debug" /> DEBUG.</label>
+<span id="stat_container">
+<span class="setting_bold">SNR</span> : <input type="number" id="snr" value="30" size="2" step="1" />
+<span id="statistics"></span><span id="serial_statistics"></span><br />
+<span id="log"></span>
+</span>
+</div>
+
+<br />
+<h3>Intro.</h3>
+안녕하세요. DS1TZE 입니다.<br /><br />
+위 프로그램은 한글 CW 해독기 겸 타건 연습기입니다.<br />
+핸드폰이나 노트북 컴퓨터 등 마이크가 있는 장비의 웹브라우저를 통해 이용하면 됩니다.<br />
+리그 앞에 휴대폰이나 컴퓨터 마이크를 둔 후 Start 버튼을 누르기만 하면 대부분 됩니다. Speed는 여유 오차가 넉넉하며 어느 정도까지는 자동으로 파악합니다.<br />
+신호 막대가 보이지 않는다면 마이크와 스피커의 간격을 조금 좁히고 리그의 볼륨을 조절합니다.<br />
+<a href="hangul_cw_trainer.html" target="_blank">[한글 CW 청취 연습기]</a> 혹은 PC용 SDR, 유투브 영상 등의 신호를 해독해보려면, 컴퓨터의 녹음(소리 입력) 장치를 Stereo Mix* 로 선택하고 장치 속성에서 볼륨**을 올리면 됩니다.<br />
+휴대폰에서는, 파이어폭스나 크롬 브라우저를 이용해, 탭 하나엔 해독기를 열어두고 다른 탭엔 청취 연습기를 열어서 소리는 내면서 해독을 시도해봐도 잘 됩니다.<br />
+많은 활용 바라며, 기능 제안은 온에어에서 말씀해주시기 바랍니다.<br />
+※ 녹음 장치 선택 : Windows 설정 -> 시스템 -> 소리. 만약 입력장치 목록에 Stereo Mix 없으면, [사운드 제어판] -> [녹음]탭에서 Stereo Mix 활성화 후 입력 장치 선택.<br />
+※※ 녹음 볼륨 조절 : 이 프로그램을 포함해, 녹음 기능을 사용하는 프로그램이 마이크 Gain을 자동 조절 옵션을 사용하는 경우가 있습니다. 그로 인해 볼륨이 스스로 낮아져있는 경우가 있으니 확인해서 높여줘야 합니다.<br />
+<br />
+<br />
+
+<h3>※ CW Key-In Support.</h3>
+최신 웹브라우저에선 COM 포트를 이용한 통신이 가능하며, 이를 이용해 컴퓨터와 연결된 CW Key 신호를 받을 수 있습니다. (모바일에선 안됨)<br />
+$2 미만의 USB to TTL 모듈을 이용해 키와 컴퓨터를 연결하는 장치를 만듭니다.<br />
+<span class="setting_bold">Connect CW Key to PC</span> 정도로 웹 검색을 하면, 간단하게 장치를 만드는 방법이 나옵니다.<br />
+이 프로그램에선 COM 포트의 CTS 핀을 확인하며, 인터페이스 장치는 DTR <-> 저항(4.7k) <-> CTS <-> CW Key <-> GND 의 단순한 회로로 만듭니다.<br /><br />
+<span class="setting_bold">소리 지연 해결 : Windows 설정 -> 시스템 -> 소리 진입 후, 출력 장치의 장치 속성 -> 추가 장치 속성 -> 개선 기능 -> 모든 사운드 효과 사용 안함을 선택해주면 됩니다. 영어로 나올 경우 Enhancements -> Disable all enhancements 를 선택해주면 됩니다. 여전히 지연이 있다면 ASIO4ALL 드라이버를 검색해 설치하면 추가적으로 개선됩니다.</span><br />
+<br />
+<br />
+
+<h3>※ 1TZE Player. <span class="font_medium font_normal">( pronounce as /wantz/ )</span></h3>
+키 연습이나 교신 등 디코딩 과정을 기록하여 파일로 저장하고 재생할 수 있는 플레이어입니다.<br />
+파일 안에는 속도와 한글 디코딩 여부 등이 추가로 기록되며, 생성되는 파일의 용량은 무척 작습니다.<br />
+저장한 파일을 재생할 때는 점/선/갭 옵션을 다양하게 조정해가며 막대바에 나타나는 이상부호를 분석하면 훈련에 도움이 됩니다.<br />
+또, 타인의 학습을 돕거나 타인과 함께 학습할 때도 파일을 만들어 공유하면 좋습니다.<br />
+<a href="hangul_cw_trainer.html" target="_blank">[한글 CW 청취 연습기]</a>에서는 문장을 입력해 MP3 파일과 1TZE 파일을 만들 수 있어 활용하기 좋습니다.<br />
+<br />
+<br />
+
+<h3>Links</h3>
+Hangul CW Trainer - <a href="hangul_cw_trainer.html" target="_blank">http://shingiru.github.io/hangul_cw_trainer.html</a><br />
+위 라이브러리가 사용하는 기술인 Web Audio API - <a href="https://webaudio.github.io/web-audio-api/" target="_blank">https://webaudio.github.io/web-audio-api/<a/><br />
+한글 자모 합성 Javascipt 라이브러리* - <a href="https://github.com/e-/Hangul.js/" target="_blank">https://github.com/e-/Hangul.js/</a><br />
+※ 한글 CW는 26개 부호만 사용하기 때문에, 라이브러리를 많이 수정해 "ㅖ"와 "ㅒ"는 각각 "ㅕ" + "ㅣ" 및 "ㅑ" + "ㅣ" 를 합성하도록 하고, 같은 홑낱자로 연속 출현도 경우에 따라 겹낱자도 합성하도록 했습니다.<br />
+<br />
+<br />
+
+<h3>DE DS1TZE - <a href="https://www.qrz.com/db/DS1TZE" target="_blank" class="font_medium">https://www.qrz.com/db/DS1TZE</a>
+<span id="counter">
+	<a href="https://hits.seeyoufarm.com"><img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fshingiru.github.io%2Fhangul_cw_decoder.html&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false"/></a>
+</span>
+</h3>
+
+<br />
+<h3>Change Log</h3>
+<span class="font_medium">
+2026.08.29. To improve timing accuracy, removed setTimeout approach in CTS polling and changed other processing logics.<br />
+2022.12.01. Interface type option added.<br />
+2022.11.21. Flute-like sound effect added. Solution about CW keying sound delay issue added in below comment.<br />
+2022.10.10. CW Key-In : Paddle Mode added. Remote Key function added. (WebSocket Msg. "1" : KEY DOWN, "0" : KEY UP) Force hangul decoding option added.<br />
+2022.09.07. 1TZE Player added.<br />
+2022.09.05. CW Key-In Mode added.<br />
+2022.09.01. Professional Setting added.<br />
+2022.08.31. WPM semi-auto detect.<br />
+2022.08.30. AGC Logic Changed.<br />
+2022.08.29. "Allow extra gap" added. Korean callsigns prevented from decoding.<br />
+2022.08.26. Screen recording added.<br />
+2022.08.22. Android Support.<br />
+2022.08.21. Tone frequency and Mic gain setting removed, set automatically.<br />
+2022.08.20. DitDah Bar and Setting Guide added.<br />
+2022.08.19. First version of Hangul CW Decoder.<br />
+</span>
+</div>
+</body>
+<script type="text/javascript">
+var audioInitialized = videoInitialized = false, ac, analyser, binCount;
+
+var ua = navigator.userAgent.toLowerCase();
+var isIOS = (ua.indexOf("iphone") > -1 || ua.indexOf("ipad") > -1 || ua.indexOf("ipod") > -1);
+var isAndroid = ua.indexOf("android") > -1;
+var isMobile = (isIOS || isAndroid);
+var speed = document.querySelector("#speed");
+var targetSpeed = document.querySelector("#target_speed");
+var hangul = document.querySelector("#hangul");
+var force = document.querySelector("#force");
+var start = document.querySelector("#start");
+var stop = document.querySelector("#stop");
+var clear = document.querySelector("#clear");
+var record = document.querySelector("#record");
+var snr = document.querySelector("#snr");
+
+var professional = document.querySelector("#professional");
+var fixedWpm = document.querySelector("#fixed_wpm");
+var fixedSpeed = document.querySelector("#fixed_speed");
+var unit = document.querySelector("#unit");
+var customProfile = document.querySelector('input[name="speed_profile"][value="custom"]');
+var noviceProfile = document.querySelector('input[name="speed_profile"][value="novice"]');
+var normalProfile = document.querySelector('input[name="speed_profile"][value="normal"]');
+var guruProfile = document.querySelector('input[name="speed_profile"][value="guru"]');
+var minDit = document.querySelector("#min_dit");
+var maxDit = document.querySelector("#max_dit");
+var minDah = document.querySelector("#min_dah");
+var maxDah = document.querySelector("#max_dah");
+var minGap = document.querySelector("#min_gap");
+var maxGap = document.querySelector("#max_gap");
+var letterGap = document.querySelector("#letter_gap");
+
+var cwPort = null, cwPortInitialized = false, cwPortOpen = false;
+var cwKey = document.querySelector("#cw_key");
+var paddle = document.querySelector("#paddle");
+var swap = document.querySelector("#swap");
+var connect = document.querySelector("#connect");
+var disconnect = document.querySelector("#disconnect");
+var freq = document.querySelector("#freq")
+var volume = document.querySelector("#volume");
+var flute = document.querySelector("#flute");
+var tzeInterface = document.querySelector('input[name="interface_type"][value="1tze"]');
+var thirdInterface = document.querySelector('input[name="interface_type"][value="third"]');
+var remoteAddress = document.querySelector("#remote_address");
+var remoteConnect = document.querySelector("#remote_connect");
+var remoteDisconnect = document.querySelector("#remote_disconnect");
+
+start.addEventListener("click", async () => {
+	if (cwKey.checked) {
+		alert("CW key-in mode. Press DISCONNECT button and uncheck CW Key checkbox first.");
+		return;
+	}
+
+    stop.click();
+
+    recorderStart();
+
+    if (!audioInitialized) {
+        ac = (ac || new AudioContext({latencyHint:"interactive"}));
+
+        var constraints = {
+            audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: (isMobile ? true : true) },
+            video: false
+        };
+        navigator.mediaDevices.getUserMedia(constraints).then(async (stream) => {
+            var input = ac.createMediaStreamSource(stream);
+            var gain = ac.createGain();
+            gain.gain.value = 1.0;
+            input.connect(gain);
+
+            analyser = ac.createAnalyser();
+            analyser.minDecibels = -47; // default: -100, pc 1% vol -> -47
+            analyser.maxDecibels = -1; // default: -30, this value should be somehow high in mobile
+            analyser.smoothingTimeConstant = 0;
+            binCount = analyser.frequencyBinCount;
+            gain.connect(analyser);
+            //analyser.connect(ac.destination); // important! this should be commented out
+
+            initProcessMorse();
+            audioInitialized = true;
+        });
+    } else {
+        if (ac.state != "running") ac.resume();
+        initProcessMorse();
+    }
+}, false);
+
+var mediaRecorder = null;
+function createRecorder(stream) {
+    let chunks = [];
+    const mr = new MediaRecorder(stream, {mimeType: 'video/webm;codecs=h264'});
+
+    mr.ondataavailable = function(e) {
+        if (e.data.size > 0)
+            chunks.push(e.data);
+    };
+    mr.onstop = function() {
+        saveFile(chunks);
+        chunks = [];
+    }
+    mr.onstart = function() {
+        var anchor = document.querySelector("#download_link");
+        if (anchor.childNodes.length > 0) anchor.removeChild(anchor.firstChild);
+    }
+    return mr;
+}
+function saveFile(chunks) {
+    const blob = new Blob(chunks);
+    let link = document.createElement("A");
+    link.href = URL.createObjectURL(blob);
+    link.appendChild(document.createTextNode("[DOWNLOAD]"));
+    const filename = (new Date()).toISOString().replace(/[\-\:T]/ig, '').substring(0, 14);
+    link.download = filename + ".webm";
+
+    var anchor = document.querySelector("#download_link");
+    link.id = anchor.id;
+    anchor.parentNode.replaceChild(link, anchor);
+    // link.click();
+    // URL.revokeOjectURL(blob); // clear from memory
+}
+function recorderStart() {
+	if (record.checked) {
+        if (!videoInitialized) {
+            var constraints = {
+                audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: false },
+                video: { mediaSource: "screen" }
+            };
+            navigator.mediaDevices.getDisplayMedia(constraints).then(async (stream) => {
+                mediaRecorder = createRecorder(stream);
+                mediaRecorder.start(200);
+                videoInitialized = true;
+            });
+        } else {
+            try { mediaRecorder.start(200); }
+			catch (e) {}
+        }
+    }
+}
+
+
+var toneBuffer = null, lastProcessedAt = 0, timerId = 0;
+var lastDitdah = false, ditdahAmount = 0, gapAmount = 0, maxGapReached = false;
+var snrThreshold, previousSnr = NaN, previousPeak = 0, SNR_THRESHOLD_INIT = 0.1, snrThresholdMax = 50.0;
+var targetWpm = previousWpm = 20;
+function setTargetWpm(value) {
+	previousWpm = targetWpm;
+	targetWpm = value;
+	targetSpeed.replaceChild(document.createTextNode(targetWpm), targetSpeed.firstChild);
+}
+function initProcessMorse() {
+    resetStat();
+
+    snrThreshold = SNR_THRESHOLD_INIT; //parseFloat(snr.value);
+    previousSnr = NaN;
+    previousPeak = 0;
+    gapAmount = 0;
+    maxGapReached = true;
+    setTargetWpm(speedFixed ? fixedSpeedValue : parseInt(speed.value));
+
+    makeCharacter(hangul.checked);
+    flushCharacter(hangul.checked);
+    printDecodedLine(" ");
+
+    lastProcessedAt = 0;
+    if (cwPortOpen) startSerialSignalLoop();
+    else processMorse();
+}
+function getSettings() {
+	var wpm = targetWpm;
+	var unit = (1200 / wpm).toFixed(1);
+	var use = useProfessionalSettings;
+	return {
+		unit : unit,
+		dit : {
+			min : (use ? minDitValue : 0.3) * unit,
+			max : (use ? maxDitValue : 2.0) * unit,
+			strictMin : (use ? minDitValue : 0.7) * unit,
+			strictMax : (use ? maxDitValue : 1.6) * unit
+		},
+		dah : {
+			min : (use ? minDahValue : 2.1) * unit,
+			max : (use ? maxDahValue : 4.5) * unit,
+			strictMin : (use ? minDahValue : 2.5) * unit,
+			strictMax : (use ? maxDahValue : 3.5) * unit
+		},
+		gap : {
+			min : (use ? minGapValue : 0.3) * unit,
+			max : (use ? maxGapValue : 2.0) * unit,
+			letter : (use ? letterGapValue : 5) * unit,
+			line : (use ? letterGapValue * 5 : 30.0) * unit,
+			strictMin : (use ? minGapValue : 0.7) * unit,
+			strictMax : (use ? maxGapValue : 1.5) * unit
+		}
+	};
+}
+function processMorse() {
+    var now = performance.now();
+    if (lastProcessedAt == 0) lastProcessedAt = now;
+    var frameDuration = now - lastProcessedAt; //parseInt(now - lastProcessedAt);
+    lastProcessedAt = now;
+	
+	if (tzePlaying) {
+		var ditdah = getTzeDitdah();
+		if ("undefined" != typeof ditdah) processDitDah(ditdah, frameDuration);
+		if (tzePlaying) setTimeout(processMorse, 1);
+	} else {
+		if (toneBuffer == null) toneBuffer = new Uint8Array(binCount);
+		try { analyser.getByteFrequencyData(toneBuffer); }
+		catch (e) { return; }
+		
+		var bucketSize = 44100 / 2 / binCount;
+		var toneStart = Math.max(parseInt(400 / bucketSize), 1);
+		var toneEnd = Math.min(parseInt(2800 / bucketSize), binCount - 1);
+		var buffer = toneBuffer.slice(0).slice(toneStart, toneEnd);
+		var peak = Math.max(...buffer);
+		var peakIndex = buffer.reduce((a, b, i) => (peak == b ? i : a), 0);
+		buffer = buffer.slice(Math.max(0, peakIndex - 2), Math.min(buffer.length, peakIndex + 3));
+		//console.log("peak : " + peak + ", peakIndex : " + peakIndex + ", buffer : " + buffer.join(", "));
+		//_log("peak : " + peak + ", peakIndex : " + peakIndex + ", buffer : " + buffer.join(", "));
+		var n = buffer.length;
+		var mean = buffer.reduce((a, b) => a + b, 0) / n;
+		var standardDeviation = Math.sqrt(buffer.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b, 0) / n);
+		var signalToNoiseRatio = mean / standardDeviation;
+
+		if (previousPeak < peak && signalToNoiseRatio < snrThresholdMax && snrThreshold < signalToNoiseRatio) snrThreshold = signalToNoiseRatio;
+
+		var ditdah = (mean != 0 && signalToNoiseRatio <= snrThreshold);
+		processDitDah(ditdah, frameDuration);
+		previousSnr = signalToNoiseRatio;
+		timerId = setTimeout(processMorse, 1);
+	}
+}
+var GAP = 0, DIT = 1, DAH = 2;
+function processDitDah(ditdah, frameDuration) {
+	var conf = getSettings();
+	
+	//console.log("ditdah : " + ditdah + ", duration : " + frameDuration);
+	printDitdah(ditdah, frameDuration);
+	
+    if (ditdah) {
+        if (lastDitdah == false) {
+            if (gapAmount < conf.gap.min) { // noise
+                console.error("GAP NOISE, " + gapAmount);
+				markDitdahError("gap noise " + (gapAmount / conf.unit).toFixed(2) + " unit");
+                if (!isNaN(previousSnr) && previousSnr < snrThresholdMax) snrThreshold = previousSnr; // should be moved to above function
+            } else if (gapAmount < conf.gap.max) { // inter-dit-dah
+                console.log("INTER-DITDAH GAP, " + gapAmount);
+                doStat(0, 0, gapAmount);
+				
+				if (gapAmount < conf.gap.strictMin || gapAmount > conf.gap.strictMax)
+					markDitdahError("gap " + (gapAmount / conf.unit).toFixed(2) + " unit");
+				gapAmount = 0;
+            } else {
+                console.log("WORD GAP, " + gapAmount);
+                makeCharacter(hangul.checked);
+                if (gapAmount > conf.gap.letter) {
+                    flushCharacter(hangul.checked);
+                    printDecodedChar(" ");
+                }
+                gapAmount = 0;
+            }
+        }
+        ditdahAmount += frameDuration;
+        maxGapReached = false;
+        lastLongDahCheckStartAt = 0;
+    } else {
+        if (lastDitdah == true) {
+            if (ditdahAmount < conf.dit.min) { // noise
+                console.log("DITDAH NOISE, " + ditdahAmount);
+				markDitdahError("dit noise " + (ditdahAmount / conf.unit).toFixed(2) + " unit");
+            } else if (ditdahAmount < conf.dit.max) { // dit
+                console.log("DIT, " + ditdahAmount);
+                addToLetter(true);
+                doStat(ditdahAmount, 0, 0);
+				if (ditdahAmount < conf.dit.strictMin || ditdahAmount > conf.dit.strictMax)
+					markDitdahError("dit " + (ditdahAmount / conf.unit).toFixed(2) + " unit");
+            } else { // dah
+                console.log("DAH, " + ditdahAmount);
+                addToLetter(false);
+                doStat(0, ditdahAmount, 0);
+				if (ditdahAmount < conf.dah.strictMin || ditdahAmount > conf.dah.strictMax)
+					markDitdahError("dah " + (ditdahAmount / conf.unit).toFixed(2) + " unit");
+            }
+        }
+        ditdahAmount = 0;
+        gapAmount += frameDuration;
+
+        // when enough gapAmount
+        if (gapAmount > conf.gap.letter) {
+            makeCharacter(hangul.checked);
+            flushCharacter(hangul.checked);
+        }
+        if (gapAmount > conf.gap.line && !maxGapReached) {
+            console.log("MAX GAP, " + gapAmount);
+            printDecodedLine(" ");
+            gapAmount = 0;
+            maxGapReached = true;
+        }
+    }
+    lastDitdah = ditdah;
+}
+
+// Web Serial does not expose CTS/DSR change events. Keep the signal query in a
+// single asynchronous loop, and turn samples into timestamped edges here. The
+// decoder, paddle keyer, audio and renderer only run when an edge or a semantic
+// gap deadline is reached.
+var serialPollGeneration = 0, serialPollPromise = null;
+var serialLastSample = null, serialModePaddle = false;
+var serialPollIntervals = [], serialEdgeLatencies = [], serialPollLastResolvedAt = 0;
+var serialEdgeCount = 0, serialStatsUpdatedAt = 0;
+var serialStatistics = document.querySelector("#serial_statistics");
+
+var serialTiming = {
+	pressed : false,
+	downAt : 0,
+	upAt : 0,
+	conf : null,
+	characterDone : false,
+	wordDone : false,
+	lineDone : false,
+	characterTimer : 0,
+	wordTimer : 0,
+	lineTimer : 0,
+	generation : 0
+};
+
+var serialPaddle = {
+	dit : false,
+	dah : false,
+	phase : "idle",
+	current : GAP,
+	queued : GAP,
+	deadline : 0,
+	timer : 0,
+	generation : 0
+};
+
+function clearSerialGapTimers() {
+	var s = serialTiming;
+	clearTimeout(s.characterTimer);
+	clearTimeout(s.wordTimer);
+	clearTimeout(s.lineTimer);
+	s.characterTimer = s.wordTimer = s.lineTimer = 0;
+	s.generation++;
+}
+
+function resetSerialTiming() {
+	clearSerialGapTimers();
+	serialTiming.pressed = false;
+	serialTiming.downAt = serialTiming.upAt = 0;
+	serialTiming.conf = null;
+	serialTiming.characterDone = false;
+	serialTiming.wordDone = false;
+	serialTiming.lineDone = false;
+	resetSerialPaddle();
+}
+
+function resetSerialPaddle() {
+	var s = serialPaddle;
+	clearTimeout(s.timer);
+	s.timer = 0;
+	s.generation++;
+	s.dit = s.dah = false;
+	s.phase = "idle";
+	s.current = s.queued = GAP;
+	s.deadline = 0;
+}
+
+function startSerialSignalLoop() {
+	stopSerialSignalLoop();
+	resetSerialTiming();
+	serialLastSample = null;
+	serialModePaddle = paddle.checked;
+	serialPollIntervals = [];
+	serialEdgeLatencies = [];
+	serialPollLastResolvedAt = 0;
+	serialEdgeCount = 0;
+	serialStatsUpdatedAt = 0;
+	serialStatistics.textContent = "";
+	var generation = ++serialPollGeneration;
+	serialPollPromise = runSerialSignalLoop(generation);
+}
+
+function stopSerialSignalLoop() {
+	serialPollGeneration++;
+	clearSerialGapTimers();
+	resetSerialPaddle();
+	stopSerialDitdahRendering();
+}
+
+async function runSerialSignalLoop(generation) {
+	while (cwPortOpen && generation == serialPollGeneration) {
+		var requestedAt = performance.now();
+		try {
+			var result = await cwPort.getSignals();
+			var resolvedAt = performance.now();
+			if (!cwPortOpen || generation != serialPollGeneration) break;
+
+			var sampledAt = (requestedAt + resolvedAt) * 0.5;
+			recordSerialPoll(resolvedAt);
+			acceptSerialSample(result.clearToSend, result.dataSetReady, sampledAt, resolvedAt);
+			updateSerialStatistics(resolvedAt);
+		} catch (e) {
+			if (cwPortOpen && generation == serialPollGeneration) {
+				_log("Serial signal error: " + (e && e.message ? e.message : e));
+				cwPortOpen = false;
+				finishSerialDitdahRendering();
+				stopSerialSignalLoop();
+				toggleConnectButtons(false);
+				audioPlay(false);
+			}
+			break;
+		}
+	}
+}
+
+function recordSerialPoll(resolvedAt) {
+	if (serialPollLastResolvedAt > 0) {
+		serialPollIntervals.push(resolvedAt - serialPollLastResolvedAt);
+		if (serialPollIntervals.length > 256) serialPollIntervals.shift();
+	}
+	serialPollLastResolvedAt = resolvedAt;
+}
+
+function updateSerialStatistics(now) {
+	if (!showDebug.checked || serialPollIntervals.length == 0 || now - serialStatsUpdatedAt < 500) return;
+	serialStatsUpdatedAt = now;
+	var sorted = serialPollIntervals.slice().sort((a, b) => a - b);
+	var sum = sorted.reduce((a, b) => a + b, 0);
+	var p95 = sorted[Math.min(sorted.length - 1, Math.floor(sorted.length * 0.95))];
+	var edgeP95 = 0;
+	if (serialEdgeLatencies.length > 0) {
+		var edges = serialEdgeLatencies.slice().sort((a, b) => a - b);
+		edgeP95 = edges[Math.min(edges.length - 1, Math.floor(edges.length * 0.95))];
+	}
+	serialStatistics.textContent = " | serial poll avg/p95/max : "
+		+ (sum / sorted.length).toFixed(2) + "/" + p95.toFixed(2) + "/"
+		+ sorted[sorted.length - 1].toFixed(2) + " ms, edge p95 : "
+		+ edgeP95.toFixed(2) + " ms, edges : " + serialEdgeCount;
+}
+
+function acceptSerialSample(cts, dsr, sampledAt, detectedAt) {
+	var dit = swap.checked ? dsr : cts;
+	var dah = swap.checked ? cts : dsr;
+	var usePaddle = paddle.checked;
+
+	if (serialLastSample == null || serialModePaddle != usePaddle) {
+		resetSerialTiming();
+		serialModePaddle = usePaddle;
+		serialLastSample = { cts:cts, dsr:dsr, dit:dit, dah:dah, at:sampledAt };
+		if (usePaddle) initializeSerialPaddle(dit, dah, sampledAt);
+		else initializeSerialStraightKey(cts, sampledAt, detectedAt);
+		return;
+	}
+
+	var previous = serialLastSample;
+	var edgeAt = (previous.at + sampledAt) * 0.5;
+	if (usePaddle) {
+		if (previous.dit != dit || previous.dah != dah) {
+			serialEdgeCount++;
+			recordSerialEdgeLatency(detectedAt - edgeAt);
+			updateSerialPaddle(dit, dah, edgeAt);
+		}
+	} else if (previous.cts != cts) {
+		serialEdgeCount++;
+		recordSerialEdgeLatency(detectedAt - edgeAt);
+		processSerialStraightEdge(cts, edgeAt, detectedAt);
+	}
+
+	serialLastSample = { cts:cts, dsr:dsr, dit:dit, dah:dah, at:sampledAt };
+}
+
+function recordSerialEdgeLatency(latency) {
+	serialEdgeLatencies.push(Math.max(0, latency));
+	if (serialEdgeLatencies.length > 128) serialEdgeLatencies.shift();
+}
+
+function initializeSerialStraightKey(pressed, at, detectedAt) {
+	serialTiming.pressed = pressed;
+	if (pressed) serialTiming.downAt = at;
+	else serialTiming.upAt = at;
+	renderSerialDitdahEdge(pressed, at, detectedAt);
+}
+
+function processSerialStraightEdge(pressed, at, detectedAt) {
+	var s = serialTiming;
+	if (pressed == s.pressed) return;
+
+	renderSerialDitdahEdge(pressed, at, detectedAt);
+	if (pressed) {
+		settleSerialGapAt(at);
+		var gapDuration = (s.upAt > 0 ? Math.max(0, at - s.upAt) : 0);
+		var conf = s.conf || getSettings();
+
+		if (s.upAt > 0 && gapDuration < conf.gap.min) {
+			console.error("GAP NOISE, " + gapDuration);
+			markDitdahError("gap noise " + (gapDuration / conf.unit).toFixed(2) + " unit");
+		} else if (s.upAt > 0 && gapDuration < conf.gap.max) {
+			doStat(0, 0, gapDuration);
+			if (gapDuration < conf.gap.strictMin || gapDuration > conf.gap.strictMax)
+				markDitdahError("gap " + (gapDuration / conf.unit).toFixed(2) + " unit");
+		} else if (s.upAt > 0) {
+			finalizeSerialCharacter();
+			if (gapDuration >= conf.gap.letter) {
+				finalizeSerialWord();
+				printDecodedChar(" ");
+			}
+		}
+
+		clearSerialGapTimers();
+		s.pressed = true;
+		s.downAt = at;
+		s.upAt = 0;
+	} else {
+		var markDuration = Math.max(0, at - s.downAt);
+		classifySerialMark(markDuration, getSettings());
+		s.pressed = false;
+		s.upAt = at;
+		s.conf = getSettings();
+		s.characterDone = false;
+		s.wordDone = false;
+		s.lineDone = false;
+		scheduleSerialGapDeadlines();
+	}
+}
+
+function classifySerialMark(amount, conf) {
+	if (amount < conf.dit.min) {
+		console.log("DITDAH NOISE, " + amount);
+		markDitdahError("dit noise " + (amount / conf.unit).toFixed(2) + " unit");
+	} else if (amount < conf.dit.max) {
+		addToLetter(true);
+		doStat(amount, 0, 0);
+		if (amount < conf.dit.strictMin || amount > conf.dit.strictMax)
+			markDitdahError("dit " + (amount / conf.unit).toFixed(2) + " unit");
+	} else {
+		addToLetter(false);
+		doStat(0, amount, 0);
+		if (amount < conf.dah.strictMin || amount > conf.dah.strictMax)
+			markDitdahError("dah " + (amount / conf.unit).toFixed(2) + " unit");
+	}
+}
+
+function scheduleSerialGapDeadlines() {
+	clearSerialGapTimers();
+	var s = serialTiming;
+	var conf = s.conf;
+	var generation = s.generation;
+	s.characterTimer = setTimeout(() => {
+		if (!s.pressed && generation == s.generation) finalizeSerialCharacter();
+	}, Math.max(0, s.upAt + conf.gap.max - performance.now()));
+	s.wordTimer = setTimeout(() => {
+		if (!s.pressed && generation == s.generation) finalizeSerialWord();
+	}, Math.max(0, s.upAt + conf.gap.letter - performance.now()));
+	s.lineTimer = setTimeout(() => {
+		if (!s.pressed && generation == s.generation) finalizeSerialLine();
+	}, Math.max(0, s.upAt + conf.gap.line - performance.now()));
+}
+
+function settleSerialGapAt(at) {
+	var s = serialTiming;
+	if (s.upAt == 0 || s.conf == null) return;
+	var elapsed = at - s.upAt;
+	if (elapsed >= s.conf.gap.max) finalizeSerialCharacter();
+	if (elapsed >= s.conf.gap.letter) finalizeSerialWord();
+	if (elapsed >= s.conf.gap.line) finalizeSerialLine();
+}
+
+function finalizeSerialCharacter() {
+	var s = serialTiming;
+	if (s.characterDone) return;
+	makeCharacter(hangul.checked);
+	s.characterDone = true;
+}
+
+function finalizeSerialWord() {
+	var s = serialTiming;
+	if (s.wordDone) return;
+	finalizeSerialCharacter();
+	flushCharacter(hangul.checked);
+	s.wordDone = true;
+}
+
+function finalizeSerialLine() {
+	var s = serialTiming;
+	if (s.lineDone) return;
+	finalizeSerialWord();
+	printDecodedLine(" ");
+	s.lineDone = true;
+	// The legacy accumulator reset gapAmount at the line boundary. Preserve
+	// that behavior so a later key-down is classified using only the remainder.
+	s.upAt += s.conf.gap.line;
+}
+
+function initializeSerialPaddle(dit, dah, at) {
+	resetSerialPaddle();
+	serialPaddle.dit = dit;
+	serialPaddle.dah = dah;
+	if (dit || dah) startSerialPaddleElement(dit ? DIT : DAH, at);
+	else initializeSerialStraightKey(false, at, at);
+}
+
+function updateSerialPaddle(dit, dah, at) {
+	advanceSerialPaddleTo(at);
+	var s = serialPaddle;
+	s.dit = dit;
+	s.dah = dah;
+	if (s.phase == "mark" && s.queued == GAP) {
+		if (s.current == DIT && dah) s.queued = DAH;
+		else if (s.current == DAH && dit) s.queued = DIT;
+	}
+	if (s.phase == "idle" && (dit || dah)) startSerialPaddleElement(dit ? DIT : DAH, at);
+}
+
+function startSerialPaddleElement(element, at) {
+	var s = serialPaddle;
+	s.phase = "mark";
+	s.current = element;
+	s.queued = GAP;
+	if (element == DIT && s.dah) s.queued = DAH;
+	else if (element == DAH && s.dit) s.queued = DIT;
+	s.deadline = at + getSettings().unit * (element == DIT ? 1 : 3);
+	processSerialStraightEdge(true, at, performance.now());
+	scheduleSerialPaddleTimer();
+}
+
+function advanceSerialPaddleTo(at) {
+	var s = serialPaddle;
+	var guard = 0;
+	while (s.phase != "idle" && s.deadline <= at && guard++ < 32) {
+		var deadline = s.deadline;
+		if (s.phase == "mark") {
+			processSerialStraightEdge(false, deadline, performance.now());
+			s.phase = "gap";
+			s.deadline = deadline + parseFloat(getSettings().unit);
+		} else {
+			var next = s.queued;
+			if (next == GAP) next = (s.dit ? DIT : (s.dah ? DAH : GAP));
+			if (next == GAP) {
+				s.phase = "idle";
+				s.current = GAP;
+				s.deadline = 0;
+			} else {
+				startSerialPaddleElement(next, deadline);
+			}
+		}
+	}
+	if (s.phase != "idle") scheduleSerialPaddleTimer();
+}
+
+function scheduleSerialPaddleTimer() {
+	var s = serialPaddle;
+	clearTimeout(s.timer);
+	var generation = ++s.generation;
+	s.timer = setTimeout(() => {
+		if (generation == s.generation) advanceSerialPaddleTo(performance.now());
+	}, Math.max(0, s.deadline - performance.now()));
+}
+
+function increaseSnrThreshold() {
+    snrThreshold += 1.0;
+    snrThresholdMax = Math.max(snrThreshold, snrThresholdMax);
+}
+
+var stat = {
+    dit : [],
+    dah : [],
+    gap : []
+};
+var statistics = document.querySelector("#statistics");
+function doStat(dit, dah, gap) {
+    // PARIS : 10 dits + 3 dahs + 9 gaps + 4 letter gaps + 1 word gap
+	
+	if (dit > 0) stat.dit.push(dit);
+    else if (dah > 0) stat.dah.push(dah);
+    else if (gap > 0) stat.gap.push(gap);
+
+    var ditLen = stat.dit.length, dahLen = stat.dah.length, gapLen = stat.gap.length;
+
+    if (ditLen > 10) stat.dit.shift();
+    if (dahLen > 10) stat.dah.shift();
+    if (gapLen > 10) stat.gap.shift();
+
+    if (ditLen + dahLen < 10 || gapLen < 5) return;
+
+    var ditMean = parseInt(stat.dit.reduce((a, b) => a + b, 0) / ditLen) || 0;
+    var dahMean = parseInt(stat.dah.reduce((a, b) => a + b, 0) / dahLen) || 0;
+    var gapMean = parseInt(stat.gap.reduce((a, b) => a + b, 0) / gapLen) || 0;
+    var mean = (ditMean + dahMean/3 + gapMean) / ((ditMean > 0 ? 1 : 0) + (dahMean > 0 ? 1 : 0) + (gapMean > 0 ? 1 : 0));
+    var wpmTemp = Math.round(1200 / mean);
+
+    updateWpm(parseInt(wpmTemp));
+    mean = 1200 / targetWpm;
+
+    if (statistics.childNodes.length > 0) statistics.removeChild(statistics.firstChild);
+    statistics.appendChild(document.createTextNode(
+        "wpm : " + wpmTemp
+        + ", dit : " + ditMean + " ms (" + parseInt(ditMean * 100 / mean) + " %)"
+        + ", dah : " + dahMean + " ms (" + parseInt(dahMean * 100 / mean / 3) + " %)"
+        + ", gap : " + gapMean + " ms (" + parseInt(gapMean * 100 / mean) + " %)"
+        + ", snr : " + snrThreshold.toFixed(1)
+    ));
+}
+function resetStat() {
+    stat.dit = [];
+    stat.dah = [];
+    stat.gap = [];
+    if (statistics.childNodes.length > 0) statistics.removeChild(statistics.firstChild);
+}
+function updateWpm(wpmTemp) {
+    if (targetWpm == wpmTemp) return;
+	if (!speedFixed) setTargetWpm(wpmTemp);
+}
+
+var ditdahs = "";
+var hangulLetters = [];
+var previousLetters = [];
+function addToLetter(ditdah) { // ditdat - dit:true, dah:false
+    ditdahs += (ditdah ? "." : "-");
+}
+var HANGUL2ALPHABET = null;
+function hangulToAlphabet(letter) {
+    if (HANGUL2ALPHABET == null) {
+        HANGUL2ALPHABET = {};
+        for (var key in HANGUL) {
+            HANGUL2ALPHABET[HANGUL[key]] = MORSE[key];
+        }
+    }
+    return HANGUL2ALPHABET[letter];
+}
+function flushCharacter(makeHangul) {
+    if (makeHangul && hangulLetters.length > 0) {
+        var characters = Hangul.assemble(hangulLetters);
+        if (characters.length == 1) {
+            updateDecodedHangul(characters);
+        } else { // characters.length == 2
+            updateDecodedHangul(characters.charAt(0));
+            printDecodedHangul(characters.charAt(1));
+        }
+        hangulLetters = [];
+    }
+    previousLetters = [];
+}
+function makeCharacter(makeHangul) {
+    if ("undefined" != typeof MORSE[ditdahs]) {
+        var letter = MORSE[ditdahs];
+        previousLetters.push(letter);
+        if ("undefined" != typeof PROSIGN[letter]) {
+            flushCharacter(makeHangul);
+            printDecodedChar(PROSIGN[letter]);
+        } else {
+            if (makeHangul && !isCallsign()) {
+                if (hangulLetters.length == 0) {
+                    printDecodedChar(letter);
+                    if ("undefined" != typeof HANGUL[ditdahs]) {
+                        hangulLetters.push(HANGUL[ditdahs]);
+						if (forceHangul) updateDecodedChar(HANGUL[ditdahs]);
+                    }
+                } else if (hangulLetters.length == 1) { // with current letter, 2 letters
+                    if ("undefined" != typeof HANGUL[ditdahs]) {
+                        hangulLetters.push(HANGUL[ditdahs]);
+                        var characters = Hangul.assemble(hangulLetters);
+                        if (characters.length == 1) {
+                            updateDecodedHangul(characters);
+                        } else {
+                            hangulLetters.shift();
+                            printDecodedChar(letter);
+							if (forceHangul) updateDecodedChar(HANGUL[ditdahs]);
+                        }
+                    } else {
+                        hangulLetters.shift();
+                        printDecodedChar(letter);
+                    }
+                } else { // with current letter, 3 letters or more
+                    if ("undefined" != typeof HANGUL[ditdahs]) {
+                        hangulLetters.push(HANGUL[ditdahs]);
+                        var characters = Hangul.assemble(hangulLetters);
+                        if (characters.length == 1) {
+                            updateDecodedHangul(characters);
+                        } else { // characters.length == 2
+                            updateDecodedHangul(characters.charAt(0));
+                            var hangulCharacters = Hangul.disassemble(characters, true);
+                            hangulLetters = hangulCharacters[1];
+                            printDecodedHangul(characters.charAt(1));
+                        }
+                    } else {
+                        var characters = Hangul.assemble(hangulLetters);
+                        if (characters.length == 1) {
+                            updateDecodedHangul(characters);
+                        } else { // characters.length == 2
+                            updateDecodedHangul(characters.charAt(0));
+                            printDecodedHangul(characters.charAt(1));
+                        }
+                        hangulLetters = [];
+                        printDecodedChar(letter);
+                    }
+                }
+            } else {
+                printDecodedChar(letter);
+                if (hangulLetters.length != 0) hangulLetters = [];
+            }
+        }
+    } else if (ditdahs.length > 7) {
+        console.error("Invalid DitDah : " + ditdahs);
+        increaseSnrThreshold();
+    }
+    ditdahs = "";
+}
+function printDecodedHangul(character) {
+    if (forceHangul) {
+		printDecodedChar(character);
+		return;
+	}
+	
+	if (Hangul.isComplete(character)) printDecodedChar(character);
+    else {
+        var s = "";
+        for (var value of Hangul.disassemble(character)) s += hangulToAlphabet(value);
+        printDecodedChar(s);
+    }
+}
+function updateDecodedHangul(character) {
+    if (forceHangul) {
+		updateDecodedChar(character);
+		return;
+	}
+	
+	if (Hangul.isComplete(character)) updateDecodedChar(character);
+    else {
+        var s = "";
+        for (var value of Hangul.disassemble(character)) s += hangulToAlphabet(value);
+        updateDecodedChar(s);
+    }
+}
+var KOREA_PREFIX = ["HL", "DS", "6K", "6L", "6M", "D7", "D9"];
+function isCallsign() {
+    if (previousLetters.length == 0) return false;
+
+    var letters = previousLetters.slice(-(Math.min(6, previousLetters.length))).join(""); // last 5 + argument
+    if (letters.length < 3) return false;
+
+    var index = 0;
+    for (var i = 0; i < letters.length; i++) {
+        code = letters.charCodeAt(i);
+        if (!(code > 47 && code < 58) && !(code > 64 && code < 91)) index = i; // callsign is only using alpha-numeric
+    }
+    letters = letters.substring(index);
+    if (letters.length < 3) return false;
+    console.log(letters);
+
+    for (var value of KOREA_PREFIX)
+        for (var num of [0, 1, 2, 3, 4, 5])
+            if (letters.indexOf(value + num) >= 0) return true;
+
+    return false;
+}
+
+stop.onclick = function() {
+    try { clearTimeout(timerId); timerId = 0; }
+    catch (e) {}
+
+    if (mediaRecorder != null && mediaRecorder.state == 'recording') mediaRecorder.stop();
+}
+clear.onclick = function() {
+    clearDecodedLog();
+    clearDitdah();
+}
+record.onchange = function() {
+    if (isAndroid || isIOS) {
+        alert("Mobile devices don't support screen capture.");
+        record.checked = false;
+    }
+}
+var speedFixed, fixedSpeedValue;
+speed.onchange = function() {
+    window.localStorage.setItem('speed', speed.value);
+	if (!speedFixed) setTargetWpm(parseInt(speed.value));
+}
+snr.onchange = function() {
+    window.localStorage.setItem('snr', snr.value);
+    snrThreshold = parseFloat(snr.value);
+    snrThresholdMax = snrThreshold;
+}
+var forceHangul = false;
+hangul.onchange = function() {
+    window.localStorage.setItem('hangul', hangul.checked);
+	setHangulConfig();
+}
+force.onchange = function() {
+    window.localStorage.setItem('force', force.checked);
+	setHangulConfig();
+}
+function setHangulConfig() {
+	force.disabled = !hangul.checked;
+	forceHangul = hangul.checked && force.checked;
+}
+professional.onchange = function() {
+    window.localStorage.setItem('professional', professional.checked);
+	enableProfessionalSettings(professional.checked);
+	setProfessionalSettings(professional.checked);
+}
+function enableProfessionalSettings(enable) {
+	//fixedSpeed.disabled = !(fixedWpm.checked);
+	customProfile.disabled = !enable;
+	noviceProfile.disabled = !enable;
+	normalProfile.disabled = !enable;
+	guruProfile.disabled = !enable;
+	minDit.disabled = !enable;
+	maxDit.disabled = !enable;
+	minDah.disabled = !enable;
+	maxDah.disabled = !enable;
+	minGap.disabled = !enable;
+	maxGap.disabled = !enable;
+	letterGap.disabled = !enable;
+}
+var useProfessionalSettings;
+function setProfessionalSettings(apply) {
+	useProfessionalSettings = apply;
+	speedFixed = fixedWpm.checked;
+	setFixedSpeedValue();
+	if (apply && speedFixed) setTargetWpm(fixedSpeedValue);
+	if (apply) setDitDahGap(minDit.value, maxDit.value, minDah.value, maxDah.value, minGap.value, maxGap.value, letterGap.value);
+}
+function setFixedSpeedValue() {
+	fixedSpeedValue = parseInt(fixedSpeed.value);
+	if (fixedWpm.checked) setTargetWpm(fixedSpeedValue);
+	unit.replaceChild(document.createTextNode((1200/fixedSpeedValue).toFixed(1)), unit.firstChild);
+}
+function setDitDahGap(dit1, dit2, dah1, dah2, gap1, gap2, gap3)
+{
+	minDit.value = minDitValue = dit1;
+	maxDit.value = maxDitValue = dit2;
+	minDah.value = minDahValue = dah1;
+	maxDah.value = maxDahValue = dah2;
+	minGap.value = minGapValue = gap1;
+	maxGap.value = maxGapValue = gap2;
+	letterGap.value = letterGapValue = gap3;
+	saveDitDahGap();
+}
+function saveDitDahGap() {	
+	window.localStorage.setItem('minDit', minDit.value);
+	window.localStorage.setItem('maxDit', maxDit.value);
+	window.localStorage.setItem('minDah', minDah.value);
+	window.localStorage.setItem('maxDah', maxDah.value);
+	window.localStorage.setItem('minGap', minGap.value);
+	window.localStorage.setItem('maxGap', maxGap.value); 
+	window.localStorage.setItem('letterGap', letterGap.value);
+	window.localStorage.setItem('speedProfile', document.querySelector('input[name="speed_profile"]:checked').value);
+}
+fixedWpm.onchange = function(e) {
+	if (e.target.checked == false && cwKey.checked && paddle.checked) {
+		alert("In paddle mode, Fixed Speed setting is needed to set keyer's speed.");
+		fixedWpm.checked = true;
+		return;
+	}
+    window.localStorage.setItem('fixedWpm', fixedWpm.checked);
+	speedFixed = fixedWpm.checked;
+	//fixedSpeed.disabled = !speedFixed;
+	setFixedSpeedValue();
+}
+fixedSpeed.onchange = function() {
+    window.localStorage.setItem('fixedSpeed', fixedSpeed.value);
+	setFixedSpeedValue();
+}
+customProfile.onchange = function() {
+	saveDitDahGap();
+}
+noviceProfile.onchange = function(e) {
+	if (e.target.checked) setDitDahGap(0.3, 2.0, 2.1, 4.5, 0.3, 2.0, 9);
+	saveDitDahGap();
+}
+normalProfile.onchange = function(e) {
+	if (e.target.checked) setDitDahGap(0.5, 1.8, 2.3, 4.0, 0.5, 1.8, 7);
+	saveDitDahGap();
+}
+guruProfile.onchange = function(e) {
+	if (e.target.checked) setDitDahGap(0.7, 1.6, 2.5, 3.5, 0.7, 1.5, 5);
+	saveDitDahGap();
+}
+var minDitValue, maxDitValue, minDahValue, maxDahValue, minGapValue, maxGapValue, letterGapValue;
+minDit.onchange = function() {
+	minDitValue = parseFloat(minDit.value);
+	if (minDitValue == maxDitValue) minDitValue = maxDitValue - 0.1;
+	minDit.value = minDitValue;
+	customProfile.checked = true;
+	saveDitDahGap();
+}
+maxDit.onchange = function() {
+	maxDitValue = parseFloat(maxDit.value);
+	if (minDitValue == maxDitValue) maxDitValue = minDitValue + 0.1;
+	if (minDahValue < maxDitValue) maxDitValue = minDahValue;
+	maxDit.value = maxDitValue;
+	customProfile.checked = true;
+	saveDitDahGap();
+}
+minDah.onchange = function() {
+	minDahValue = parseFloat(minDah.value);
+	if (minDahValue == maxDahValue) minDahValue = maxDahValue - 0.1;
+	if (minDahValue < maxDitValue) maxDitValue = minDahValue;
+	minDah.value = minDahValue;
+	customProfile.checked = true;
+	saveDitDahGap();
+}
+maxDah.onchange = function() {
+	maxDahValue = parseFloat(maxDah.value);
+	if (minDahValue == maxDahValue) maxDahValue = minDahValue + 0.1;
+	maxDah.value = maxDahValue;
+	customProfile.checked = true;
+	saveDitDahGap();
+}
+minGap.onchange = function() {
+	minGapValue = parseFloat(minGap.value);
+	if (minGapValue == maxGapValue) minGapValue = maxGapValue - 0.1;
+	minGap.value = minGapValue;
+	customProfile.checked = true;
+	saveDitDahGap();
+}
+maxGap.onchange = function() {
+	maxGapValue = parseFloat(maxGap.value);
+	if (minGapValue == maxGapValue) maxGapValue = minGapValue + 0.1;
+	maxGap.value = maxGapValue;
+	customProfile.checked = true;
+	saveDitDahGap();
+}
+letterGap.onchange = function() {
+	letterGapValue = parseInt(letterGap.value);
+	if (letterGapValue < maxGapValue) letterGapValue = maxGapValue;
+	letterGap.value = letterGapValue;
+	customProfile.checked = true;
+	saveDitDahGap();
+}
+function initSettings() {
+	setTargetWpm(parseInt(speed.value));
+	statContainer.style.display = (showDebug.checked ? "inline" : "none");
+	enableProfessionalSettings(professional.checked);
+	setProfessionalSettings(professional.checked);
+	if (!isAndroid && !isIOS) document.querySelector("#record_setting").style.display = "inline";
+	if (!isAndroid && !isIOS) document.querySelector("#key_setting").style.display = "inline";
+	setHangulConfig();
+}
+remoteAddress.onchange = function() {
+	window.localStorage.setItem('remoteAddress', remoteAddress.value);
+}
+window.addEventListener('DOMContentLoaded', function() {
+    try {
+        if (window.localStorage.getItem('speed')) speed.value = parseInt(window.localStorage.getItem('speed'));
+        if (window.localStorage.getItem('snr')) snr.value = parseFloat(window.localStorage.getItem('snr'));
+        if (window.localStorage.getItem('hangul')) hangul.checked = window.localStorage.getItem('hangul') == 'true';
+        if (window.localStorage.getItem('force')) force.checked = window.localStorage.getItem('force') == 'true';
+        if (window.localStorage.getItem('showDebug')) showDebug.checked = window.localStorage.getItem('showDebug') == 'true';
+		if (window.localStorage.getItem('professional')) professional.checked = window.localStorage.getItem('professional') == 'true';
+		if (window.localStorage.getItem('fixedWpm')) fixedWpm.checked = window.localStorage.getItem('fixedWpm') == 'true';
+		if (window.localStorage.getItem('paddle')) paddle.checked = window.localStorage.getItem('paddle') == 'true';
+		if (window.localStorage.getItem('swap')) swap.checked = window.localStorage.getItem('swap') == 'true';
+		if (window.localStorage.getItem('fixedSpeed')) fixedSpeed.value = parseInt(window.localStorage.getItem('fixedSpeed'));
+		if (window.localStorage.getItem('speedProfile')) document.querySelector('input[name="speed_profile"][value="'+window.localStorage.getItem('speedProfile')+'"]').checked = true;
+		if (window.localStorage.getItem('minDit')) minDit.value = parseFloat(window.localStorage.getItem('minDit'));
+		if (window.localStorage.getItem('maxDit')) maxDit.value = parseFloat(window.localStorage.getItem('maxDit'));
+		if (window.localStorage.getItem('minDah')) minDah.value = parseFloat(window.localStorage.getItem('minDah'));
+		if (window.localStorage.getItem('maxDah')) maxDah.value = parseFloat(window.localStorage.getItem('maxDah'));
+		if (window.localStorage.getItem('minGap')) minGap.value = parseFloat(window.localStorage.getItem('minGap'));
+		if (window.localStorage.getItem('maxGap')) maxGap.value = parseFloat(window.localStorage.getItem('maxGap'));
+		if (window.localStorage.getItem('letterGap')) letterGap.value = parseInt(window.localStorage.getItem('letterGap'));
+        if (window.localStorage.getItem('freq')) freq.value = parseInt(window.localStorage.getItem('freq'));
+        if (window.localStorage.getItem('volume')) volume.value = parseInt(window.localStorage.getItem('volume'));
+		if (window.localStorage.getItem('flute')) flute.checked = window.localStorage.getItem('flute') == 'true';
+        if (window.localStorage.getItem('interfaceType')) document.querySelector('input[name="interface_type"][value="'+window.localStorage.getItem('interfaceType')+'"]').checked = true;
+		if (window.localStorage.getItem('remoteAddress')) remoteAddress.value = window.localStorage.getItem('remoteAddress');
+		initSettings();
+        
+    } catch (e) {}
+}, true);
+
+cwKey.onchange = function(e) {
+	if (isAndroid || isIOS) {
+        alert("Mobile devices don't support serial communication.");
+		cwKey.checked = false;
+        return;
+    }
+	
+	if (timerId != 0) {
+		alert("Mic-in mode. Press STOP button first.");
+		cwKey.checked = false;
+		return;
+	}
+	
+	if (e.target.checked == false && cwPortOpen) {
+		alert("CW key connected, press DISCONNECT button first.");
+		cwKey.checked = true;
+		return;
+	}
+	
+	paddle.disabled = swap.disabled = !cwKey.checked;
+	if (cwKey.checked && paddle.checked && !fixedWpm.checked) fixedWpm.click();
+}
+paddle.onchange = function() {
+	if (paddle.checked && !fixedWpm.checked) fixedWpm.click();
+	window.localStorage.setItem('paddle', paddle.checked);
+}
+swap.onchange = function() {
+	window.localStorage.setItem('swap', swap.checked);
+}
+freq.onchange = function() {
+	if (audioPlayInitialized) {
+		osc.frequency.value = parseInt(freq.value);
+		filter.frequency.value = parseInt(freq.value);
+	}
+    window.localStorage.setItem('freq', freq.value);
+}
+volume.onchange = function() {
+    window.localStorage.setItem('volume', volume.value);
+}
+flute.onchange = function() {
+    window.localStorage.setItem('flute', flute.checked);
+}
+tzeInterface.onchange = function(e) {
+	window.localStorage.setItem('interfaceType', document.querySelector('input[name="interface_type"]:checked').value);
+}
+thirdInterface.onchange = function(e) {
+	window.localStorage.setItem('interfaceType', document.querySelector('input[name="interface_type"]:checked').value);
+}
+connect.addEventListener("click", async () => {
+	if (timerId != 0) {
+		alert("Mic-in mode. Press STOP button first.");
+		return;
+	}
+	if (cwKey.checked == false) {
+		alert("CW key is not enabled. Check CW Key checkbox first.");
+		return;
+	}
+	
+	var options = { baudRate: 115200, flowControl: 'hardware' };
+	try {
+		if (!cwPortInitialized) cwPort = await navigator.serial.requestPort();
+		if (cwPortOpen) return;
+		await cwPort.open(options); // DTR should be set on the radio
+		if (document.querySelector('input[name="interface_type"]:checked').value == '1tze')
+			await cwPort.setSignals({dataTerminalReady:false});
+		keyStart();
+	} catch (e) {
+		_log("Serial connect error: " + (e && e.message ? e.message : e));
+	}
+}, false);
+disconnect.addEventListener("click", async () => {
+	if (mediaRecorder != null && mediaRecorder.state == 'recording') mediaRecorder.stop();
+	
+	if (cwPort != null && cwPortOpen) {
+		cwPortOpen = false;
+		finishSerialDitdahRendering();
+		stopSerialSignalLoop();
+		try { await serialPollPromise; }
+		catch (e) {}
+		try { await cwPort.close(); }
+		catch (e) { _log("Serial close error: " + (e && e.message ? e.message : e)); }
+		toggleConnectButtons(false);
+		disconnected = true;
+		audioStop();
+	}
+}, false);
+function keyStart() {
+	toggleConnectButtons(true);
+	cwPortInitialized = true;
+	cwPortOpen = true;
+	disconnected = false;
+	clearDitdah();
+	audioStart();
+	recorderStart();
+	initProcessMorse();
+}
+function toggleConnectButtons(connected) {
+	connect.replaceChild(document.createTextNode(connected ? "CONNECTED!" : "CONNECT"), connect.firstChild);
+	disconnect.replaceChild(document.createTextNode(connected ? "DISCONNECT" : "DISCONNECTED!"), disconnect.firstChild);
+}
+
+var remoteConnected = false, ws = null;
+remoteConnect.addEventListener("click", async () => {
+	//if (!cwPortOpen) {
+	//	alert("CW key is not connected, connect it first.");
+	//	return;
+	//}
+	
+	ws = new WebSocket("ws://" + remoteAddress.value, ["1tze"]);
+	ws.onopen = function(e){
+		toggleRemoteConnectButtons(true);
+		remoteConnected = true;
+		console.log("Connected");
+	};
+	ws.onclose = function(e){
+		toggleRemoteConnectButtons(false);
+		remoteConnected = false;
+		console.log("Disconnected");
+	};
+	ws.onerror = function(e){
+		toggleRemoteConnectButtons(false);
+		remoteConnected = false;
+		console.log("ws error", e);
+	};
+	ws.onmessage = function(e){
+		var msg = "";
+		if(e.data instanceof ArrayBuffer){
+			msg = "BIN:";
+			var bytes = new Uint8Array(e.data);
+			for (var i = 0; i < bytes.length; i++) {
+				msg += String.fromCharCode(bytes[i]);
+			}
+		} else {
+			msg = "TXT:"+e.data;
+		}
+		console.log(msg);
+	};
+	
+}, false);
+remoteDisconnect.addEventListener("click", async () => {
+	if (!remoteConnected) return;
+	ws.send("0");
+	ws.close();
+	remoteConnected = false;
+}, false);
+function remoteSend(ditdah) {
+	if (remoteConnected) ws.send(ditdah ? "1" : "0");
+}
+function toggleRemoteConnectButtons(connected) {
+	remoteConnect.replaceChild(document.createTextNode(connected ? "CONNECTED!" : "CONNECT"), remoteConnect.firstChild);
+	remoteDisconnect.replaceChild(document.createTextNode(connected ? "DISCONNECT" : "DISCONNECTED!"), remoteDisconnect.firstChild);
+}
+
+var audioPlayInitialized = false, osc, gain = null, filter;
+function audioStart() {
+	if (!audioPlayInitialized) {
+        ac = (ac || new AudioContext({latencyHint:"interactive"}));
+		
+		osc = ac.createOscillator();
+		osc.type = 'sine';
+		osc.frequency.value = parseInt(freq.value);
+		
+		gain = ac.createGain();
+		gain.gain.value = 0;
+		osc.connect(gain);
+		
+		filter = ac.createBiquadFilter(); 
+		filter.frequency.value = parseInt(freq.value);
+		filter.Q.value = 0;
+		gain.connect(filter);
+		filter.connect(ac.destination);
+		
+		osc.start(0);
+        audioPlayInitialized = true;
+    } else {
+        if (ac.state != "running") ac.resume();
+		
+		osc.disconnect(gain);
+		osc = ac.createOscillator();
+		osc.type = 'sine';
+		osc.frequency.value = parseInt(freq.value);
+		osc.connect(gain);
+		osc.start(0);
+    }
+}
+function audioStop() {
+	if (!audioPlayInitialized) return;
+	try { osc.stop(0); }
+	catch (e) {}
+}
+function audioPlay(playOrMute) {
+	if (gain) {
+		var v = parseInt(volume.value) * 0.01;
+		var t = ac.currentTime; //+ 0.01;
+		gain.gain.setValueAtTime(gain.gain.value, t);
+		gain.gain.linearRampToValueAtTime((playOrMute ? v : 0), t + (flute.checked ? 0.02 : 0.004));
+	}
+}
+
+var tzeQueue = [], tzeRecording = false, tzePlaying = false, tzePaused = false, tzeMoving = false, tzeStartAt = 0, tzeQueueIndex = 0, tzePausedAt = 0;
+var tzeRecord = document.querySelector("#tze_record");
+var tzeLoad = document.querySelector("#tze_load");
+var tzeLoadSample = document.querySelector("#tze_load_sample");
+var tzePlay = document.querySelector("#tze_play");
+var tzeRew = document.querySelector("#tze_rew");
+var tzeFF = document.querySelector("#tze_ff");
+var tzeStop = document.querySelector("#tze_stop");
+tzeRecord.onclick = function() {
+	if (tzeRecording) {
+		recordTzeDitdah(false);
+		tzeRecording = false;
+		saveTzeFile();
+	} else {
+		tzeQueue = [];
+		tzeStartAt = performance.now();
+		tzeRecording = true;
+		recordTzeDitdah(false);
+	}
+	tzeRecord.className = (tzeRecording ? "recording" : "record_stop");
+}
+tzeLoad.onclick = function() {
+	if (tzeRecording) {
+		alert("1TZE player is in recodring, stop it first.");
+		return;
+	}
+	
+	var hiddenFile = document.querySelector("#hidden_file");
+	hiddenFile.addEventListener("change", function() {
+		if (hiddenFile.files.length == 0) return;
+		var reader = new FileReader();
+		reader.addEventListener("load", function() {
+			result = JSON.parse(reader.result);
+			loadTzeFile(result);
+		});
+		reader.readAsText(hiddenFile.files[0]);
+	});
+	hiddenFile.click();
+}
+tzeLoadSample.onclick = function() {
+	if (tzeRecording) {
+		alert("1TZE player is in recodring, stop it first.");
+		return;
+	}
+	loadTzeFile(TZE_FILE_SAMPLE);
+}
+tzePlay.onclick = function() {
+	if (tzeRecording) {
+		alert("1TZE player is in recodring, stop it first.");
+		return;
+	}
+	if (tzePaused) resumeTzePlayer();
+	else if (tzePlaying) pauseTzePlayer();
+	else startTzePlayer();
+}
+tzeRew.onclick = function() {
+	printDitdah(false, 1);
+	tzeMoving = true;
+	
+	var now = performance.now();
+	var diff = Math.min(now - tzeStartAt, 5000);
+	tzeStartAt += diff;
+	
+	var timePassed = (performance.now() - tzeStartAt) / 1000;
+	for (; tzeQueueIndex > 1; tzeQueueIndex--)
+		if (tzeQueue[tzeQueueIndex - 1][0] < timePassed) break;
+	
+	tzeMoving = false;
+}
+tzeFF.onclick = function() {
+	printDitdah(false, 1);
+	tzeMoving = true;
+	
+	var now = performance.now();
+	var diff = Math.min(tzeQueue[tzeQueue.length - 1][0] * 1000 - (now - tzeStartAt), 5000);
+	tzeStartAt -= diff;
+	
+	// index repairing will be done in getTzeDitdah()
+	
+	tzeMoving = false;
+}
+tzeStop.onclick = function() {
+	if (tzeRecording) tzeRecord.click();
+	stopTzePlayer();
+}
+function saveTzeFile() {
+	var data = packTzeFile();
+	var blob = new Blob([JSON.stringify(data)], {type:"application/json"});
+	var url = URL.createObjectURL(blob);
+	
+	var link = document.createElement("A");
+	link.href = url;
+	link.appendChild(document.createTextNode("[DOWNLOAD]"));
+	var filename = (new Date()).toISOString().replace(/[\-\:T]/ig, '').substring(0, 14);
+	link.download = filename + ".tze";
+	
+	var anchor = document.querySelector("#file_link");
+    link.id = anchor.id;
+    anchor.parentNode.replaceChild(link, anchor);
+	
+	loadTzeFile(data);
+}
+function recordTzeDitdah(ditdah) {
+	if (tzeRecording) tzeQueue.push([parseInt(performance.now() - tzeStartAt) / 1000, (ditdah ? 1.0 : 0.0)]);
+}
+function getTzeDitdah() {
+	if (!tzePlaying || tzePaused) return undefined;
+	if (tzeMoving) return false;
+	
+	var timePassed = (performance.now() - tzeStartAt) / 1000;
+	updateDuration(timePassed);
+	
+	if (tzeQueue[tzeQueueIndex][0] > timePassed) return (tzeQueue[tzeQueueIndex - 1][1] > 0);
+	
+	for (; tzeQueueIndex < tzeQueue.length; tzeQueueIndex++)
+		if (tzeQueue[tzeQueueIndex][0] > timePassed) return (tzeQueue[tzeQueueIndex - 1][1] > 0);
+	
+	if (tzeQueueIndex == tzeQueue.length) stopTzePlayer();
+}
+function packTzeFile() {
+	return {
+		version: 1,
+		creatdAt: (new Date()).toISOString(),
+		wpm: parseInt(targetWpm),
+		hangul: hangul.checked,
+		queue: tzeQueue.map(x => [x[0].toFixed(3),x[1]])
+	};
+}
+function loadTzeFile(data) {
+	tzeQueue = data.queue;
+	updateDuration(0);
+	if (data.wpm) {
+		speed.value = data.wpm;
+		setTargetWpm(data.wpm);
+	}
+	if (data.hangul) {
+		hangul.checked = data.hangul;
+	}
+}
+function startTzePlayer() {
+	stopTzePlayer();
+	clearDitdah();
+	audioStart();
+	recorderStart();
+	tzeQueueIndex = 0;
+	tzeStartAt = performance.now();
+	resumeTzePlayer();
+	tzePlaying = true;
+	initProcessMorse();
+}
+function stopTzePlayer() {
+	resumeTzePlayer(true);
+	tzePlaying = false;
+	printDitdah(false, 1);
+	if (!cwPortOpen) audioStop();
+}
+function resumeTzePlayer(stop) {
+	if (tzePlaying) audioPlay(tzeQueue[tzeQueueIndex - 1][1] > 0);
+	tzePlay.replaceChild(document.createTextNode(stop ? "PLAY" : "PAUSE"), tzePlay.firstChild);
+	if (tzePlaying) tzeStartAt += (performance.now() - tzePausedAt);
+	tzePaused = false;
+}
+function pauseTzePlayer() {
+	if (tzePlaying) audioPlay(false);
+	tzePlay.replaceChild(document.createTextNode("RESUME"), tzePlay.firstChild);
+	tzePausedAt = performance.now();
+	tzePaused = true;
+}
+function updateDuration(timePassed) {
+	var str = "( " + makeHHMMSS(timePassed) + " / " + makeHHMMSS(tzeQueue[tzeQueue.length - 1][0]) + " )";
+	updateDisplay(str);
+}
+function makeHHMMSS(sec) {
+	sec = parseInt(sec);
+	var min = parseInt(sec / 60) % 60;
+	sec = sec % 60
+	return (min < 10 ? "0" : "") + min + ":" + (sec < 10 ? "0" : "") + sec;
+}
+function updateDisplay(str) {
+	var display = document.querySelector("#tze_display");
+	display.replaceChild(document.createTextNode(str), display.firstChild);
+}
+
+var decodedLog = document.querySelector("#decoded_log");
+var textNode = null, decodedScrollAnimation = 0;
+function scheduleDecodedScroll() {
+    if (isAndroid || isIOS || showDebug.checked || decodedScrollAnimation != 0) return;
+    var container = decodedLog.parentElement;
+    if (container.scrollHeight - container.scrollTop - container.clientHeight > 80) return;
+    decodedScrollAnimation = requestAnimationFrame(() => {
+        decodedScrollAnimation = 0;
+        container.scrollTop = container.scrollHeight;
+    });
+}
+function printDecodedChar(s) {
+    textNode = document.createTextNode(s);
+    decodedLog.appendChild(textNode);
+    scheduleDecodedScroll();
+}
+function updateDecodedChar(s) {
+    if (textNode) textNode.textContent = s;
+    else printDecodedChar(s);
+    scheduleDecodedScroll();
+}
+function printDecodedLine(s) {
+    var el = document.createElement("DIV");
+    decodedLog.appendChild(el);
+    var tn = document.createTextNode(s);
+    el.appendChild(tn);
+}
+function clearDecodedLog() {
+    decodedLog.textContent = "";
+    printDecodedChar("");
+}
+
+var ditdahLog = document.querySelector("#ditdah");
+var lastDitdahLog = false, lastWidth = 0;
+var serialRenderStartedAt = 0, serialRenderAnimation = 0;
+
+function appendDitdahSpan(ditdah, len) {
+    var span = document.createElement("SPAN");
+    span.className = (ditdah ? (professional.checked ? "ditdah_bar2" : "ditdah_bar") : "ditdah_gap");
+    span.style.width = Math.max(1, parseInt(len) >> 3) + "px";
+    ditdahLog.appendChild(span);
+    if (ditdahLog.childNodes.length > 256) ditdahLog.removeChild(ditdahLog.firstChild);
+    lastDitdahLog = ditdah;
+    lastWidth = len;
+}
+
+function printDitdah(ditdah, len) {
+    if (ditdah == lastDitdahLog && ditdahLog.childNodes.length > 0 && lastWidth < 8192) {
+        var span = ditdahLog.lastChild;
+        lastWidth += len;
+        span.style.width = (parseInt(lastWidth) >> 3) + "px";
+        return;
+    }
+	
+	recordTzeDitdah(ditdah);
+	audioPlay(ditdah);
+	remoteSend(ditdah);
+	
+    appendDitdahSpan(ditdah, len);
+}
+
+function renderSerialDitdahEdge(ditdah, at, detectedAt) {
+    if (ditdahLog.childNodes.length > 0 && serialRenderStartedAt > 0) {
+        updateSerialDitdahWidth(at);
+    }
+
+    if (ditdah != lastDitdahLog || ditdahLog.childNodes.length == 0) {
+        recordTzeDitdah(ditdah);
+        audioPlay(ditdah);
+        remoteSend(ditdah);
+        appendDitdahSpan(ditdah, 1);
+    }
+    serialRenderStartedAt = at;
+    scheduleSerialDitdahRendering();
+}
+
+function updateSerialDitdahWidth(now) {
+    if (ditdahLog.childNodes.length == 0 || serialRenderStartedAt == 0) return;
+    lastWidth = Math.min(8192, Math.max(1, now - serialRenderStartedAt));
+    ditdahLog.lastChild.style.width = Math.max(1, parseInt(lastWidth) >> 3) + "px";
+}
+
+function scheduleSerialDitdahRendering() {
+    if (serialRenderAnimation != 0) return;
+    serialRenderAnimation = requestAnimationFrame(function render(now) {
+        serialRenderAnimation = 0;
+        updateSerialDitdahWidth(now);
+        if (cwPortOpen && lastWidth < 8192) scheduleSerialDitdahRendering();
+    });
+}
+
+function stopSerialDitdahRendering() {
+    if (serialRenderAnimation != 0) cancelAnimationFrame(serialRenderAnimation);
+    serialRenderAnimation = 0;
+    serialRenderStartedAt = 0;
+}
+
+function finishSerialDitdahRendering() {
+    if (serialRenderStartedAt > 0) updateSerialDitdahWidth(performance.now());
+    if (lastDitdahLog) {
+        recordTzeDitdah(false);
+        audioPlay(false);
+        remoteSend(false);
+        appendDitdahSpan(false, 1);
+    }
+    stopSerialDitdahRendering();
+}
+function markDitdahError(msg) {
+	if (professional.checked == false || ditdahLog.childNodes < 2) return;
+	var span = ditdahLog.childNodes[ditdahLog.childNodes.length - 2];
+	//span.setAttribute("data-tooltip", msg);
+	//span.setAttribute("data-tooltip-position", "left");
+	span.setAttribute("title", msg);
+	span.className += "_err";
+	//_log(span.getAttribute("title"));
+}
+function clearDitdah() {
+    stopSerialDitdahRendering();
+    ditdahLog.textContent = "";
+    lastDitdahLog = false;
+    lastWidth = 0;
+
+    lastProcessedAt = 0;
+}
+
+var showDebug = document.querySelector("#show_debug");
+var statContainer = document.querySelector("#stat_container");
+var log = document.querySelector("#log");
+showDebug.onchange = function() {
+    window.localStorage.setItem('showDebug', showDebug.checked);
+    statContainer.style.display = (showDebug.checked ? "inline" : "none");
+}
+function _log(s) {
+    log.appendChild(document.createTextNode(s));
+    log.appendChild(document.createElement("BR"));
+    if (log.childNodes.length > 20) { log.removeChild(log.firstChild); log.removeChild(log.firstChild); }
+}
+
+MORSE = {
+    ".-": "A",
+    "-...": "B",
+    "-.-.": "C",
+    "-..": "D",
+    ".": "E",
+    "..-.": "F",
+    "--.": "G",
+    "....": "H",
+    "..": "I",
+    ".---": "J",
+    "-.-": "K",
+    ".-..": "L",
+    "--": "M",
+    "-.": "N",
+    "---": "O",
+    ".--.": "P",
+    "--.-": "Q",
+    ".-.": "R",
+    "...": "S",
+    "-": "T",
+    "..-": "U",
+    "...-": "V",
+    ".--": "W",
+    "-..-": "X",
+    "-.--": "Y",
+    "--..": "Z",
+
+    ".----": "1",
+    "..---": "2",
+    "...--": "3",
+    "....-": "4",
+    ".....": "5",
+    "-....": "6",
+    "--...": "7",
+    "---..": "8",
+    "----.": "9",
+    "-----": "0",
+
+    ".-.-.-": ".",
+    "--..--": ",",
+    "..--..": "?",
+    "-..-.": "/",
+    ".-.-.": "+",
+    "-....-": "-",
+    "-...-": "=",
+    "---...": ":",
+    "-.-.-.": ";",
+    "-.--.": "(",
+    "-.--.-": ")",
+    ".----.": "'",
+    ".-..-.": "\"",
+    ".--.-.": "@",
+
+    // for prosign
+    ".-...": "&",
+    "...-.": "Ŝ",
+    // non-standard
+    "-...-.-": "[",
+    "...-.-": "]",
+    "-.-.-": "^",
+    "........": "※"
+};
+
+HANGUL = {
+    ".-..": "ㄱ",
+    "..-.": "ㄴ",
+    "-...": "ㄷ",
+    "...-": "ㄹ",
+    "--": "ㅁ",
+    ".--": "ㅂ",
+    "--.": "ㅅ",
+    "-.-": "ㅇ",
+    ".--.": "ㅈ",
+    "-.-.": "ㅊ",
+    "-..-": "ㅋ",
+    "--..": "ㅌ",
+    "---": "ㅍ",
+    ".---": "ㅎ",
+    ".": "ㅏ",
+    "..": "ㅑ",
+    "-": "ㅓ",
+    "...": "ㅕ",
+    ".-": "ㅗ",
+    "-.": "ㅛ",
+    "....": "ㅜ",
+    ".-.": "ㅠ",
+    "-..": "ㅡ",
+    "..-": "ㅣ",
+    "-.--": "ㅔ",
+    "--.-": "ㅐ"
+};
+
+PROSIGN = {
+    "+": "<AR>",
+    "(": "<KN>",
+    "&": "<AS>",
+    "=": "<BT>",
+    "Ŝ": "<SN>",
+    // non-standard
+    "[": "<BK>",
+    "]": "<SK>",
+    "]": "<VA>",
+    "^": "<KA>",
+    "※": "<HH>"
+};
+
+TZE_FILE_SAMPLE = {
+	"version": 1,
+	"creatdAt": "2022-09-06T19:14:00.000Z",
+	"wpm": 20,
+	"hangul": true,
+	"queue": [["0.00",0],["1.00",1],["1.18",0],["1.24",1],["1.30",0],["1.36",1],["1.42",0],["1.60",1],["1.66",0],["2.08",1],["2.26",0],["2.32",1],["2.38",0],["2.44",1],["2.50",0],["2.68",1],["2.74",0],["2.80",1],["2.86",0],["2.92",1],["2.98",0],["3.16",1],["3.22",0],["3.28",1],["3.46",0],["3.52",1],["3.70",0],["3.76",1],["3.94",0],["4.00",1],["4.18",0],["4.36",1],["4.54",0],["4.72",1],["4.90",0],["4.96",1],["5.14",0],["5.20",1],["5.26",0],["5.32",1],["5.38",0],["5.56",1],["5.62",0],["6.04",1],["6.22",0],["6.28",1],["6.34",0],["6.40",1],["6.46",0],["6.52",1],["6.58",0],["6.64",1],["6.82",0],["7.24",1],["7.42",0],["7.48",1],["7.54",0],["7.60",1],["7.78",0],["7.84",1],["7.90",0],["7.96",1],["8.14",0],["8.56",1],["8.74",0],["8.80",1],["8.86",0],["8.92",1],["9.10",0],["9.28",1],["9.34",0],["9.52",1],["9.58",0],["9.64",1],["9.70",0],["9.76",1],["9.94",0],["10.00",1],["10.06",0],["10.36",1],["10.42",0],["10.48",1],["10.54",0],["10.60",1],["10.78",0],["10.84",1],["10.90",0],["11.08",1],["11.14",0],["11.20",1],["11.26",0],["11.32",1],["11.38",0],["11.56",1],["11.74",0],["11.80",1],["11.86",0],["11.92",1],["12.10",0],["12.40",1],["12.46",0],["12.52",1],["12.70",0],["12.76",1],["12.94",0],["13.00",1],["13.18",0],["13.36",1],["13.42",0],["13.72",1],["13.90",0],["13.96",1],["14.14",0],["14.20",1],["14.26",0],["14.44",1],["14.62",0],["14.68",1],["14.74",0],["14.80",1],["14.98",0],["15.04",1],["15.22",0],["15.52",1],["15.70",0],["15.76",1],["15.82",0],["15.88",1],["16.06",0],["16.24",1],["16.42",0],["16.48",1],["16.54",0],["16.84",1],["16.90",0],["16.96",1],["17.14",0],["17.20",1],["17.26",0],["17.32",1],["17.50",0],["17.56",1],["17.62",0],["17.68",1],["17.86",0],["18.28",1],["18.46",0],["18.52",1],["18.58",0],["18.64",1],["18.70",0],["18.88",1],["18.94",0],["19.00",1],["19.06",0],["19.12",1],["19.18",0],["19.36",1],["19.42",0],["19.48",1],["19.66",0],["19.72",1],["19.90",0],["19.96",1],["20.14",0],["20.20",1],["20.38",0],["20.56",1],["20.74",0],["20.92",1],["21.10",0],["21.16",1],["21.34",0],["21.40",1],["21.46",0],["21.52",1],["21.58",0],["21.76",1],["21.82",0],["22.24",1],["22.30",0],["22.36",1],["22.54",0],["22.60",1],["22.66",0],["22.72",1],["22.78",0],["22.96",1],["23.02",0],["23.08",1],["23.14",0],["23.20",1],["23.38",0],["23.56",1],["23.74",0],["23.80",1],["23.98",0],["24.28",1],["24.46",0],["24.52",1],["24.58",0],["24.64",1],["24.70",0],["24.76",1],["24.82",0],["25.00",1],["25.18",0],["25.24",1],["25.42",0],["25.48",1],["25.54",0],["25.60",1],["25.78",0],["26.08",1],["26.26",0],["26.32",1],["26.50",0],["26.56",1],["26.62",0],["26.80",1],["26.98",0],["27.16",1],["27.34",0],["27.40",1],["27.46",0],["27.52",1],["27.70",0],["28.00",1],["28.18",0],["28.24",1],["28.30",0],["28.36",1],["28.54",0],["28.72",1],["28.78",0],["28.84",1],["28.90",0],["28.96",1],["29.14",0],["29.32",1],["29.38",0],["29.44",1],["29.62",0],["29.68",1],["29.86",0],["30.16",1],["30.22",0],["30.28",1],["30.34",0],["30.40",1],["30.58",0],["30.64",1],["30.70",0],["30.88",1],["30.94",0],["31.00",1],["31.06",0],["31.12",1],["31.30",0],["31.60",1],["31.78",0],["31.84",1],["31.90",0],["31.96",1],["32.02",0],["32.08",1],["32.14",0],["32.32",1],["32.38",0],["32.68",1],["32.74",0],["32.80",1],["32.98",0],["33.04",1],["33.10",0],["33.16",1],["33.34",0],["33.40",1],["33.46",0],["33.52",1],["33.70",0],["34.12",1],["34.30",0],["34.36",1],["34.42",0],["34.48",1],["34.54",0],["34.60",1],["34.66",0],["34.72",1],["34.90",0],["35.32",1],["35.38",0],["35.44",1],["35.62",0],["35.68",1],["35.86",0],["35.92",1],["36.10",0],["36.28",1],["36.34",0],["36.52",1],["36.58",0],["36.64",1],["36.70",0],["36.76",1],["36.94",0],["37.00",1],["37.06",0],["37.36",1],["37.42",0],["37.48",1],["37.66",0],["37.72",1],["37.78",0],["37.84",1],["37.90",0],["38.08",1],["38.26",0],["38.32",1],["38.38",0],["38.44",1],["38.50",0],["38.68",1],["38.74",0],["38.80",1],["38.86",0],["38.92",1],["38.98",0],["39.04",1],["39.22",0],["39.76",1],["39.82",0],["39.88",1],["40.06",0],["40.12",1],["40.30",0],["40.36",1],["40.42",0],["40.60",1],["40.78",0],["40.96",1],["41.02",0],["41.08",1],["41.14",0],["41.20",1],["41.38",0],["41.44",1],["41.50",0],["41.80",1],["41.98",0],["42.04",1],["42.22",0],["42.28",1],["42.34",0],["42.52",1],["42.58",0],["42.64",1],["42.70",0],["42.76",1],["42.94",0],["43.12",1],["43.18",0],["43.24",1],["43.30",0],["43.36",1],["43.54",0],["43.60",1],["43.66",0],["43.96",1],["44.14",0],["44.20",1],["44.26",0],["44.32",1],["44.50",0],["44.68",1],["44.86",0],["44.92",1],["44.98",0],["45.04",1],["45.10",0],["45.28",1],["45.34",0],["45.40",1],["45.46",0],["45.52",1],["45.58",0],["45.64",1],["45.82",0],["46.36",1],["46.54",0],["46.60",1],["46.66",0],["46.72",1],["46.90",0],["47.08",1],["47.14",0],["47.20",1],["47.26",0],["47.32",1],["47.50",0],["47.68",1],["47.74",0],["47.80",1],["47.98",0],["48.04",1],["48.10",0],["48.16",1],["48.22",0],["48.52",1],["48.58",0],["48.64",1],["48.82",0],["48.88",1],["49.06",0],["49.12",1],["49.30",0],["49.48",1],["49.54",0],["49.60",1],["49.66",0],["49.72",1],["49.90",0],["50.20",1],["50.26",0],["50.32",1],["50.38",0],["50.44",1],["50.62",0],["50.68",1],["50.74",0],["50.92",1],["51.10",0],["51.16",1],["51.22",0],["51.28",1],["51.34",0],["51.52",1],["51.58",0],["51.64",1],["51.70",0],["51.76",1],["51.94",0],["52.00",1],["52.06",0],["52.36",1],["52.54",0],["52.60",1],["52.66",0],["52.72",1],["52.78",0],["52.84",1],["52.90",0],["53.08",1],["53.26",0],["53.32",1],["53.38",0],["53.44",1],["53.62",0],["53.68",1],["53.86",0],["54.40",1],["54.58",0],["54.64",1],["54.70",0],["54.76",1],["54.82",0],["54.88",1],["54.94",0],["55.12",1],["55.18",0],["55.24",1],["55.42",0],["55.72",1],["55.90",0],["55.96",1],["56.02",0],["56.08",1],["56.26",0],["56.44",1],["56.50",0],["56.56",1],["56.62",0],["56.68",1],["56.74",0],["56.80",1],["56.86",0],["57.04",1],["57.22",0],["57.28",1],["57.46",0],["57.76",1],["57.94",0],["58.00",1],["58.06",0],["58.12",1],["58.30",0],["58.48",1],["58.54",0],["58.60",1],["58.66",0],["58.72",1],["58.90",0],["59.44",1],["59.62",0],["59.68",1],["59.74",0],["59.80",1],["59.86",0],["59.92",1],["59.98",0],["60.16",1],["60.22",0],["60.28",1],["60.46",0],["60.64",1],["60.70",0],["60.76",1],["60.82",0],["60.88",1],["61.06",0],["61.36",1],["61.42",0],["61.48",1],["61.66",0],["61.72",1],["61.78",0],["61.84",1],["61.90",0],["62.08",1],["62.14",0],["62.20",1],["62.26",0],["62.32",1],["62.50",0],["62.68",1],["62.74",0],["62.80",1],["62.86",0],["62.92",1],["62.98",0],["63.04",1],["63.22",0],["63.76",1],["63.82",0],["63.88",1],["64.06",0],["64.12",1],["64.30",0],["64.48",1],["64.54",0],["64.84",1],["64.90",0],["64.96",1],["65.02",0],["65.08",1],["65.14",0],["65.20",1],["65.38",0],["65.56",1],["65.62",0],["65.92",1],["65.98",0],["66.04",1],["66.10",0],["66.16",1],["66.34",0],["66.40",1],["66.46",0],["66.64",1],["66.82",0],["66.88",1],["66.94",0],["67.00",1],["67.06",0],["67.24",1],["67.30",0],["67.36",1],["67.42",0],["67.48",1],["67.66",0],["67.72",1],["67.78",0],["68.32",1],["68.50",0],["68.56",1],["68.74",0],["68.92",1],["68.98",0],["69.28",1],["69.46",0],["69.52",1],["69.58",0],["69.64",1],["69.82",0],["70.00",1],["70.18",0],["70.24",1],["70.30",0],["70.36",1],["70.42",0],["70.60",1],["70.78",0],["70.84",1],["71.02",0],["71.32",1],["71.50",0],["71.56",1],["71.62",0],["71.68",1],["71.86",0],["72.04",1],["72.22",0],["72.28",1],["72.34",0],["72.40",1],["72.46",0],["72.76",1],["72.82",0],["72.88",1],["72.94",0],["73.00",1],["73.06",0],["73.12",1],["73.30",0],["73.48",1],["73.54",0],["73.60",1],["73.78",0],["74.32",1],["74.50",0],["74.56",1],["74.74",0],["74.92",1],["74.98",0],["75.16",1],["75.22",0],["75.28",1],["75.34",0],["75.40",1],["75.58",0],["75.64",1],["75.70",0],["76.00",1],["76.18",0],["76.24",1],["76.30",0],["76.36",1],["76.42",0],["76.48",1],["76.54",0],["76.72",1],["76.90",0],["76.96",1],["77.02",0],["77.08",1],["77.14",0],["77.32",1],["77.38",0],["77.44",1],["77.50",0],["77.56",1],["77.62",0],["77.68",1],["77.86",0],["78.16",1],["78.34",0],["78.40",1],["78.46",0],["78.52",1],["78.70",0],["78.88",1],["79.06",0],["79.24",1],["79.42",0],["79.48",1],["79.66",0],["79.72",1],["79.78",0],["79.96",1],["80.14",0],["80.20",1],["80.38",0],["80.44",1],["80.50",0],["80.80",1],["80.98",0],["81.04",1],["81.22",0],["81.28",1],["81.34",0],["81.52",1],["81.70",0],["81.76",1],["81.82",0],["81.88",1],["81.94",0],["82.12",1],["82.18",0],["82.24",1],["82.42",0],["82.48",1],["82.66",0],["82.96",1],["83.02",0],["83.08",1],["83.14",0],["83.20",1],["83.38",0],["83.44",1],["83.50",0],["83.68",1],["83.74",0],["83.80",1],["83.86",0],["83.92",1],["84.10",0],["84.40",1],["84.58",0],["84.64",1],["84.70",0],["84.76",1],["84.82",0],["84.88",1],["84.94",0],["85.12",1],["85.18",0],["85.48",1],["85.54",0],["85.60",1],["85.78",0],["85.84",1],["85.90",0],["85.96",1],["86.14",0],["86.20",1],["86.26",0],["86.32",1],["86.50",0],["86.92",1],["87.10",0],["87.16",1],["87.22",0],["87.28",1],["87.34",0],["87.40",1],["87.46",0],["87.52",1],["87.70",0],["88.12",1],["88.30",0],["88.36",1],["88.54",0],["88.72",1],["88.78",0],["88.96",1],["89.02",0],["89.08",1],["89.14",0],["89.20",1],["89.38",0],["89.44",1],["89.50",0],["89.68",1],["89.74",0],["89.80",1],["89.98",0],["90.04",1],["90.22",0],["90.28",1],["90.46",0],["90.76",1],["90.94",0],["91.00",1],["91.06",0],["91.12",1],["91.30",0],["91.48",1],["91.66",0],["91.72",1],["91.78",0],["91.84",1],["91.90",0],["92.08",1],["92.14",0],["92.20",1],["92.26",0],["92.32",1],["92.50",0],["92.56",1],["92.62",0],["93.16",1],["93.34",0],["93.40",1],["93.46",0],["93.52",1],["93.70",0],["93.88",1],["93.94",0],["94.00",1],["94.06",0],["94.12",1],["94.30",0],["94.60",1],["94.78",0],["94.84",1],["94.90",0],["94.96",1],["95.14",0],["95.32",1],["95.50",0],["95.56",1],["95.62",0],["95.80",1],["95.98",0],["96.04",1],["96.10",0],["96.16",1],["96.34",0],["96.88",1],["96.94",0],["97.00",1],["97.18",0],["97.24",1],["97.42",0],["97.60",1],["97.66",0],["97.96",1],["98.02",0],["98.08",1],["98.14",0],["98.20",1],["98.26",0],["98.32",1],["98.50",0],["98.68",1],["98.74",0],["98.92",1],["98.98",0],["99.04",1],["99.22",0],["99.28",1],["99.46",0],["99.76",1],["99.82",0],["99.88",1],["99.94",0],["100.00",1],["100.18",0],["100.24",1],["100.30",0],["100.48",1],["100.54",0],["100.60",1],["100.66",0],["100.72",1],["100.90",0],["101.20",1],["101.38",0],["101.44",1],["101.50",0],["101.56",1],["101.62",0],["101.68",1],["101.74",0],["101.92",1],["101.98",0],["102.28",1],["102.34",0],["102.40",1],["102.58",0],["102.64",1],["102.70",0],["102.76",1],["102.94",0],["103.00",1],["103.06",0],["103.12",1],["103.30",0],["103.72",1],["103.78",0],["103.84",1],["104.02",0],["104.08",1],["104.14",0],["104.20",1],["104.26",0],["104.44",1],["104.50",0],["104.56",1],["104.74",0],["105.04",1],["105.22",0],["105.28",1],["105.46",0],["105.64",1],["105.70",0],["105.88",1],["105.94",0],["106.00",1],["106.18",0],["106.24",1],["106.42",0],["106.72",1],["106.90",0],["106.96",1],["107.14",0],["107.20",1],["107.26",0],["107.44",1],["107.62",0],["107.68",1],["107.74",0],["107.80",1],["107.86",0],["108.04",1],["108.10",0],["108.16",1],["108.34",0],["108.40",1],["108.58",0],["108.88",1],["108.94",0],["109.00",1],["109.06",0],["109.12",1],["109.30",0],["109.36",1],["109.42",0],["109.60",1],["109.66",0],["109.72",1],["109.78",0],["109.84",1],["110.02",0],["110.32",1],["110.50",0],["110.56",1],["110.62",0],["110.68",1],["110.74",0],["110.80",1],["110.86",0],["111.04",1],["111.10",0],["111.40",1],["111.46",0],["111.52",1],["111.70",0],["111.76",1],["111.82",0],["111.88",1],["112.06",0],["112.12",1],["112.18",0],["112.24",1],["112.42",0],["112.84",1],["112.90",0],["112.96",1],["113.14",0],["113.20",1],["113.26",0],["113.32",1],["113.50",0],["113.56",1],["113.62",0],["114.04",1],["114.22",0],["114.28",1],["114.34",0],["114.40",1],["114.46",0],["114.64",1],["114.70",0],["115.12",1],["115.30",0],["115.36",1],["115.42",0],["115.48",1],["115.54",0],["115.72",1],["115.78",0],["115.84",1],["115.90",0],["115.96",1],["116.02",0],["116.20",1],["116.26",0],["116.32",1],["116.50",0],["116.56",1],["116.74",0],["116.80",1],["116.98",0],["117.04",1],["117.22",0],["117.40",1],["117.58",0],["117.76",1],["117.94",0],["118.00",1],["118.18",0],["118.24",1],["118.30",0],["118.36",1],["118.42",0],["118.60",1],["118.66",0],["119.08",1],["119.26",0],["119.32",1],["119.50",0],["119.56",1],["119.62",0],["119.68",1],["119.74",0],["119.80",1],["119.86",0],["120.04",1],["120.10",0],["120.16",1],["120.22",0],["120.28",1],["120.34",0],["120.40",1],["120.58",0],["120.64",1],["120.82",0],["121.24",1],["121.42",0],["121.60",1],["121.66",0],["121.72",1],["121.78",0],["121.84",1],["122.02",0],["122.44",1],["122.50",0],["122.92",1],["122.98",0],["125.00",0]]
+};
+</script>
+
+</html>
