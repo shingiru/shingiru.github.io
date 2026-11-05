@@ -247,6 +247,7 @@ audio {
 <button id="hangul_qso_4">Hangul Sample 4</button>
 <button id="english_qso_1">English Sample 1</button>
 <button id="english_qso_2">English Sample 2</button>
+<button id="english_qso_3">English Sample 3</button>
 <button id="user_qso">User Text</button>
 <button id="random_qso">Random Text</button>
 <button id="hangul_syllable">Hangul Letter Training</button>
@@ -391,6 +392,20 @@ TU 73 E E
 TU E E  
 </textarea>
 <div id="english_txt_2_caption" class="hidden_sample">※ QSO Sample from : HL5KY & HL5BTF Amateur Radio Blog <a href="https://hl5ky.tistory.com/99" target="_blank">https://hl5ky.tistory.com/99</a></div>
+
+<textarea id="english_txt_3" rows="16" class="hidden_sample">
+BENS BEST BENT WIRE  
+
+/5 5 ESE BENN BENT BENN BEST  
+
+<HN> <HN> <HN> EET <HN> <HN> <HN> EET  
+
+<MH> <MH> <MH> T <MH> <MH> <MH> T  
+
+<HN> <HN> <HN> EET  
+
+</textarea>
+<div id="english_txt_3_caption" class="hidden_sample">※  Ben's Best Bent Wire <a href="https://youtu.be/LNiG8DPXHFY" target="_blank">https://youtu.be/LNiG8DPXHFY</a></div>
 
 <textarea id="user_txt" rows="16" class="hidden_sample">
 자유롭게 입력해서 사용하세요. 입력한 내용은 브라우저에 기억됩니다.
@@ -825,6 +840,7 @@ MorseNode.prototype.playString = function(queueOnly, t, w, v, k, fade) {
 	queue = [];
 	enQueue(0, 0);
 	hasHangul = false;
+    ignoreGap = false;
     
     var start = t, fv = v;
     for (var n = 0; n < w.length; n++) {
@@ -842,7 +858,16 @@ MorseNode.prototype.playString = function(queueOnly, t, w, v, k, fade) {
             }
             else if ("undefined" != typeof this.MORSE[c[i]]) {
                 t = this.playChar(queueOnly, t, this.MORSE[c[i]], fv); // 1 gap after dit/dah
-                t += 2 * this._dot * this.dotfac('l'); // with this 2 more gap, whole gap between letter is 3
+                if (!ignoreGap) {
+                    t += 2 * this._dot * this.dotfac('l'); // with this 2 more gap, whole gap between letter is 3
+                }
+            }
+            // HACK: pseudo prosign
+            else if (c[i] === '<') {
+                ignoreGap = true;
+            }
+            else if (c[i] === '>') {
+                ignoreGap = false;
             }
         }
         if (hangul) {
@@ -1404,6 +1429,7 @@ makeEditor(document.querySelector("#hangul_txt_3"));
 makeEditor(document.querySelector("#hangul_txt_4"));
 makeEditor(document.querySelector("#english_txt_1"));
 makeEditor(document.querySelector("#english_txt_2"));
+makeEditor(document.querySelector("#english_txt_3"));
 makeEditor(document.querySelector("#user_txt"));
 makeEditor(document.querySelector("#random_txt"));
 makeEditor(document.querySelector("#hangul_txt"));
@@ -1416,6 +1442,7 @@ var hangulQso3 = document.querySelector("#hangul_qso_3");
 var hangulQso4 = document.querySelector("#hangul_qso_4");
 var englishQso1 = document.querySelector("#english_qso_1");
 var englishQso2 = document.querySelector("#english_qso_2");
+var englishQso3 = document.querySelector("#english_qso_3");
 var userQso = document.querySelector("#user_qso");
 var randomQso = document.querySelector("#random_qso");
 var hangulSyllable = document.querySelector("#hangul_syllable");
@@ -1488,6 +1515,9 @@ englishQso1.onclick = function() {
 }
 englishQso2.onclick = function() {
     changeQsoSample("english_txt_2");
+}
+englishQso3.onclick = function() {
+    changeQsoSample("english_txt_3");
 }
 userQso.onclick = function() {
     changeQsoSample("user_txt");
